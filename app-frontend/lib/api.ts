@@ -1,6 +1,7 @@
 // API Client for Londoolink AI Backend Connection
-declare const process: { env: { NEXT_PUBLIC_API_URL?: string } }
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
+declare const process: { env: { NEXT_PUBLIC_API_BASE_URL?: string } }
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+const API_VERSION = "/api/v1"
 
 interface ApiResponse<T = any> {
   success?: boolean
@@ -46,7 +47,7 @@ class ApiClient {
 
   async post<T = any>(endpoint: string, data: any): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${API_VERSION}${endpoint}`, {
         method: 'POST',
         headers: this.getAuthHeaders(),
         body: JSON.stringify(data)
@@ -66,7 +67,7 @@ class ApiClient {
 
   async get<T = any>(endpoint: string): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${API_VERSION}${endpoint}`, {
         method: 'GET',
         headers: this.getAuthHeaders()
       })

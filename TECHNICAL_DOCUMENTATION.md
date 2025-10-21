@@ -11,21 +11,23 @@
 
 ## System Architecture Overview
 
-Londoolink AI is a sophisticated multi-agent system designed to intelligently track and link your digital life. The architecture follows a microservices pattern with clear separation of concerns between data ingestion, processing, and user interaction.
+Londoolink AI is a sophisticated multi-agent system designed to intelligently process and prioritize information from various sources, reducing information overload through AI-powered insights. The architecture follows a modern microservices pattern with clear separation of concerns between data ingestion, processing, and user interaction.
 
 ### Architecture Diagram
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │   Backend       │    │   External      │
 │   (Next.js)     │◄──►│   (FastAPI)     │◄──►│   Services      │
-│                 │    │                 │    │   (n8n, APIs)   │
+│   TypeScript    │    │   Python        │    │   (n8n, APIs)   │
+│   Tailwind CSS  │    │   LangGraph     │    │   Google, etc.  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                               │
                               ▼
                     ┌─────────────────┐
-                    │   LangGraph     │
-                    │   Multi-Agent   │
-                    │   Workflow     │
+                    │   AI Agents     │
+                    │   Email Agent   │
+                    │   Calendar Agent│
+                    │   Priority Agent│
                     └─────────────────┘
                               │
                               ▼
@@ -33,17 +35,20 @@ Londoolink AI is a sophisticated multi-agent system designed to intelligently tr
                     │   Data Layer    │
                     │   PostgreSQL    │
                     │   ChromaDB      │
+                    │   Vector Store  │
                     └─────────────────┘
 ```
 
 ### End-to-End Data Flow
 
-1. **Data Ingestion**: External services (n8n workflows, API integrations) collect data from various sources (emails, calendars, social media)
-2. **API Processing**: FastAPI backend receives and validates incoming data through secure endpoints
-3. **Agent Coordination**: LangGraph orchestrates specialized agents (Email, Calendar, Priority, Social) to process and analyze the data
-4. **Intelligent Processing**: Each agent applies domain-specific logic and AI models to extract insights and determine priorities
-5. **Data Storage**: Processed data is stored in PostgreSQL for relational data and ChromaDB for vector embeddings
-6. **User Interface**: Frontend presents intelligent summaries, insights, and actionable recommendations to users
+The system processes information through a sophisticated pipeline designed for scalability and intelligent analysis:
+
+1. **Data Ingestion**: External services (n8n workflows, API integrations) collect data from various sources including emails, calendars, and third-party services
+2. **API Processing**: FastAPI backend receives and validates incoming data through secure, authenticated endpoints
+3. **Agent Orchestration**: LangGraph coordinates specialized agents in a stateful workflow to process and analyze the data
+4. **Intelligent Analysis**: Each agent applies domain-specific logic and advanced AI models to extract insights, determine priorities, and generate recommendations
+5. **Data Persistence**: Processed data is stored in PostgreSQL for relational data and ChromaDB for vector embeddings and semantic search
+6. **User Interface**: Frontend presents intelligent summaries, insights, and actionable recommendations through a modern, responsive interface
 
 ---
 
