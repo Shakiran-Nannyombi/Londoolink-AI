@@ -63,13 +63,18 @@ Londoolink uses **LangGraph** for sophisticated multi-agent orchestration, provi
 - **Document Memory**: Persistent storage of analyzed content
 - **Context Awareness**: Long-term memory across user sessions
 
-#### **Data Flow Architecture**
-```
-[External Services] → [n8n Automation] → [FastAPI Backend] → [LangGraph Agents] → [Daily Briefing]
-       ↓                    ↓                   ↓                    ↓                ↓
-   Gmail, GCal,         Webhooks &          Secure API          AI Analysis      Prioritized
-   Social Media         Scheduling          Endpoints           & Synthesis       Insights
-```
+#### **Complete Data Flow Architecture**
+
+Comprehensive data flow showing the complete journey from external services through n8n automation, FastAPI endpoints, LangGraph multi-agent processing, to final daily briefing generation.
+
+- [Data Flow Architecture](./Diagrams/data-flow-architecture.png)
+
+**Data Flow Stages:**
+1. **Data Collection**: External APIs → n8n Workflows → FastAPI Ingestion
+2. **API Processing**: Authentication → Endpoint Routing → Business Logic  
+3. **AI Processing**: LangGraph Coordinator → Specialized Agents → LLM Analysis
+4. **Data Storage**: PostgreSQL (relational) + ChromaDB (vector embeddings)
+5. **Output Generation**: Agent Synthesis → Prioritization → JSON Response
 
 ## Technology Stack
 
@@ -143,18 +148,20 @@ The API will be available at `http://127.0.0.1:8000`.
 
 ### 5. Run Tests
 
-Verify your installation with the comprehensive test suite:
+Verify your installation with the available test suite:
 
 ```bash
-# Run all tests
-uv run python test_runner.py
+# Run security tests (recommended - core functionality)
+uv run pytest tests/test_security_minimal.py -v
 
-# Expected output:
-# ALL TESTS PASSED!
-# Security: Working
-# Schemas: Working  
-# Basic Functions: Working
-# LangGraph Multi-Agent: Working
+# Run all available tests
+uv run pytest tests/ -v
+
+# Available test modules:
+# - test_security_minimal.py (JWT, encryption, password hashing)
+# - test_agents.py (AI agent functionality)
+# - test_api.py (FastAPI endpoints)
+# - test_rag.py (RAG pipeline)
 ```
 
 ## API Documentation
