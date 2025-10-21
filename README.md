@@ -17,47 +17,74 @@ In today's hyper-connected world, we are flooded with information from emails, c
 
 ## The Solution
 
-Londoolink provides a secure and intelligent backend that connects to your digital world via automated workflows. It doesn't just aggregate data; it understands it. The system uses a Retrieval-Augmented Generation (RAG) pipeline and a team of specialized AI agents to deliver a prioritized daily briefing, helping you focus on what's important.
+Londoolink provides a secure and intelligent backend powered by **LangGraph multi-agent orchestration** that connects to your digital world via automated workflows. It doesn't just aggregate data; it understands it. The system uses a sophisticated **LangGraph state machine** with specialized AI agents and a Retrieval-Augmented Generation (RAG) pipeline to deliver prioritized daily briefings, helping you focus on what's important.
 
 ### Core Features
 
-* **AI-Powered Daily Briefings:** Start your day with a clear, concise summary of your top priorities, including urgent emails, upcoming meetings, and important reminders.
-* **Secure Credential Management:** All sensitive credentials (like Google OAuth tokens) are stored using strong AES-256 symmetric encryption. Your data is never stored in plaintext.
-* **Multi-Agent System:** Specialized agents for email triage, calendar management, and prioritization collaborate to analyze information from different perspectives.
-* **Context-Aware Memory (RAG):** Using a vector database, Londoolink remembers past interactions and context, enabling it to provide more relevant and intelligent insights.
-* **Automated Data Ingestion:** Integrated with n8n, the system automatically and continuously fetches new data from your connected services without manual intervention.
-* **Built with FastAPI:** A modern, high-performance, and scalable API built with production best practices.
+* **LangGraph Multi-Agent System:** Advanced stateful workflow orchestration with specialized agents for email triage, calendar management, social media analysis, and priority synthesis.
+* **AI-Powered Daily Briefings:** Start your day with a comprehensive, AI-generated summary of your top priorities, including urgent emails, upcoming meetings, and important communications.
+* **Enterprise-Grade Security:** All sensitive credentials are protected with AES-256 encryption, JWT authentication, and Argon2 password hashing. Your data is never stored in plaintext.
+* **Context-Aware Memory (RAG):** Using ChromaDB vector database, Londoolink remembers past interactions and context, enabling intelligent insights across sessions.
+* **Stateful Workflow Management:** LangGraph provides durable execution, error recovery, and human-in-the-loop capabilities for reliable agent coordination.
+* **Automated Data Ingestion:** Integrated with n8n for continuous, automated data fetching from your connected services without manual intervention.
+* **Production-Ready Architecture:** Built with FastAPI, featuring comprehensive testing, modular design, and scalable deployment options.
 
 ## System Architecture
 
-*(This diagram shows the flow of data from external services through n8n to the Londoolink backend, where the AI agents process it and store insights in the databases.)*
+### **LangGraph Multi-Agent Workflow**
 
+Londoolink uses **LangGraph** for sophisticated multi-agent orchestration, providing stateful workflow management and reliable agent coordination.
+
+![Multi-Agent Workflow Architecture](./Diagrams/multi-agent-workflow-architecture.png)
+
+*The architecture shows how specialized AI agents (Email, Calendar, Social, Priority) work together through LangGraph's stateful orchestration, with RAG tools and external services integration.*
+
+### **Additional Architecture Diagrams**
+
+- [LangGraph State Flow Diagram](./Diagrams/langgraph-state-flow-diagram.png)
+- [Sequential Execution Flow](./Diagrams/sequential-execution-flow.png)
+- [Additional Workflow Diagrams](./Diagrams/)
+
+### **Key Architecture Components**
+
+#### **LangGraph Coordinator**
+- **Stateful Orchestration**: Manages workflow state across agent interactions
+- **Error Recovery**: Graceful handling of agent failures with partial results
+- **Conditional Routing**: Smart agent selection based on workflow state
+
+#### **Specialized AI Agents**
+- **Email Agent**: Analyzes emails for urgency, action items, and key contacts
+- **Calendar Agent**: Processes meetings, deadlines, and scheduling conflicts  
+- **Social Agent**: Handles social media and messaging platform analysis
+- **Priority Agent**: Synthesizes all analyses into prioritized daily briefings
+
+#### **RAG Pipeline Integration**
+- **Semantic Search**: ChromaDB vector database for context retrieval
+- **Document Memory**: Persistent storage of analyzed content
+- **Context Awareness**: Long-term memory across user sessions
+
+#### **Data Flow Architecture**
 ```
-[----------------]      (Webhook)      [------------------]      [--------------------]
-|                |--------------------->|                  |----->|                    |
-|      n8n       |                      |  FastAPI Backend |      |   LangChain AI     |
-| (Gmail, GCal)  |                      |   (Ingestion)    |      | (Agents & RAG)     |
-|                |<---------------------|                  |<-----|                    |
-[----------------]      (API Calls)      [------------------]      [--------------------]
-                                                 |                        |
-                                                 |                        |
-                                        [----------------]      [----------------]
-                                        |  PostgreSQL DB |      |  ChromaDB      |
-                                        | (Users, Encrypted|      | (Vector       |
-                                        |  Credentials)  |      |  Embeddings)   |
-                                        [----------------]      [----------------]
+[External Services] → [n8n Automation] → [FastAPI Backend] → [LangGraph Agents] → [Daily Briefing]
+       ↓                    ↓                   ↓                    ↓                ↓
+   Gmail, GCal,         Webhooks &          Secure API          AI Analysis      Prioritized
+   Social Media         Scheduling          Endpoints           & Synthesis       Insights
 ```
 
 ## Technology Stack
 
 | Category | Technology |
 | :--- | :--- |
-| **Backend** | FastAPI, Pydantic, SQLAlchemy |
-| **AI / ML** | LangChain, OpenAI (or other LLM), ChromaDB, Sentence Transformers |
-| **Databases** | PostgreSQL (for relational data), ChromaDB (for vector storage) |
-| **Authentication** | Bcrypt (for password hashing), JWT (for sessions) |
-| **Automation** | n8n (self-hosted or cloud) |
-| **Deployment** | Docker, Railway / Render |
+| **Backend** | FastAPI, Pydantic, SQLAlchemy, uvicorn |
+| **AI Orchestration** | **LangGraph** (stateful multi-agent workflows), LangChain |
+| **LLM Provider** | Groq (llama3-70b-8192), OpenAI (fallback) |
+| **Vector Database** | ChromaDB (embeddings & semantic search) |
+| **Embeddings** | Ollama (local embeddings), Sentence Transformers |
+| **Databases** | PostgreSQL (relational data), ChromaDB (vector storage) |
+| **Security** | Argon2 (password hashing), JWT (authentication), AES-256 (encryption) |
+| **Automation** | n8n (workflow automation & data ingestion) |
+| **Testing** | Custom test runners, comprehensive security testing |
+| **Deployment** | Docker, Railway / Render, uv (dependency management) |
 
 ## Getting Started
 
@@ -66,22 +93,27 @@ Follow these instructions to get the Londoolink backend up and running on your l
 ### Prerequisites
 
 * Python 3.12+
-* Docker and Docker Compose (for database and n8n)
-* An n8n instance
-* API keys for your chosen LLM provider (e.g., OpenAI)
+* [uv](https://docs.astral.sh/uv/) (fast Python package manager)
+* Docker and Docker Compose (for databases)
+* An n8n instance (for automation)
+* API keys for Groq and/or OpenAI
 
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Shakiran-Nannyombi/Londoolink-AI.git
-cd Londoolink-AI
+cd Londoolink-AI/backend
 ```
 
 ### 2. Set Up the Environment
 
-Create a virtual environment and install the required Python packages.
+Install dependencies using uv (recommended) or pip:
 
 ```bash
+# Using uv (recommended - faster)
+uv sync
+
+# Or using traditional pip
 python -m venv venv
 source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 pip install -r requirements.txt
@@ -100,10 +132,30 @@ Now, open the `.env` file and fill in the required values.
 ### 4. Run the Application
 
 ```bash
+# Using uv (recommended)
+uv run uvicorn app.main:app --reload
+
+# Or using traditional method
 uvicorn app.main:app --reload
 ```
 
 The API will be available at `http://127.0.0.1:8000`.
+
+### 5. Run Tests
+
+Verify your installation with the comprehensive test suite:
+
+```bash
+# Run all tests
+uv run python test_runner.py
+
+# Expected output:
+# ALL TESTS PASSED!
+# Security: Working
+# Schemas: Working  
+# Basic Functions: Working
+# LangGraph Multi-Agent: Working
+```
 
 ## API Documentation
 
@@ -128,7 +180,10 @@ ENCRYPTION_KEY="your_32_byte_encryption_key"
 # Database connection string
 DATABASE_URL="postgresql+psycopg2://user:password@localhost/londoolink_db"
 
-# OpenAI API Key
+# Groq API Key (primary LLM provider)
+GROQ_API_KEY="gsk_..."
+
+# OpenAI API Key (fallback LLM provider)
 OPENAI_API_KEY="sk-..."
 
 # The algorithm used for JWTs
