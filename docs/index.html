@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Londoolink AI - Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))"
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))"
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))"
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))"
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222.2 84% 4.9%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 212.7 26.8% 83.9%;
+        }
+        
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+        
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .tab-button.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        pre {
+            background-color: hsl(var(--muted));
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        code {
+            background-color: hsl(var(--muted));
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Londoolink AI Documentation
+            </h1>
+            <p class="text-xl text-muted-foreground mb-6">
+                An intelligent agent that securely tracks and links your digital life
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="https://github.com/your-username/Londoolink-AI" target="_blank" 
+                   class="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
+                    📁 GitHub Repository
+                </a>
+                <a href="#" class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:opacity-90 transition-opacity">
+                    🚀 Live Demo
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg">
+            <button class="tab-button active px-6 py-3 rounded-md font-medium" onclick="showTab('deployment')">
+                🚀 Deployment Guide
+            </button>
+            <button class="tab-button px-6 py-3 rounded-md font-medium" onclick="showTab('technical')">
+                🔧 Technical Documentation
+            </button>
+            <button class="tab-button px-6 py-3 rounded-md font-medium" onclick="showTab('setup')">
+                📋 Repository Setup
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content active" id="deployment">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6">🚀 Deployment Guide</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h3 class="text-xl font-semibold mb-4 text-blue-400">Backend (Railway)</h3>
+                        <ol class="space-y-2 text-sm">
+                            <li>1. Go to <a href="https://railway.app" target="_blank" class="text-blue-400 hover:underline">railway.app</a></li>
+                            <li>2. Create new project from GitHub</li>
+                            <li>3. Select <code>backend</code> folder</li>
+                            <li>4. Add PostgreSQL database</li>
+                            <li>5. Configure environment variables</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h3 class="text-xl font-semibold mb-4 text-green-400">Frontend (Netlify)</h3>
+                        <ol class="space-y-2 text-sm">
+                            <li>1. Go to <a href="https://netlify.com" target="_blank" class="text-blue-400 hover:underline">netlify.com</a></li>
+                            <li>2. Import from GitHub</li>
+                            <li>3. Set base directory: <code>app-frontend</code></li>
+                            <li>4. Set build command: <code>npm run build</code></li>
+                            <li>5. Set publish directory: <code>out</code></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4">Environment Variables</h3>
+                
+                <h4 class="text-lg font-medium mb-2">Backend (Railway)</h4>
+                <pre><code>SECRET_KEY=your-super-secret-jwt-key-make-it-long-and-random
+ENCRYPTION_KEY=your-32-character-fernet-encryption-key
+GROQ_API_KEY=your-groq-api-key-here
+OPENAI_API_KEY=your-openai-api-key-here
+ENVIRONMENT=production
+ALLOWED_ORIGINS=https://your-frontend-url.netlify.app</code></pre>
+
+                <h4 class="text-lg font-medium mb-2 mt-4">Frontend (Netlify)</h4>
+                <pre><code>NEXT_PUBLIC_API_BASE_URL=https://your-backend-url.up.railway.app</code></pre>
+
+                <div class="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-4 mt-6">
+                    <h4 class="font-semibold text-yellow-400 mb-2">⚠️ Important</h4>
+                    <p class="text-sm">After deploying both services, update the <code>ALLOWED_ORIGINS</code> in Railway with your actual Netlify URL to fix CORS issues.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="technical">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6">🔧 Technical Documentation</h2>
+                
+                <h3 class="text-2xl font-semibold mb-4">System Architecture</h3>
+                <div class="bg-muted p-6 rounded-lg mb-6">
+                    <pre class="text-sm"><code>┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   External      │
+│   (Next.js)     │◄──►│   (FastAPI)     │◄──►│   Services      │
+│   TypeScript    │    │   Python        │    │   (n8n, APIs)   │
+│   Tailwind CSS  │    │   LangGraph     │    │   Google, etc.  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │   AI Agents     │
+                    │   Email Agent   │
+                    │   Calendar Agent│
+                    │   Priority Agent│
+                    └─────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │   Data Layer    │
+                    │   PostgreSQL    │
+                    │   ChromaDB      │
+                    │   Vector Store  │
+                    └─────────────────┘</code></pre>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4">Tech Stack</h3>
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-blue-400 mb-2">Frontend</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• Next.js 15</li>
+                            <li>• TypeScript</li>
+                            <li>• Tailwind CSS</li>
+                            <li>• shadcn/ui</li>
+                        </ul>
+                    </div>
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-green-400 mb-2">Backend</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• FastAPI</li>
+                            <li>• Python 3.12</li>
+                            <li>• LangGraph</li>
+                            <li>• PostgreSQL</li>
+                        </ul>
+                    </div>
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-purple-400 mb-2">AI/ML</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• OpenAI GPT-4</li>
+                            <li>• Groq</li>
+                            <li>• ChromaDB</li>
+                            <li>• LangChain</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4">API Endpoints</h3>
+                <div class="space-y-4">
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-green-400 mb-2">POST /api/v1/auth/login</h4>
+                        <p class="text-sm text-muted-foreground mb-2">Authenticate user and receive JWT token</p>
+                        <pre class="text-xs"><code>curl -X POST "https://your-backend.railway.app/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "password"}'</code></pre>
+                    </div>
+                    
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-blue-400 mb-2">GET /api/v1/agent/briefing/daily</h4>
+                        <p class="text-sm text-muted-foreground mb-2">Generate daily briefing using multi-agent workflow</p>
+                        <pre class="text-xs"><code>curl -X GET "https://your-backend.railway.app/api/v1/agent/briefing/daily" \
+  -H "Authorization: Bearer your-jwt-token"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="setup">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6">📋 Repository Setup</h2>
+                
+                <h3 class="text-2xl font-semibold mb-4">Project Structure</h3>
+                <pre class="mb-6"><code>Londoolink-AI/
+├── app-frontend/          # Next.js frontend application
+│   ├── app/              # App router pages
+│   ├── components/       # React components
+│   ├── lib/             # Utility functions
+│   └── public/          # Static assets
+├── backend/             # FastAPI backend application
+│   ├── app/            # Application code
+│   ├── agents/         # LangGraph agents
+│   └── Dockerfile      # Container configuration
+├── docs/               # GitHub Pages documentation
+├── DEPLOYMENT_INSTRUCTIONS.md
+└── TECHNICAL_DOCUMENTATION.md</code></pre>
+
+                <h3 class="text-2xl font-semibold mb-4">Getting Started</h3>
+                <div class="space-y-4">
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold mb-2">1. Clone Repository</h4>
+                        <pre><code>git clone https://github.com/your-username/Londoolink-AI.git
+cd Londoolink-AI</code></pre>
+                    </div>
+                    
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold mb-2">2. Setup Backend</h4>
+                        <pre><code>cd backend
+cp .env.example .env
+# Edit .env with your API keys
+uv sync
+uv run uvicorn app.main:app --reload</code></pre>
+                    </div>
+                    
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold mb-2">3. Setup Frontend</h4>
+                        <pre><code>cd app-frontend
+cp .env.example .env.local
+# Edit .env.local with backend URL
+npm install
+npm run dev</code></pre>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 mt-8">Features</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-blue-400 mb-2">🤖 Multi-Agent System</h4>
+                        <p class="text-sm">LangGraph-powered agents for email, calendar, and priority management</p>
+                    </div>
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-green-400 mb-2">🔒 Secure Authentication</h4>
+                        <p class="text-sm">JWT-based auth with encrypted credential storage</p>
+                    </div>
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-purple-400 mb-2">🔍 Semantic Search</h4>
+                        <p class="text-sm">ChromaDB vector database for intelligent content search</p>
+                    </div>
+                    <div class="bg-card p-4 rounded-lg border">
+                        <h4 class="font-semibold text-yellow-400 mb-2">📱 Modern UI</h4>
+                        <p class="text-sm">Responsive design with dark theme and smooth animations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

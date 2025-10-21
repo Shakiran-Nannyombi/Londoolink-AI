@@ -2,11 +2,12 @@
 
 *An intelligent agent that securely tracks and links your digital life, ensuring you never miss what truly matters.*
 
-## 🚀 Live Demo
+## 🚀 Live Demo & Documentation
 
-**Frontend:** [https://londoolink-ai.vercel.app](https://londoolink-ai.vercel.app)  
-**Backend API:** [https://londoolink-backend.onrender.com](https://londoolink-backend.onrender.com)  
-**API Documentation:** [https://londoolink-backend.onrender.com/docs](https://londoolink-backend.onrender.com/docs)
+**📚 Documentation:** [https://your-username.github.io/Londoolink-AI/](https://your-username.github.io/Londoolink-AI/)  
+**Frontend:** [https://londoolink-ai.netlify.app](https://londoolink-ai.netlify.app)  
+**Backend API:** [https://londoolink-backend.up.railway.app](https://londoolink-backend.up.railway.app)  
+**API Documentation:** [https://londoolink-backend.up.railway.app/docs](https://londoolink-backend.up.railway.app/docs)
 
 > **Note:** The live demo is currently in development mode. For production deployment, environment variables need to be configured with actual API keys and database connections.
 
