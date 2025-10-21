@@ -1,8 +1,8 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { apiClient } from "@/lib/api"
+import { transformBackendBriefing, transformUserData, transformError, type BriefingItem, type User, type AppError } from "@/lib/transformers"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -20,7 +20,7 @@ import {
   AlertCircle,
   Clock,
   Zap,
-  Sun,
+  Sun
   Moon,
   ArrowRight,
   Filter,
@@ -31,25 +31,7 @@ import {
   Tag,
 } from "lucide-react"
 
-// Types
-interface BriefingItem {
-  id: string
-  type: "email" | "event" | "reminder" | "task"
-  title: string
-  description: string
-  priority: "high" | "medium" | "low"
-  time?: string
-  fullDescription?: string
-  sender?: string
-  tags?: string[]
-  actionItems?: string[]
-  relatedLinks?: { label: string; url: string }[]
-}
-
-interface User {
-  email: string
-  token: string
-}
+// Note: Types are now imported from transformers.ts
 
 // Animation variants
 const containerVariants = {
@@ -486,6 +468,7 @@ export default function LondoolinkAI() {
   const [activeFilter, setActiveFilter] = useState<"all" | "high" | "medium" | "low">("all")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<BriefingItem | null>(null)
+  const [error, setError] = useState<AppError | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem("londoolink_token")
@@ -510,26 +493,75 @@ export default function LondoolinkAI() {
 
   const loadBriefing = async () => {
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setBriefing(mockBriefing)
-    setIsLoading(false)
+    setError(null)
+    
+    try {
+      const response = await apiClient.getDailyBriefing()
+      
+      if (response.briefing) {
+        const transformedBriefing = transformBackendBriefing(response.briefing)
+        setBriefing(transformedBriefing)
+      } else {
+        // Fallback to mock data if no real data available
+        setBriefing(mockBriefing)
+      }
+    } catch (err: any) {
+      console.error('Failed to load briefing:', err)
+      const transformedError = transformError(err)
+      setError(transformedError)
+      
+      // If it's an auth error, logout the user
+      if (transformedError.type === 'auth') {
+        handleLogout()
+        return
+      }
+      
+      // Fallback to mock data on error
+      setBriefing(mockBriefing)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      let response
+      
+      if (isLogin) {
+        response = await apiClient.login({ email, password })
+      } else {
+        response = await apiClient.register({ email, password })
+        // After successful registration, login automatically
+        if (response.message?.includes('successfully')) {
+          response = await apiClient.login({ email, password })
+        }
+      }
 
-    const token = "mock_jwt_token_" + Date.now()
-    localStorage.setItem("londoolink_token", token)
-    localStorage.setItem("londoolink_email", email)
+      if (response.access_token) {
+        const userData = transformUserData({ email }, response.access_token)
+        
+        localStorage.setItem("londoolink_token", response.access_token)
+        localStorage.setItem("londoolink_email", email)
 
-    setUser({ email, token })
-    setIsAuthenticated(true)
-    setIsLoading(false)
-
-    loadBriefing()
+        setUser(userData)
+        setIsAuthenticated(true)
+        
+        // Load briefing after successful authentication
+        await loadBriefing()
+      } else {
+        throw new Error(response.message || 'Authentication failed')
+      }
+    } catch (err: any) {
+      console.error('Authentication failed:', err)
+      const transformedError = transformError(err)
+      setError(transformedError)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleLogout = () => {
