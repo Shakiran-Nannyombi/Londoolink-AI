@@ -3,12 +3,12 @@ from .state import AgentState
 
 class WorkflowRouting:
     # Routing logic for LangGraph workflow
-    
+
     @staticmethod
     def route_to_agents(state: AgentState) -> str:
         # Route to appropriate agent based on current step
         current_step = state.get("current_step", "start")
-        
+
         if current_step == "email":
             return "email"
         elif current_step == "calendar":
@@ -19,7 +19,7 @@ class WorkflowRouting:
             return "priority"
         else:
             return "end"
-    
+
     @staticmethod
     def should_use_tools(state: AgentState) -> str:
         # Determine if agent should use tools or proceed to next step

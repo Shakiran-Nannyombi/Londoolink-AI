@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { apiClient } from "@/lib/api"
-import { transformBackendBriefing, transformUserData, transformError, type BriefingItem, type User, type AppError } from "@/lib/transformers"
+import { transformBackendBriefing, transformUserData, transformError, type BriefingItem, type User, type AppError, type BackendBriefing } from "@/lib/transformers"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -20,7 +20,7 @@ import {
   AlertCircle,
   Clock,
   Zap,
-  Sun
+  Sun,
   Moon,
   ArrowRight,
   Filter,
@@ -70,103 +70,7 @@ const cardHoverVariants = {
   },
 }
 
-// Mock data for demo
-const mockBriefing: BriefingItem[] = [
-  {
-    id: "1",
-    type: "email",
-    title: "Urgent: Q4 Budget Review",
-    description: "Finance team needs your approval on the revised budget proposal",
-    priority: "high",
-    time: "2 hours ago",
-    fullDescription:
-      "The finance team has completed the Q4 budget review and identified several areas requiring immediate attention. The revised proposal includes cost optimization strategies and resource reallocation to maximize ROI. Your approval is needed to proceed with the implementation timeline.",
-    sender: "Sarah Chen (Finance Director)",
-    tags: ["Budget", "Finance", "Q4", "Urgent"],
-    actionItems: [
-      "Review the revised budget spreadsheet",
-      "Approve or request changes by EOD",
-      "Schedule follow-up meeting with finance team",
-    ],
-    relatedLinks: [
-      { label: "Budget Spreadsheet", url: "#" },
-      { label: "Previous Quarter Comparison", url: "#" },
-    ],
-  },
-  {
-    id: "2",
-    type: "event",
-    title: "Team Standup",
-    description: "Daily sync with the engineering team",
-    priority: "medium",
-    time: "In 30 minutes",
-    fullDescription:
-      "Daily standup meeting to discuss progress, blockers, and coordinate on ongoing projects. This is a quick 15-minute sync to ensure everyone is aligned and no one is blocked.",
-    sender: "Engineering Team",
-    tags: ["Meeting", "Daily", "Engineering"],
-    actionItems: ["Prepare your updates", "List any blockers", "Join the video call on time"],
-    relatedLinks: [
-      { label: "Meeting Link", url: "#" },
-      { label: "Sprint Board", url: "#" },
-    ],
-  },
-  {
-    id: "3",
-    type: "task",
-    title: "Complete Project Documentation",
-    description: "Finalize the API documentation for the new release",
-    priority: "high",
-    time: "Due today",
-    fullDescription:
-      "The API documentation needs to be completed before the v2.0 release. This includes endpoint descriptions, authentication flows, error handling, and code examples for all major use cases.",
-    sender: "Product Team",
-    tags: ["Documentation", "API", "Release", "v2.0"],
-    actionItems: [
-      "Document all new endpoints",
-      "Add code examples for each language",
-      "Review with the dev team",
-      "Publish to docs site",
-    ],
-    relatedLinks: [
-      { label: "Documentation Draft", url: "#" },
-      { label: "API Changelog", url: "#" },
-    ],
-  },
-  {
-    id: "4",
-    type: "reminder",
-    title: "Follow up with Client",
-    description: "Check in on the implementation progress",
-    priority: "medium",
-    time: "Tomorrow",
-    fullDescription:
-      "It's been two weeks since the last client check-in. Reach out to see how the implementation is going, if they need any support, and gather feedback on the onboarding process.",
-    sender: "Customer Success",
-    tags: ["Client", "Follow-up", "Implementation"],
-    actionItems: ["Send follow-up email", "Schedule call if needed", "Update CRM with notes"],
-    relatedLinks: [
-      { label: "Client Profile", url: "#" },
-      { label: "Implementation Timeline", url: "#" },
-    ],
-  },
-  {
-    id: "5",
-    type: "email",
-    title: "Weekly Newsletter",
-    description: "Industry insights and updates from your subscriptions",
-    priority: "low",
-    time: "1 day ago",
-    fullDescription:
-      "Your weekly digest of industry news, trends, and insights. This week covers AI developments, market analysis, and upcoming tech conferences.",
-    sender: "Tech Insights Weekly",
-    tags: ["Newsletter", "Industry", "Updates"],
-    actionItems: ["Read key articles", "Share relevant insights with team"],
-    relatedLinks: [
-      { label: "Full Newsletter", url: "#" },
-      { label: "Archive", url: "#" },
-    ],
-  },
-]
+// No mock data - all data will come from real backend agents
 
 // Reusable Components
 function GlassCard({ children, className = "", ...props }: any) {
@@ -259,28 +163,44 @@ function ThemeToggle({ theme, setTheme }: { theme: string; setTheme: (theme: str
 }
 
 // Animated Background component for auth pages
-function AnimatedBackground() {
+const AnimatedBackground = () => {
+  // Use fixed values to avoid hydration mismatch
+  const orbConfigs = [
+    { width: 300, height: 250, left: 10, top: 20, x: 30, y: 40, duration: 20 },
+    { width: 400, height: 350, left: 70, top: 10, x: -20, y: 30, duration: 25 },
+    { width: 250, height: 300, left: 30, top: 60, x: 40, y: -25, duration: 18 },
+    { width: 350, height: 280, left: 80, top: 40, x: -30, y: 35, duration: 22 },
+    { width: 280, height: 320, left: 50, top: 80, x: 25, y: -40, duration: 19 },
+  ]
+
+  const particleConfigs = Array.from({ length: 20 }, (_, i) => ({
+    left: (i * 5.26) % 100, // Distribute evenly
+    top: (i * 3.14) % 100,
+    duration: 5 + (i % 3),
+    delay: i * 0.25,
+  }))
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Floating orbs */}
-      {[...Array(6)].map((_, i) => (
+      {orbConfigs.map((config, i) => (
         <motion.div
           key={i}
           className="absolute rounded-full blur-3xl opacity-20"
           style={{
-            width: Math.random() * 300 + 200,
-            height: Math.random() * 300 + 200,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            width: config.width,
+            height: config.height,
+            left: `${config.left}%`,
+            top: `${config.top}%`,
             background: i % 3 === 0 ? "var(--primary)" : i % 3 === 1 ? "var(--secondary)" : "var(--accent)",
           }}
           animate={{
-            x: [0, Math.random() * 100 - 50, 0],
-            y: [0, Math.random() * 100 - 50, 0],
+            x: [0, config.x, 0],
+            y: [0, config.y, 0],
             scale: [1, 1.2, 1],
           }}
           transition={{
-            duration: Math.random() * 10 + 15,
+            duration: config.duration,
             repeat: Number.POSITIVE_INFINITY,
             ease: "easeInOut",
           }}
@@ -288,22 +208,22 @@ function AnimatedBackground() {
       ))}
 
       {/* Floating particles */}
-      {[...Array(20)].map((_, i) => (
+      {particleConfigs.map((config, i) => (
         <motion.div
           key={`particle-${i}`}
           className="absolute w-1 h-1 bg-primary/30 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: `${config.left}%`,
+            top: `${config.top}%`,
           }}
           animate={{
             y: [0, -100, 0],
             opacity: [0, 1, 0],
           }}
           transition={{
-            duration: Math.random() * 5 + 3,
+            duration: config.duration,
             repeat: Number.POSITIVE_INFINITY,
-            delay: Math.random() * 5,
+            delay: config.delay,
             ease: "easeInOut",
           }}
         />
@@ -328,7 +248,7 @@ function DetailModal({ item, onClose }: { item: BriefingItem; onClose: () => voi
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-card rounded-2xl p-8 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
@@ -469,26 +389,70 @@ export default function LondoolinkAI() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<BriefingItem | null>(null)
   const [error, setError] = useState<AppError | null>(null)
+  const [isHydrated, setIsHydrated] = useState(false)
+  
+  // Agent chat states
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [selectedAgent, setSelectedAgent] = useState<string>("email")
+  const [chatMessages, setChatMessages] = useState<Array<{id: string, type: 'user' | 'agent', content: string, timestamp: Date}>>([])
+  const [chatInput, setChatInput] = useState("")
+  const [isChatLoading, setIsChatLoading] = useState(false)
+  const [availableAgents, setAvailableAgents] = useState<Array<{id: string, name: string, description: string, icon: string}>>([
+    { id: "email", name: "Email Agent", description: "Analyze and manage your emails", icon: "📧" },
+    { id: "calendar", name: "Calendar Agent", description: "Manage your schedule and events", icon: "📅" },
+    { id: "priority", name: "Priority Agent", description: "Help prioritize your tasks", icon: "⚡" },
+    { id: "social", name: "Social Agent", description: "Monitor social media insights", icon: "🌐" }
+  ])
 
   useEffect(() => {
-    const token = localStorage.getItem("londoolink_token")
-    const userEmail = localStorage.getItem("londoolink_email")
-    if (token && userEmail) {
-      setUser({ email: userEmail, token })
-      setIsAuthenticated(true)
-      loadBriefing()
+    // Only run on client side to avoid hydration mismatch
+    if (typeof window !== 'undefined') {
+      setIsHydrated(true)
+      const token = localStorage.getItem("londoolink_token")
+      const userEmail = localStorage.getItem("londoolink_email")
+      if (token && userEmail) {
+        setUser({ email: userEmail, token })
+        setIsAuthenticated(true)
+        loadBriefing()
+      }
+
+      // Remove debugging buttons that might be injected by browser extensions
+      const removeDebugButtons = () => {
+        const debugButtons = document.querySelectorAll('button, div')
+        debugButtons.forEach(element => {
+          const text = element.textContent || ''
+          if (text.includes('Send element') || text.includes('Send console') || text.includes('debug')) {
+            if (element instanceof HTMLElement) {
+              element.style.display = 'none'
+              element.remove()
+            }
+          }
+        })
+      }
+
+      // Run immediately and then periodically to catch dynamically added elements
+      removeDebugButtons()
+      const interval = setInterval(removeDebugButtons, 1000)
+
+      return () => clearInterval(interval)
     }
   }, [])
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("londoolink_theme") || "light"
-    setTheme(savedTheme)
-    document.documentElement.classList.toggle("dark", savedTheme === "dark")
+    // Only run on client side to avoid hydration mismatch
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem("londoolink_theme") || "light"
+      setTheme(savedTheme)
+      document.documentElement.classList.toggle("dark", savedTheme === "dark")
+    }
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("londoolink_theme", theme)
-    document.documentElement.classList.toggle("dark", theme === "dark")
+    // Only run on client side to avoid hydration mismatch
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("londoolink_theme", theme)
+      document.documentElement.classList.toggle("dark", theme === "dark")
+    }
   }, [theme])
 
   const loadBriefing = async () => {
@@ -498,12 +462,14 @@ export default function LondoolinkAI() {
     try {
       const response = await apiClient.getDailyBriefing()
       
-      if (response.briefing) {
-        const transformedBriefing = transformBackendBriefing(response.briefing)
+      // The backend returns the briefing data directly in the response
+      if (response && (response.briefing || response.data)) {
+        const briefingData = (response.briefing || response.data) as any
+        const transformedBriefing = transformBackendBriefing(briefingData)
         setBriefing(transformedBriefing)
       } else {
-        // Fallback to mock data if no real data available
-        setBriefing(mockBriefing)
+        // No real data available - show empty state
+        setBriefing([])
       }
     } catch (err: any) {
       console.error('Failed to load briefing:', err)
@@ -516,8 +482,8 @@ export default function LondoolinkAI() {
         return
       }
       
-      // Fallback to mock data on error
-      setBriefing(mockBriefing)
+      // Show empty state on error
+      setBriefing([])
     } finally {
       setIsLoading(false)
     }
@@ -525,35 +491,53 @@ export default function LondoolinkAI() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Basic validation
+    if (!email || !password) {
+      setError({ type: 'validation', message: 'Please enter both email and password' })
+      return
+    }
+
     setIsLoading(true)
     setError(null)
 
     try {
+      console.log(`Attempting ${isLogin ? 'login' : 'registration'} for:`, email)
       let response
       
       if (isLogin) {
         response = await apiClient.login({ email, password })
+        console.log('Login response:', response)
       } else {
         response = await apiClient.register({ email, password })
+        console.log('Registration response:', response)
         // After successful registration, login automatically
-        if (response.message?.includes('successfully')) {
+        if (response.message?.includes('successfully') || response.message?.includes('created')) {
+          console.log('Registration successful, attempting login...')
           response = await apiClient.login({ email, password })
+          console.log('Auto-login response:', response)
         }
       }
 
       if (response.access_token) {
+        console.log('Authentication successful, setting user data')
         const userData = transformUserData({ email }, response.access_token)
         
-        localStorage.setItem("londoolink_token", response.access_token)
-        localStorage.setItem("londoolink_email", email)
+        // Only access localStorage on client side
+        if (typeof window !== 'undefined') {
+          localStorage.setItem("londoolink_token", response.access_token)
+          localStorage.setItem("londoolink_email", email)
+        }
 
         setUser(userData)
         setIsAuthenticated(true)
         
         // Load briefing after successful authentication
+        console.log('Loading briefing...')
         await loadBriefing()
       } else {
-        throw new Error(response.message || 'Authentication failed')
+        console.log('No access token in response:', response)
+        throw new Error(response.message || response.detail || 'Authentication failed - no access token received')
       }
     } catch (err: any) {
       console.error('Authentication failed:', err)
@@ -565,8 +549,11 @@ export default function LondoolinkAI() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("londoolink_token")
-    localStorage.removeItem("londoolink_email")
+    // Only access localStorage on client side
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("londoolink_token")
+      localStorage.removeItem("londoolink_email")
+    }
     setUser(null)
     setIsAuthenticated(false)
     setBriefing([])
@@ -577,10 +564,52 @@ export default function LondoolinkAI() {
     console.log("[v0] Search query:", searchQuery)
   }
 
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!chatInput.trim() || isChatLoading) return
+
+    const userMessage = {
+      id: Date.now().toString(),
+      type: 'user' as const,
+      content: chatInput.trim(),
+      timestamp: new Date()
+    }
+
+    setChatMessages(prev => [...prev, userMessage])
+    setChatInput("")
+    setIsChatLoading(true)
+
+    try {
+      const response = await apiClient.chatWithAgent(selectedAgent, userMessage.content)
+      
+      const agentMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'agent' as const,
+        content: response.message || response.analysis || "I'm here to help! How can I assist you?",
+        timestamp: new Date()
+      }
+
+      setChatMessages(prev => [...prev, agentMessage])
+    } catch (error) {
+      console.error('Chat failed:', error)
+      const errorMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'agent' as const,
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        timestamp: new Date()
+      }
+      setChatMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsChatLoading(false)
+    }
+  }
+
   const filteredBriefing = briefing.filter((item) => {
     if (activeFilter === "all") return true
     return item.priority === activeFilter
   })
+
+  // Skip hydration loading screen - render immediately
 
   if (!isAuthenticated) {
     return (
@@ -676,6 +705,17 @@ export default function LondoolinkAI() {
                 )}
               </Button>
             </motion.form>
+
+            {/* Error Display */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg"
+              >
+                <p className="text-sm text-destructive text-center">{error.message}</p>
+              </motion.div>
+            )}
 
             <motion.div
               className="mt-8 text-center"
@@ -883,6 +923,171 @@ export default function LondoolinkAI() {
               </div>
             </GlassCard>
           </motion.div>
+
+          {/* AI Agents Interface */}
+          <motion.div variants={itemVariants} className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-2xl font-semibold text-foreground">AI Agents</h3>
+              <Button
+                onClick={() => setIsChatOpen(true)}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              >
+                <span className="mr-2">💬</span>
+                Chat with Agents
+              </Button>
+            </div>
+
+            {/* Agent Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {availableAgents.map((agent) => (
+                <motion.div
+                  key={agent.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Card 
+                    className="p-4 glass-card cursor-pointer hover:shadow-lg transition-all"
+                    onClick={() => {
+                      setSelectedAgent(agent.id)
+                      setIsChatOpen(true)
+                    }}
+                  >
+                    <div className="text-center">
+                      <div className="text-3xl mb-2">{agent.icon}</div>
+                      <h4 className="font-semibold text-foreground mb-1">{agent.name}</h4>
+                      <p className="text-sm text-muted-foreground">{agent.description}</p>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Agent Chat Modal */}
+          <AnimatePresence>
+            {isChatOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                onClick={() => setIsChatOpen(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="w-full max-w-2xl max-h-[80vh] glass-card rounded-2xl p-6 shadow-2xl"
+                  onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                >
+                  {/* Chat Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">
+                        {availableAgents.find(a => a.id === selectedAgent)?.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-foreground">
+                          {availableAgents.find(a => a.id === selectedAgent)?.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {availableAgents.find(a => a.id === selectedAgent)?.description}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsChatOpen(false)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-5 h-5" />
+                    </Button>
+                  </div>
+
+                  {/* Agent Selector */}
+                  <div className="flex gap-2 mb-4 p-2 bg-muted/30 rounded-lg">
+                    {availableAgents.map((agent) => (
+                      <button
+                        key={agent.id}
+                        onClick={() => setSelectedAgent(agent.id)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                          selectedAgent === agent.id
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        <span>{agent.icon}</span>
+                        <span>{agent.name.replace(' Agent', '')}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Chat Messages */}
+                  <div className="h-96 overflow-y-auto mb-4 p-4 bg-muted/20 rounded-lg space-y-4">
+                    {chatMessages.length === 0 ? (
+                      <div className="text-center text-muted-foreground py-8">
+                        <div className="text-4xl mb-2">
+                          {availableAgents.find(a => a.id === selectedAgent)?.icon}
+                        </div>
+                        <p>Start a conversation with the {availableAgents.find(a => a.id === selectedAgent)?.name}!</p>
+                        <p className="text-sm mt-2">Ask questions about your data, get insights, or request analysis.</p>
+                      </div>
+                    ) : (
+                      chatMessages.map((message) => (
+                        <div
+                          key={message.id}
+                          className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[80%] p-3 rounded-lg ${
+                              message.type === 'user'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-card text-foreground border border-border'
+                            }`}
+                          >
+                            <p className="text-sm">{message.content}</p>
+                            <p className="text-xs opacity-70 mt-1">
+                              {message.timestamp.toLocaleTimeString()}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                    {isChatLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-card text-foreground border border-border p-3 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                            <span className="text-sm">Agent is thinking...</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Chat Input */}
+                  <form onSubmit={handleChatSubmit} className="flex gap-2">
+                    <Input
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder={`Ask the ${availableAgents.find(a => a.id === selectedAgent)?.name} anything...`}
+                      className="flex-1"
+                      disabled={isChatLoading}
+                    />
+                    <Button 
+                      type="submit" 
+                      disabled={!chatInput.trim() || isChatLoading}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </form>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Briefing Items */}
           <motion.div variants={itemVariants} className="space-y-5">

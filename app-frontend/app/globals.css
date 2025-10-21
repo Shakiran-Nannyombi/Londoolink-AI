@@ -157,3 +157,38 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Hide debugging tools and browser extension overlays */
+[data-testid*="debug"],
+[class*="debug"],
+[id*="debug"],
+button[style*="position: fixed"],
+div[style*="position: fixed"][style*="bottom"][style*="right"],
+div[style*="position: absolute"][style*="bottom"][style*="right"] {
+  display: none !important;
+}
+
+/* Hide buttons containing debug text */
+button:contains("Send element"),
+button:contains("Send console"),
+button:contains("debug"),
+div:contains("Send element"),
+div:contains("Send console") {
+  display: none !important;
+}
+
+/* Hide React DevTools and similar extensions */
+#react-devtools-portal,
+.__react-devtools-portal__,
+[data-react-devtools],
+[class*="devtools"],
+[class*="extension"] {
+  display: none !important;
+}
+
+/* More aggressive hiding of bottom-right positioned elements that look like debug tools */
+div[style*="position: fixed"][style*="bottom: 0"][style*="right: 0"],
+div[style*="position: fixed"][style*="bottom: 10px"][style*="right: 10px"],
+div[style*="position: fixed"][style*="bottom: 20px"][style*="right: 20px"] {
+  display: none !important;
+}

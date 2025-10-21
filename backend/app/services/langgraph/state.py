@@ -1,4 +1,5 @@
-from typing import Dict, Any, List, TypedDict, Annotated
+from typing import Annotated, Any, Dict, List, TypedDict
+
 from langchain_core.messages import BaseMessage
 
 
@@ -16,7 +17,9 @@ class AgentState(TypedDict):
     error: str
 
 
-def create_initial_state(user_id: int, user_query: str = "Generate daily briefing") -> AgentState:
+def create_initial_state(
+    user_id: int, user_query: str = "Generate daily briefing"
+) -> AgentState:
     # Create initial state for workflow
     return AgentState(
         messages=[],
@@ -28,5 +31,5 @@ def create_initial_state(user_id: int, user_query: str = "Generate daily briefin
         priority_recommendations={},
         final_briefing="",
         current_step="start",
-        error=""
+        error="",
     )

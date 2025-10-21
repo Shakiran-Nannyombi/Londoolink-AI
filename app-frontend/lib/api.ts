@@ -9,6 +9,8 @@ interface ApiResponse<T = any> {
   detail?: string
   access_token?: string
   token_type?: string
+  briefing?: T
+  [key: string]: any // Allow additional properties
 }
 
 interface LoginRequest {
@@ -34,7 +36,8 @@ interface BackendBriefing {
 
 class ApiClient {
   private getAuthHeaders(): Record<string, string> {
-    const token = localStorage.getItem("londoolink_token")
+    // Only access localStorage on client side
+    const token = typeof window !== 'undefined' ? localStorage.getItem("londoolink_token") : null
     return {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {})
@@ -108,6 +111,20 @@ class ApiClient {
 
   async searchRAG(query: string): Promise<ApiResponse> {
     return this.post('/agent/rag/search', { query })
+  }
+
+  async getRagStats(): Promise<ApiResponse> {
+    return this.get('/agent/rag/stats')
+  }
+
+  // Chat with agents
+  async chatWithAgent(agentType: string, message: string): Promise<ApiResponse> {
+    return this.post('/agent/chat', { agent_type: agentType, message })
+  }
+
+  // Get available agents
+  async getAvailableAgents(): Promise<ApiResponse> {
+    return this.get('/agent/list')
   }
 
   // Ingestion methods

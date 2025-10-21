@@ -41,53 +41,7 @@ declare module 'framer-motion' {
   }
 }
 
-declare module '@/components/ui/button' {
-  interface ButtonProps {
-    children?: React.ReactNode;
-    className?: string;
-    variant?: string;
-    onClick?: (event: any) => void;
-    type?: 'button' | 'submit' | 'reset';
-    disabled?: boolean;
-  }
-  export const Button: React.FC<ButtonProps>;
-}
-
-declare module '@/components/ui/card' {
-  interface CardProps {
-    children?: React.ReactNode;
-    className?: string;
-  }
-  export const Card: React.FC<CardProps>;
-}
-
-declare module '@/components/ui/input' {
-  interface InputProps {
-    type?: string;
-    placeholder?: string;
-    value?: string;
-    onChange?: (event: any) => void;
-    className?: string;
-    required?: boolean;
-  }
-  export const Input: React.FC<InputProps>;
-}
-
-declare module '@/components/ui/badge' {
-  interface BadgeProps {
-    children?: React.ReactNode;
-    variant?: string;
-    className?: string;
-  }
-  export const Badge: React.FC<BadgeProps>;
-}
-
-declare module '@/components/ui/skeleton' {
-  interface SkeletonProps {
-    className?: string;
-  }
-  export const Skeleton: React.FC<SkeletonProps>;
-}
+// UI component types will be inferred from actual implementations
 
 declare module 'lucide-react' {
   interface IconProps {
