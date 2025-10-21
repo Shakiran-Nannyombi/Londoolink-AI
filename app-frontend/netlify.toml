@@ -1,13 +1,25 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
 
 [build.environment]
   NODE_VERSION = "18"
 
+# Handle client-side routing
 [[redirects]]
   from = "/*"
+  to = "/404.html"
+  status = 404
+
+# Handle SPA routing for existing pages
+[[redirects]]
+  from = "/"
   to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/documentation"
+  to = "/documentation/index.html"
   status = 200
 
 [context.production.environment]
