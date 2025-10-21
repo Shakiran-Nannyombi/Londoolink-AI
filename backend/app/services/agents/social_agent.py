@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class SocialAgent:
-    """Social Media & Messaging Agent for analyzing messages from various platforms."""
+    # Social Media & Messaging Agent for analyzing messages from various platforms
     
     def __init__(self, tools: List):
         self.tools = tools
         self.agent = self._create_agent()
     
     def _create_agent(self):
-        """Create the social messaging agent."""
+        # Create the social messaging agent
         try:
             llm = ChatGroq(
                 model="llama3-70b-8192",
@@ -55,7 +55,7 @@ class SocialAgent:
             raise
     
     def analyze(self, prompt: str) -> Dict[str, Any]:
-        """Analyze social messages based on the given prompt."""
+        # Analyze social messages based on the given prompt
         try:
             result = self.agent.invoke({
                 "messages": [{
@@ -79,11 +79,11 @@ class SocialAgent:
             }
     
     def get_daily_insights(self) -> Dict[str, Any]:
-        """Get daily social messaging insights."""
+        # Get daily social messaging insights
         prompt = "Analyze recent messages from Instagram, WhatsApp, Telegram and other messaging platforms. Identify urgent messages, important conversations, and messages that need immediate replies. Focus on work-related messages, family communications, and time-sensitive opportunities."
         return self.analyze(prompt)
     
     def analyze_message(self, content: str, platform: str) -> Dict[str, Any]:
-        """Analyze a specific message for urgency and importance."""
+        # Analyze a specific message for urgency and importance
         prompt = f"Analyze this {platform} message for urgency, importance, emotional context, and required actions. Identify if this needs immediate reply:\n\n{content}"
         return self.analyze(prompt)

@@ -9,10 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class AICoordinator:
-    """
-    Simple coordinator that manages specialized AI agents.
-    Replaces the complex LondoolinkAgentOrchestrator with a cleaner, modular approach.
-    """
+    # Simple coordinator that manages specialized AI agents
     
     def __init__(self):
         self.tools = get_all_tools()
@@ -23,7 +20,7 @@ class AICoordinator:
         logger.info("AI Coordinator initialized with all agents")
     
     def get_daily_briefing(self, user_id: int) -> Dict[str, Any]:
-        """Generate a comprehensive daily briefing using all agents."""
+        # Generate a comprehensive daily briefing using all agents
         try:
             briefing_data = {
                 'user_id': user_id,
@@ -100,7 +97,7 @@ class AICoordinator:
             }
     
     def analyze_document(self, content: str, document_type: str) -> Dict[str, Any]:
-        """Analyze a document using the appropriate agent."""
+        # Analyze a document using the appropriate agent
         try:
             if document_type == 'email':
                 return self.email_agent.analyze(f"Analyze this email for urgency, importance, and action items:\n\n{content}")

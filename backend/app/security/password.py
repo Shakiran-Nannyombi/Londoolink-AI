@@ -1,31 +1,38 @@
-from passlib.context import CryptContext
+from pwdlib import PasswordHash
+import logging
 
-# Create password context for hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+logger = logging.getLogger(__name__)
+
+# Create password hash instance with recommended Argon2 settings
+# Falls back to bcrypt if Argon2 is not available
+try:
+    password_hash = PasswordHash.recommended()
+    logger.info("Password hashing initialized with Argon2")
+except Exception as e:
+    logger.warning(f"Argon2 not available, falling back to bcrypt: {e}")
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    password_hash = None
 
 
 def hash_password(password: str) -> str:
-    """
-    Hash a password using bcrypt.
-    
-    Args:
-        password: Plain text password
-        
-    Returns:
-        Hashed password string
-    """
-    return pwd_context.hash(password)
+    # Hash a password
+    if password_hash:
+        return password_hash.hash(password)
+    else:
+        # Fallback to bcrypt
+        return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verify a password against its hash.
-    
-    Args:
-        plain_password: Plain text password to verify
-        hashed_password: Hashed password to verify against
-        
-    Returns:
-        True if password matches, False otherwise
-    """
-    return pwd_context.verify(plain_password, hashed_password)
+    # Verify a password
+    if password_hash:
+        return password_hash.verify(plain_password, hashed_password)
+    else:
+        # Fallback to bcrypt
+        return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password: str) -> str:
+    # Alias for hash_password for compatibility with FastAPI examples
+    return hash_password(password)

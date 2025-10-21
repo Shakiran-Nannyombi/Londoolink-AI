@@ -5,16 +5,14 @@ logger = logging.getLogger(__name__)
 
 
 class TextChunker:
-    """Handles text chunking for better retrieval."""
+    # Handles text chunking for better retrieval
     
     def __init__(self, chunk_size: int = 500, overlap: int = 50):
         self.chunk_size = chunk_size
         self.overlap = overlap
     
     def chunk_text(self, text: str) -> List[str]:
-        """
-        Split text into overlapping chunks for better retrieval.
-        """
+        # Split text into overlapping chunks for better retrieval
         if len(text) <= self.chunk_size:
             return [text]
         
@@ -40,6 +38,7 @@ class TextChunker:
         return chunks
     
     def chunk_with_metadata(self, text: str, base_metadata: dict) -> List[tuple]:
+        # Chunk text and return chunks with enhanced metadata
         chunks = self.chunk_text(text)
         
         chunk_data = []

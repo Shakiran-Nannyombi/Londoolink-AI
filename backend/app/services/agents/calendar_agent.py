@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarAgent:
-    """Calendar Analysis Agent for analyzing meetings and events."""
+    # Calendar Analysis Agent for analyzing meetings and events
     
     def __init__(self, tools: List):
         self.tools = tools
         self.agent = self._create_agent()
     
     def _create_agent(self):
-        """Create the calendar analysis agent."""
+        # Create the calendar analysis agent
         try:
             llm = ChatGroq(
                 model="llama3-70b-8192",
@@ -48,7 +48,7 @@ class CalendarAgent:
             raise
     
     def analyze(self, prompt: str) -> Dict[str, Any]:
-        """Analyze calendar events based on the given prompt."""
+        # Analyze calendar events based on the given prompt
         try:
             result = self.agent.invoke({
                 "messages": [{
@@ -72,6 +72,6 @@ class CalendarAgent:
             }
     
     def get_daily_insights(self) -> Dict[str, Any]:
-        """Get daily calendar insights."""
+        # Get daily calendar insights
         prompt = "Analyze upcoming calendar events, meetings, and deadlines. Identify any conflicts or important items requiring attention."
         return self.analyze(prompt)

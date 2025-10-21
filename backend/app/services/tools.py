@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 @tool
 def semantic_search(query: str) -> str:
-    """Searches through user's emails, calendar events, and other documents using semantic similarity. Use this to find relevant information based on context or keywords."""
+    # Search through user's emails, calendar events, and other documents using semantic similarity
     try:
         results = rag_pipeline.query_texts(query, n_results=5)
         
@@ -35,7 +35,7 @@ def semantic_search(query: str) -> str:
 
 @tool
 def get_recent_documents(days: str = "7") -> str:
-    """Gets recently added documents from the last N days. Useful for understanding recent activity."""
+    # Get recently added documents from the last N days
     try:
         days_int = int(days)
         cutoff_date = (datetime.utcnow() - timedelta(days=days_int)).isoformat()
@@ -73,7 +73,7 @@ def get_recent_documents(days: str = "7") -> str:
 
 @tool
 def get_document_stats(_: str = "") -> str:
-    """Gets statistics about the user's document collection (total emails, events, etc.)."""
+    # Get statistics about the user's document collection
     try:
         stats = rag_pipeline.get_collection_stats()
         return f"Document collection stats: {stats}"
@@ -83,5 +83,5 @@ def get_document_stats(_: str = "") -> str:
 
 
 def get_all_tools() -> List:
-    """Gets all available tools for agents."""
+    # Get all available tools for agents
     return [semantic_search, get_recent_documents, get_document_stats]

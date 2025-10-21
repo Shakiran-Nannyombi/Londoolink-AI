@@ -10,10 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class RAGPipeline:
-    """
-    Modern RAG pipeline with modular components.
-    Handles document ingestion, chunking, embedding, and retrieval.
-    """
+    # Modern RAG pipeline with modular components
     
     def __init__(self):
         self.chunker = text_chunker
@@ -22,16 +19,7 @@ class RAGPipeline:
         logger.info("RAG Pipeline initialized with modular components")
     
     def add_text(self, text: str, metadata: Dict[str, Any]) -> List[str]:
-        """
-        Add text to the RAG pipeline with automatic chunking and embedding.
-        
-        Args:
-            text: Text content to add
-            metadata: Metadata about the text (source, timestamp, etc.)
-            
-        Returns:
-            List of document IDs that were added
-        """
+        # Add text to the RAG pipeline with automatic chunking and embedding
         try:
             # Enhance metadata with timestamp if not present
             if 'timestamp' not in metadata:
@@ -59,17 +47,7 @@ class RAGPipeline:
             raise
     
     def query_texts(self, query: str, n_results: int = 5, filter_metadata: Optional[Dict] = None) -> List[Dict[str, Any]]:
-        """
-        Query the RAG pipeline for relevant documents.
-        
-        Args:
-            query: Search query
-            n_results: Number of results to return
-            filter_metadata: Optional metadata filters
-            
-        Returns:
-            List of relevant documents with metadata and scores
-        """
+        # Query the RAG pipeline for relevant documents
         try:
             return self.vector_store.query_documents(query, n_results, filter_metadata)
         except Exception as e:
@@ -77,16 +55,7 @@ class RAGPipeline:
             raise
     
     def get_recent_documents(self, days: int = 7, limit: int = 50) -> List[Dict[str, Any]]:
-        """
-        Get recent documents from the last N days.
-        
-        Args:
-            days: Number of days to look back
-            limit: Maximum number of documents to retrieve
-            
-        Returns:
-            List of recent documents
-        """
+        # Get recent documents from the last N days
         try:
             from datetime import timedelta
             
@@ -116,15 +85,7 @@ class RAGPipeline:
             raise
     
     def delete_documents(self, filter_metadata: Dict[str, Any]) -> int:
-        """
-        Delete documents matching the filter criteria.
-        
-        Args:
-            filter_metadata: Metadata filters to match documents for deletion
-            
-        Returns:
-            Number of documents deleted
-        """
+        # Delete documents matching the filter criteria
         try:
             return self.vector_store.delete_documents(filter_metadata)
         except Exception as e:
@@ -132,7 +93,7 @@ class RAGPipeline:
             raise
     
     def get_collection_stats(self) -> Dict[str, Any]:
-        """Get statistics about the document collection."""
+        # Get statistics about the document collection
         try:
             return self.vector_store.get_stats()
         except Exception as e:
@@ -140,17 +101,7 @@ class RAGPipeline:
             return {'error': str(e)}
     
     def search_by_content_type(self, content_type: str, query: str = "", n_results: int = 10) -> List[Dict[str, Any]]:
-        """
-        Search for documents by content type (email, calendar, social, etc.).
-        
-        Args:
-            content_type: Type of content to search for
-            query: Optional search query within that content type
-            n_results: Number of results to return
-            
-        Returns:
-            List of matching documents
-        """
+        # Search for documents by content type (email, calendar, social, etc.)
         try:
             filter_metadata = {'source': content_type}
             
@@ -170,16 +121,7 @@ class RAGPipeline:
             raise
     
     def get_user_documents(self, user_id: int, n_results: int = 50) -> List[Dict[str, Any]]:
-        """
-        Get all documents for a specific user.
-        
-        Args:
-            user_id: User ID to filter by
-            n_results: Maximum number of results
-            
-        Returns:
-            List of user's documents
-        """
+        # Get all documents for a specific user
         try:
             filter_metadata = {'user_id': user_id}
             

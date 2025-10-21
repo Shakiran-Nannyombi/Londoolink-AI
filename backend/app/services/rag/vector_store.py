@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class VectorStore:
-    """Manages ChromaDB vector storage operations."""
+    # Manages ChromaDB vector storage operations
     
     def __init__(self, collection_name: str = "londoolink_documents"):
         self.client = None
@@ -21,7 +21,7 @@ class VectorStore:
         self._initialize()
     
     def _initialize(self):
-        """Initialize ChromaDB client and collection."""
+        # Initialize ChromaDB client and collection
         try:
             # Initialize ChromaDB client
             self.client = chromadb.PersistentClient(
@@ -49,17 +49,7 @@ class VectorStore:
             raise
     
     def add_documents(self, documents: List[str], metadatas: List[Dict[str, Any]], ids: Optional[List[str]] = None) -> List[str]:
-        """
-        Add documents to the vector store.
-        
-        Args:
-            documents: List of document texts
-            metadatas: List of metadata dictionaries
-            ids: Optional list of document IDs (will generate if not provided)
-            
-        Returns:
-            List of document IDs that were added
-        """
+        # Add documents to the vector store
         try:
             if ids is None:
                 ids = [self._generate_id(doc, meta) for doc, meta in zip(documents, metadatas)]
@@ -84,17 +74,7 @@ class VectorStore:
             raise
     
     def query_documents(self, query: str, n_results: int = 5, filter_metadata: Optional[Dict] = None) -> List[Dict[str, Any]]:
-        """
-        Query the vector store for relevant documents.
-        
-        Args:
-            query: Search query
-            n_results: Number of results to return
-            filter_metadata: Optional metadata filters
-            
-        Returns:
-            List of relevant documents with metadata and scores
-        """
+        # Query the vector store for relevant documents
         try:
             # Query ChromaDB
             results = self.collection.query(
@@ -124,7 +104,7 @@ class VectorStore:
             raise
     
     def get_all_documents(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
-        """Get all documents from the collection."""
+        # Get all documents from the collection
         try:
             results = self.collection.get(limit=limit)
             
@@ -145,15 +125,7 @@ class VectorStore:
             raise
     
     def delete_documents(self, filter_metadata: Dict[str, Any]) -> int:
-        """
-        Delete documents matching the filter criteria.
-        
-        Args:
-            filter_metadata: Metadata filters to match documents for deletion
-            
-        Returns:
-            Number of documents deleted
-        """
+        # Delete documents matching the filter criteria
         try:
             # Get documents matching the filter
             results = self.collection.get(where=filter_metadata)
@@ -172,7 +144,7 @@ class VectorStore:
             raise
     
     def get_stats(self) -> Dict[str, Any]:
-        """Get statistics about the document collection."""
+        # Get statistics about the document collection
         try:
             count = self.collection.count()
             return {
@@ -185,7 +157,7 @@ class VectorStore:
             return {'error': str(e)}
     
     def _generate_id(self, text: str, metadata: Dict[str, Any]) -> str:
-        """Generate unique ID for document."""
+        # Generate unique ID for document
         content = f"{text}_{metadata.get('source', '')}_{metadata.get('timestamp', '')}"
         return hashlib.md5(content.encode()).hexdigest()
 
