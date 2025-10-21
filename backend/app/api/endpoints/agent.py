@@ -5,7 +5,7 @@ import logging
 from app.models.user import User
 from app.schemas.user import User as UserSchema
 from app.security.jwt import get_current_user
-from app.services.coordinator import ai_coordinator
+from app.services.langgraph.coordinator import langgraph_coordinator
 from app.services.rag import rag_pipeline
 
 logger = logging.getLogger(__name__)
@@ -24,8 +24,8 @@ async def get_daily_briefing(current_user: User = Depends(get_current_user)) -> 
     try:
         logger.info(f"Generating daily briefing for user {current_user.id}")
         
-        # Generate briefing using AI coordinator
-        briefing = ai_coordinator.get_daily_briefing(current_user.id)
+        # Generate briefing using LangGraph coordinator
+        briefing = langgraph_coordinator.get_daily_briefing(current_user.id)
         
         return {
             "message": f"Daily briefing for {current_user.email}",
@@ -116,7 +116,7 @@ async def analyze_document(
         
         logger.info(f"Analyzing document for user {current_user.id}, type: {document_type}")
         
-        analysis = ai_coordinator.analyze_document(content, document_type)
+        analysis = langgraph_coordinator.analyze_document(content, document_type)
         
         return {
             "user_id": current_user.id,
