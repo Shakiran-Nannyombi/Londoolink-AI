@@ -19,13 +19,16 @@ class Settings(BaseSettings):
     DATABASE_URL: str 
     
     # AI Configuration
-    OPENAI_API_KEY: str
+    GROQ_API_KEY: str  # Primary AI provider
+    OPENAI_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
-    GROQ_API_KEY: Optional[str] = None
     CLAUDE_API_KEY: Optional[str] = None 
 
     # ChromaDB Configuration
     CHROMA_DB_PATH: str
+    
+    # Ollama Configuration
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
     
     # Environment
     ENVIRONMENT: str 
