@@ -8,14 +8,14 @@ logger = logging.getLogger(__name__)
 
 
 class EmbeddingManager:
-    """Manages embeddings using Ollama."""
+    # Manages embeddings using Ollama
     
     def __init__(self):
         self.embedding_model = None
         self._initialize()
     
     def _initialize(self):
-        """Initialize Ollama embeddings model."""
+        # Initialize Ollama embeddings model
         try:
             self.embedding_model = OllamaEmbeddings(
                 model="llama3",
@@ -27,7 +27,7 @@ class EmbeddingManager:
             raise
     
     def embed_query(self, text: str) -> List[float]:
-        """Embed a single query text."""
+        # Embed a single query text
         try:
             return self.embedding_model.embed_query(text)
         except Exception as e:
@@ -35,7 +35,7 @@ class EmbeddingManager:
             raise
     
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        """Embed multiple documents."""
+        # Embed multiple documents
         try:
             return self.embedding_model.embed_documents(texts)
         except Exception as e:
@@ -44,13 +44,13 @@ class EmbeddingManager:
 
 
 class ChromaEmbeddingFunction:
-    """ChromaDB-compatible embedding function wrapper."""
+    # ChromaDB-compatible embedding function wrapper
     
     def __init__(self, embedding_manager: EmbeddingManager):
         self.embedding_manager = embedding_manager
     
     def __call__(self, input: Union[str, List[str]]) -> Union[List[float], List[List[float]]]:
-        """Handle both single strings and lists of strings for ChromaDB."""
+        # Handle both single strings and lists of strings for ChromaDB
         if isinstance(input, str):
             return self.embedding_manager.embed_query(input)
         elif isinstance(input, list):

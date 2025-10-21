@@ -14,13 +14,13 @@ router = APIRouter()
 
 @router.get("/health")
 async def health_check() -> Dict[str, str]:
-    """Health check endpoint to verify the service is running."""
+    # Health check endpoint to verify the service is running
     return {"status": "ok", "service": "Londoolink AI Agent"}
 
 
 @router.get("/briefing/daily")
 async def get_daily_briefing(current_user: User = Depends(get_current_user)) -> Dict[str, Any]:
-    """Get AI-powered daily briefing from multi-agent system."""
+    # Get AI-powered daily briefing from multi-agent system
     try:
         logger.info(f"Generating daily briefing for user {current_user.id}")
         
@@ -44,13 +44,13 @@ async def get_daily_briefing(current_user: User = Depends(get_current_user)) -> 
 
 @router.get("/users/me", response_model=UserSchema)
 async def get_current_user_info(current_user: User = Depends(get_current_user)) -> UserSchema:
-    """Get current user information."""
+    # Get current user information
     return UserSchema.from_orm(current_user)
 
 
 @router.get("/rag/stats")
 async def get_rag_stats(current_user: User = Depends(get_current_user)) -> Dict[str, Any]:
-    """Get RAG pipeline statistics."""
+    # Get RAG pipeline statistics
     try:
         stats = rag_pipeline.get_collection_stats()
         return {
@@ -71,7 +71,7 @@ async def semantic_search(
     query_data: Dict[str, Any],
     current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
-    """Perform semantic search on user's documents."""
+    # Perform semantic search on user's documents
     try:
         query = query_data.get("query", "")
         n_results = query_data.get("n_results", 5)
@@ -106,7 +106,7 @@ async def analyze_document(
     document_data: Dict[str, Any],
     current_user: User = Depends(get_current_user)
 ) -> Dict[str, Any]:
-    """Analyze a document using AI agents."""
+    # Analyze a document using AI agents
     try:
         content = document_data.get("content", "")
         document_type = document_data.get("type", "general")

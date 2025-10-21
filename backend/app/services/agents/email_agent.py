@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class EmailAgent:
-    """Email Triage Agent for analyzing emails and identifying urgent items."""
+    # Email Triage Agent for analyzing emails and identifying urgent items
     
     def __init__(self, tools: List):
         self.tools = tools
         self.agent = self._create_agent()
     
     def _create_agent(self):
-        """Create the email triage agent."""
+        # Create the email triage agent
         try:
             llm = ChatGroq(
                 model="llama3-70b-8192",
@@ -48,7 +48,7 @@ class EmailAgent:
             raise
     
     def analyze(self, prompt: str) -> Dict[str, Any]:
-        """Analyze emails based on the given prompt."""
+        # Analyze emails based on the given prompt
         try:
             result = self.agent.invoke({
                 "messages": [{
@@ -72,6 +72,6 @@ class EmailAgent:
             }
     
     def get_daily_insights(self) -> Dict[str, Any]:
-        """Get daily email insights."""
+        # Get daily email insights
         prompt = "Analyze recent emails for urgent items, action items, and important communications. Provide a summary of key findings."
         return self.analyze(prompt)

@@ -166,10 +166,12 @@ backend/
 │   │   ├── user.py              # User Pydantic schemas
 │   │   ├── token.py             # JWT token schemas
 │   │   └── message.py           # Message/ingestion schemas
-│   ├── security/
-│   │   ├── password.py          # Password hashing
-│   │   ├── jwt.py               # JWT token handling
-│   │   └── encryption.py        # AES encryption for credentials
+│   ├── security/                # Security modules
+│   │   ├── jwt.py               # JWT token handling (PyJWT)
+│   │   ├── password.py          # Password hashing (Argon2/bcrypt)
+│   │   ├── encryption.py        # AES encryption (Fernet)
+│   │   ├── utils.py             # Security utilities
+│   │   └── validator.py         # Security configuration validator
 │   ├── services/                # Business logic
 │   │   ├── coordinator.py       # Main AI coordinator
 │   │   ├── tools.py             # Shared agent tools

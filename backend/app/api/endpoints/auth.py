@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/register", response_model=dict)
 async def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    """Register a new user."""
+    # Register a new user
     # Check if user already exists
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
@@ -46,7 +46,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 async def login_user(user_credentials: UserLogin, db: Session = Depends(get_db)):
-    """Login user and return JWT token."""
+    # Login user and return JWT token
     # Find user by email
     user = db.query(User).filter(User.email == user_credentials.email).first()
     
