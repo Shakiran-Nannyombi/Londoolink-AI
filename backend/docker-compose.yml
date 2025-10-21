@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: londoolink-postgres
+    environment:
+      POSTGRES_DB: londoolink_db
+      POSTGRES_USER: londoolink
+      POSTGRES_PASSWORD: londoolink123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
