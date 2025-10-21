@@ -1,0 +1,9 @@
+from fastapi import APIRouter
+from app.api.endpoints import auth, agent, ingest
+
+api_router = APIRouter()
+
+# Include all endpoint routers
+api_router.include_router(auth.router, prefix="/auth", tags=["authentication"])
+api_router.include_router(agent.router, prefix="/agent", tags=["agent"])
+api_router.include_router(ingest.router, prefix="/ingest", tags=["ingestion"])
