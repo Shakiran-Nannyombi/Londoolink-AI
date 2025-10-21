@@ -2,6 +2,14 @@
 
 *An intelligent agent that securely tracks and links your digital life, ensuring you never miss what truly matters.*
 
+## 🚀 Live Demo
+
+**Frontend:** [https://londoolink-ai.vercel.app](https://londoolink-ai.vercel.app)  
+**Backend API:** [https://londoolink-backend.onrender.com](https://londoolink-backend.onrender.com)  
+**API Documentation:** [https://londoolink-backend.onrender.com/docs](https://londoolink-backend.onrender.com/docs)
+
+> **Note:** The live demo is currently in development mode. For production deployment, environment variables need to be configured with actual API keys and database connections.
+
 ---
 
 **Londoolink** (from the Luganda word *Okulondoola*, meaning "to track" or "to follow up on") is a backend system designed to be the central nervous system for your personal information. It combats digital overload by ingesting data from your various platforms, using an AI-powered multi-agent system to understand, prioritize, and summarize your most critical tasks, messages, and events.
@@ -90,6 +98,39 @@ Comprehensive data flow showing the complete journey from external services thro
 | **Automation** | n8n (workflow automation & data ingestion) |
 | **Testing** | Custom test runners, comprehensive security testing |
 | **Deployment** | Docker, Railway / Render, uv (dependency management) |
+
+## Deployment
+
+### Backend Deployment (Railway/Render)
+
+1. **Create a Dockerfile** (already included in the repository)
+2. **Push your code** to a public GitHub repository
+3. **Create a new project** on Railway or Render and link it to your GitHub repo
+4. **Add environment variables** in the platform's secure environment section:
+   - `SECRET_KEY`: Generate with `openssl rand -hex 32`
+   - `ENCRYPTION_KEY`: Generate with `python -c "import os; print(os.urandom(32).hex())"`
+   - `DATABASE_URL`: Your PostgreSQL connection string
+   - `GROQ_API_KEY`: Your Groq API key
+   - `OPENAI_API_KEY`: Your OpenAI API key (optional)
+   - `ALLOWED_ORIGINS`: Your frontend domain (e.g., `https://your-frontend.vercel.app`)
+   - `ENVIRONMENT`: Set to `production`
+5. **Deploy** and get your backend URL
+
+### Frontend Deployment (Vercel/Netlify)
+
+1. **Push your code** to GitHub
+2. **Create a new project** on Vercel or Netlify and link to your GitHub repo
+3. **Configure build settings**:
+   - Root directory: `app-frontend`
+   - Build command: `npm run build`
+   - Output directory: `.next`
+4. **Add environment variable**:
+   - `NEXT_PUBLIC_API_BASE_URL`: Your backend URL (e.g., `https://your-backend.onrender.com`)
+5. **Deploy** and get your frontend URL
+
+### CORS Configuration
+
+The backend automatically configures CORS based on the `ALLOWED_ORIGINS` environment variable. Make sure to include your frontend URL in this variable for production deployment.
 
 ## Getting Started
 

@@ -1,18 +1,18 @@
-import pytest
 import asyncio
 from unittest.mock import Mock, patch
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.main import app
 from app.db.base import Base
 from app.db.session import get_db
+from app.main import app
 from app.models.user import User
-from app.security.password import hash_password
 from app.security.jwt import create_access_token
-
+from app.security.password import hash_password
 
 # Test database setup - use in-memory SQLite for faster tests
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -36,10 +36,10 @@ def event_loop():
 def db_session():
     # Create test database tables
     Base.metadata.create_all(bind=engine)
-    
+
     # Create session
     session = TestingSessionLocal()
-    
+
     try:
         yield session
     finally:
@@ -56,13 +56,13 @@ def client(db_session):
             yield db_session
         finally:
             pass
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     # Create test client
     with TestClient(app) as test_client:
         yield test_client
-    
+
     # Clean up
     app.dependency_overrides.clear()
 
@@ -73,7 +73,7 @@ def test_user(db_session):
     user = User(
         email="test@example.com",
         hashed_password=hash_password("testpassword123"),
-        is_active=True
+        is_active=True,
     )
     db_session.add(user)
     db_session.commit()
@@ -91,10 +91,10 @@ def auth_headers(test_user):
 @pytest.fixture
 def mock_groq_llm():
     # Mock Groq LLM for testing
-    with patch('app.services.agents.email_agent.ChatGroq') as mock:
+    with patch("app.services.agents.email_agent.ChatGroq") as mock:
         mock_instance = Mock()
         mock_instance.invoke.return_value = {
-            'messages': [{'content': 'Test AI response'}]
+            "messages": [{"content": "Test AI response"}]
         }
         mock.return_value = mock_instance
         yield mock_instance
@@ -103,7 +103,7 @@ def mock_groq_llm():
 @pytest.fixture
 def mock_ollama_embeddings():
     # Mock Ollama embeddings for testing
-    with patch('app.services.rag.embeddings.OllamaEmbeddings') as mock:
+    with patch("app.services.rag.embeddings.OllamaEmbeddings") as mock:
         mock_instance = Mock()
         mock_instance.embed_query.return_value = [0.1, 0.2, 0.3, 0.4, 0.5]
         mock_instance.embed_documents.return_value = [[0.1, 0.2, 0.3, 0.4, 0.5]]
@@ -114,30 +114,30 @@ def mock_ollama_embeddings():
 @pytest.fixture
 def mock_chromadb():
     # Mock ChromaDB for testing
-    with patch('app.services.rag.vector_store.chromadb') as mock:
+    with patch("app.services.rag.vector_store.chromadb") as mock:
         mock_client = Mock()
         mock_collection = Mock()
-        
+
         # Mock collection methods
         mock_collection.add.return_value = None
         mock_collection.query.return_value = {
-            'ids': [['doc1', 'doc2']],
-            'documents': [['Test document 1', 'Test document 2']],
-            'metadatas': [[{'source': 'test'}, {'source': 'test'}]],
-            'distances': [[0.1, 0.2]]
+            "ids": [["doc1", "doc2"]],
+            "documents": [["Test document 1", "Test document 2"]],
+            "metadatas": [[{"source": "test"}, {"source": "test"}]],
+            "distances": [[0.1, 0.2]],
         }
         mock_collection.get.return_value = {
-            'ids': ['doc1', 'doc2'],
-            'documents': ['Test document 1', 'Test document 2'],
-            'metadatas': [{'source': 'test'}, {'source': 'test'}]
+            "ids": ["doc1", "doc2"],
+            "documents": ["Test document 1", "Test document 2"],
+            "metadatas": [{"source": "test"}, {"source": "test"}],
         }
         mock_collection.count.return_value = 2
         mock_collection.delete.return_value = None
         mock_collection.name = "test_collection"
-        
+
         mock_client.get_or_create_collection.return_value = mock_collection
         mock.PersistentClient.return_value = mock_client
-        
+
         yield mock_collection
 
 
@@ -149,7 +149,7 @@ def sample_email_data():
         "recipient": "user@example.com",
         "subject": "Test Email",
         "body": "This is a test email body.",
-        "timestamp": "2025-10-21T10:00:00Z"
+        "timestamp": "2025-10-21T10:00:00Z",
     }
 
 
@@ -162,7 +162,7 @@ def sample_calendar_data():
         "start_time": "2025-10-21T14:00:00Z",
         "end_time": "2025-10-21T15:00:00Z",
         "location": "Conference Room A",
-        "attendees": ["user1@example.com", "user2@example.com"]
+        "attendees": ["user1@example.com", "user2@example.com"],
     }
 
 
@@ -175,18 +175,20 @@ def sample_social_message():
         "sender": "John Doe",
         "timestamp": "2025-10-21T16:00:00Z",
         "message_type": "text",
-        "is_group_chat": False
+        "is_group_chat": False,
     }
 
 
 @pytest.fixture(autouse=True)
 def mock_settings():
     # Mock settings for testing - must be applied before any imports
-    with patch('app.core.config.settings') as mock:
+    with patch("app.core.config.settings") as mock:
         mock.SECRET_KEY = "test-secret-key-32-characters-long"
         mock.JWT_ALGORITHM = "HS256"
         mock.ACCESS_TOKEN_EXPIRE_MINUTES = 30
-        mock.ENCRYPTION_KEY = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        mock.ENCRYPTION_KEY = (
+            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        )
         mock.GROQ_API_KEY = "test-groq-key"
         mock.OLLAMA_BASE_URL = "http://localhost:11434"
         mock.CHROMA_DB_PATH = "./test_chroma_db"
@@ -198,41 +200,43 @@ def mock_settings():
 @pytest.fixture(autouse=True)
 def mock_global_instances():
     # Mock global instances to prevent initialization during tests
-    with patch('app.services.rag.vector_store.vector_store') as mock_vs, \
-         patch('app.services.rag.embeddings.embedding_manager') as mock_em, \
-         patch('app.services.rag.pipeline.rag_pipeline') as mock_rp, \
-         patch('app.services.coordinator.ai_coordinator') as mock_coord:
-        
+    with (
+        patch("app.services.rag.vector_store.vector_store") as mock_vs,
+        patch("app.services.rag.embeddings.embedding_manager") as mock_em,
+        patch("app.services.rag.pipeline.rag_pipeline") as mock_rp,
+        patch("app.services.coordinator.ai_coordinator") as mock_coord,
+    ):
+
         # Configure mocks
         mock_vs.add_documents.return_value = ["doc1", "doc2"]
         mock_vs.query_documents.return_value = []
         mock_vs.get_stats.return_value = {"total_documents": 0}
-        
+
         mock_em.embed_query.return_value = [0.1, 0.2, 0.3, 0.4, 0.5]
         mock_em.embed_documents.return_value = [[0.1, 0.2, 0.3, 0.4, 0.5]]
-        
+
         mock_rp.add_text.return_value = ["doc1"]
         mock_rp.query_texts.return_value = []
         mock_rp.get_collection_stats.return_value = {"total_documents": 0}
-        
+
         mock_coord.get_daily_briefing.return_value = {"summary": "Test briefing"}
         mock_coord.analyze_document.return_value = {"analysis": "Test analysis"}
-        
+
         yield {
-            'vector_store': mock_vs,
-            'embedding_manager': mock_em,
-            'rag_pipeline': mock_rp,
-            'ai_coordinator': mock_coord
+            "vector_store": mock_vs,
+            "embedding_manager": mock_em,
+            "rag_pipeline": mock_rp,
+            "ai_coordinator": mock_coord,
         }
 
 
 @pytest.fixture
 def mock_langchain_agent():
     # Mock LangChain agent for testing
-    with patch('app.services.agents.email_agent.create_agent') as mock:
+    with patch("app.services.agents.email_agent.create_agent") as mock:
         mock_agent = Mock()
         mock_agent.invoke.return_value = {
-            'messages': [{'content': 'Test agent response'}]
+            "messages": [{"content": "Test agent response"}]
         }
         mock.return_value = mock_agent
         yield mock_agent

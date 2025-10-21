@@ -1,6 +1,6 @@
-from .email_agent import EmailAgent
 from .calendar_agent import CalendarAgent
-from .social_agent import SocialAgent
+from .email_agent import EmailAgent
 from .priority_agent import PriorityAgent
+from .social_agent import SocialAgent
 
-__all__ = ['EmailAgent', 'CalendarAgent', 'SocialAgent', 'PriorityAgent']
+__all__ = ["EmailAgent", "CalendarAgent", "SocialAgent", "PriorityAgent"]

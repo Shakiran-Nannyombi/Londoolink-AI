@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.api import api_router
 from app.core.config import settings
 
@@ -11,14 +12,20 @@ app = FastAPI(
 )
 
 # Set up CORS middleware for frontend connection
+# Get allowed origins from environment variable for production
+import os
+
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+
+# Add development origins if not in production
+if settings.ENVIRONMENT != "production":
+    allowed_origins.extend(
+        ["http://localhost:3000", "http://127.0.0.1:3000", "https://localhost:3000"]
+    )
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Next.js frontend development
-        "http://127.0.0.1:3000",  # Alternative localhost
-        "https://localhost:3000", # HTTPS version
-        "*"  # Allow all for development - configure properly for production
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],

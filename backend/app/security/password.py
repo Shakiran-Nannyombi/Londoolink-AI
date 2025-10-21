@@ -1,5 +1,6 @@
-from pwdlib import PasswordHash
 import logging
+
+from pwdlib import PasswordHash
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +12,7 @@ try:
 except Exception as e:
     logger.warning(f"Argon2 not available, falling back to bcrypt: {e}")
     from passlib.context import CryptContext
+
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     password_hash = None
 
