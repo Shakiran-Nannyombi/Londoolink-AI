@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import Link from "next/link"
 import {
   Mail,
   Calendar,
@@ -29,6 +30,7 @@ import {
   ExternalLink,
   UserIcon,
   Tag,
+  BookOpen,
 } from "lucide-react"
 
 // Note: Types are now imported from transformers.ts
@@ -764,6 +766,16 @@ export default function LondoolinkAI() {
               <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
               <span className="text-sm text-muted-foreground">{user?.email}</span>
             </div>
+            <Link href="/documentation">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hover:bg-primary/10 hover:text-primary"
+              >
+                <BookOpen className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Docs</span>
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
