@@ -49,6 +49,10 @@ class ChromaEmbeddingFunction:
     def __init__(self, embedding_manager: EmbeddingManager):
         self.embedding_manager = embedding_manager
     
+    def name(self) -> str:
+        # Required by ChromaDB
+        return "ollama_embeddings"
+    
     def __call__(self, input: Union[str, List[str]]) -> Union[List[float], List[List[float]]]:
         # Handle both single strings and lists of strings for ChromaDB
         if isinstance(input, str):
