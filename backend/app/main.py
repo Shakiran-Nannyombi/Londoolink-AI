@@ -10,12 +10,17 @@ app = FastAPI(
     openapi_url="/api/v1/openapi.json",
 )
 
-# Set up CORS middleware
+# Set up CORS middleware for frontend connection
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure this properly for production
+    allow_origins=[
+        "http://localhost:3000",  # Next.js frontend development
+        "http://127.0.0.1:3000",  # Alternative localhost
+        "https://localhost:3000", # HTTPS version
+        "*"  # Allow all for development - configure properly for production
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
