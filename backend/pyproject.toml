@@ -2,7 +2,6 @@
 name = "londoolink-ai-backend"
 version = "0.1.0"
 description = "An intelligent agent that securely tracks and links your digital life, ensuring you never miss what truly matters."
-readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     # Core FastAPI and web framework
