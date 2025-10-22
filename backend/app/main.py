@@ -15,7 +15,7 @@ app = FastAPI(
 # Get allowed origins from environment variable for production
 import os
 
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,https://londoolink-ai.vercel.app,http://londoolink-ai.vercel.app").split(",")
 
 # Add development origins if not in production
 if settings.ENVIRONMENT != "production":
@@ -38,3 +38,6 @@ app.include_router(api_router, prefix="/api/v1")
 @app.get("/")
 async def root():
     return {"message": "Londoolink AI Backend is running!", "version": "0.1.0"}
+
+# Vercel handler
+handler = app
