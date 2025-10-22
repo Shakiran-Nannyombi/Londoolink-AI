@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Londoolink AI - Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -31,6 +32,20 @@
                         accent: {
                             DEFAULT: "hsl(var(--accent))",
                             foreground: "hsl(var(--accent-foreground))"
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
                         }
                     }
                 }
@@ -69,6 +84,10 @@
             transition: all 0.2s ease-in-out;
         }
         
+        .tab-button:hover {
+            background-color: hsl(var(--secondary));
+        }
+        
         .tab-button.active {
             background-color: hsl(var(--primary));
             color: hsl(var(--primary-foreground));
@@ -76,6 +95,7 @@
         
         .tab-content {
             display: none;
+            animation: fade-in 0.3s ease-in;
         }
         
         .tab-content.active {
@@ -87,249 +107,1075 @@
             border-radius: 0.5rem;
             padding: 1rem;
             overflow-x: auto;
+            position: relative;
         }
         
         code {
             background-color: hsl(var(--muted));
-            padding: 0.125rem 0.25rem;
+            padding: 0.125rem 0.375rem;
             border-radius: 0.25rem;
             font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
         }
         
         pre code {
             background-color: transparent;
             padding: 0;
         }
+        
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        pre:hover .copy-button {
+            opacity: 1;
+        }
+        
+        .feature-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .diagram-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.25rem;
+        }
     </style>
 </head>
 <body class="min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Scroll to Top Button -->
+    <button onclick="scrollToTop()" class="scroll-to-top bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:opacity-90 transition-opacity" id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
         <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+        <div class="text-center mb-12 animate-fade-in">
+            <div class="inline-block mb-4">
+                <i class="fas fa-brain text-6xl gradient-text"></i>
+            </div>
+            <h1 class="text-5xl font-bold mb-4 gradient-text">
                 Londoolink AI Documentation
             </h1>
-            <p class="text-xl text-muted-foreground mb-6">
-                An intelligent agent that securely tracks and links your digital life
+            <p class="text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
+                An intelligent multi-agent system that securely tracks and links your digital life. 
+                Built with cutting-edge AI technology to reduce information overload and boost productivity.
             </p>
-            <div class="flex justify-center gap-4">
-                <a href="https://github.com/your-username/Londoolink-AI" target="_blank" 
-                   class="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-                    📁 GitHub Repository
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+                <a href="https://github.com/Shakiran-Nannyombi/Londoolink-AI.git" target="_blank" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                    <i class="fab fa-github"></i> View on GitHub
                 </a>
-                <a href="#" class="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:opacity-90 transition-opacity">
-                    🚀 Live Demo
+                <a href="#deployment" onclick="showTab('deployment')" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                    <i class="fas fa-rocket"></i> Quick Start
                 </a>
+                <a href="#api" onclick="showTab('api')" 
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-lg hover:opacity-90 transition-opacity shadow-lg">
+                    <i class="fas fa-code"></i> API Reference
+                </a>
+            </div>
+            
+            <!-- Key Features Banner -->
+            <div class="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="bg-card p-4 rounded-lg border text-center">
+                    <i class="fas fa-robot text-3xl mb-2 text-blue-400"></i>
+                    <p class="text-sm font-semibold">Multi-Agent AI</p>
+                </div>
+                <div class="bg-card p-4 rounded-lg border text-center">
+                    <i class="fas fa-shield-alt text-3xl mb-2 text-green-400"></i>
+                    <p class="text-sm font-semibold">Enterprise Security</p>
+                </div>
+                <div class="bg-card p-4 rounded-lg border text-center">
+                    <i class="fas fa-search text-3xl mb-2 text-purple-400"></i>
+                    <p class="text-sm font-semibold">Semantic Search</p>
+                </div>
+                <div class="bg-card p-4 rounded-lg border text-center">
+                    <i class="fas fa-bolt text-3xl mb-2 text-yellow-400"></i>
+                    <p class="text-sm font-semibold">Real-time Insights</p>
+                </div>
             </div>
         </div>
 
         <!-- Tab Navigation -->
-        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg">
-            <button class="tab-button active px-6 py-3 rounded-md font-medium" onclick="showTab('deployment')">
-                🚀 Deployment Guide
+        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg sticky top-4 z-10 shadow-lg">
+            <button class="tab-button active px-6 py-3 rounded-md font-medium flex items-center gap-2" onclick="showTab('overview')">
+                <i class="fas fa-home"></i> Overview
             </button>
-            <button class="tab-button px-6 py-3 rounded-md font-medium" onclick="showTab('technical')">
-                🔧 Technical Documentation
+            <button class="tab-button px-6 py-3 rounded-md font-medium flex items-center gap-2" onclick="showTab('deployment')">
+                <i class="fas fa-rocket"></i> Deployment
             </button>
-            <button class="tab-button px-6 py-3 rounded-md font-medium" onclick="showTab('setup')">
-                📋 Repository Setup
+            <button class="tab-button px-6 py-3 rounded-md font-medium flex items-center gap-2" onclick="showTab('architecture')">
+                <i class="fas fa-project-diagram"></i> Architecture
+            </button>
+            <button class="tab-button px-6 py-3 rounded-md font-medium flex items-center gap-2" onclick="showTab('api')">
+                <i class="fas fa-code"></i> API Reference
+            </button>
+            <button class="tab-button px-6 py-3 rounded-md font-medium flex items-center gap-2" onclick="showTab('setup')">
+                <i class="fas fa-cog"></i> Local Setup
+            </button>
+            <button class="tab-button px-6 py-3 rounded-md font-medium flex items-center gap-2" onclick="showTab('security')">
+                <i class="fas fa-lock"></i> Security
             </button>
         </div>
 
-        <!-- Tab Content -->
-        <div class="tab-content active" id="deployment">
+        <!-- Tab Content: Overview -->
+        <div class="tab-content active" id="overview">
             <div class="prose prose-invert max-w-none">
-                <h2 class="text-3xl font-bold mb-6">🚀 Deployment Guide</h2>
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-info-circle text-blue-400"></i> What is Londoolink AI?
+                </h2>
+                
+                <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 rounded-lg border mb-8">
+                    <p class="text-lg leading-relaxed">
+                        Londoolink AI is a sophisticated multi-agent system that intelligently processes and prioritizes information 
+                        from various sources including emails, calendars, and social media. By leveraging advanced AI models like 
+                        GPT-4, Groq, and LangGraph, it reduces information overload and provides actionable insights to boost productivity.
+                    </p>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-star text-yellow-400"></i> Key Features
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="feature-card bg-card p-6 rounded-lg border">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-brain text-3xl text-blue-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Intelligent Multi-Agent System</h4>
+                                <p class="text-sm text-muted-foreground">
+                                    Coordinated AI agents working together using LangGraph to analyze emails, 
+                                    calendars, and social media for comprehensive insights.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card bg-card p-6 rounded-lg border">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-shield-halved text-3xl text-green-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Enterprise-Grade Security</h4>
+                                <p class="text-sm text-muted-foreground">
+                                    Military-grade AES-256 encryption, Argon2 password hashing, and JWT authentication 
+                                    ensure your data remains secure.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card bg-card p-6 rounded-lg border">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-search-plus text-3xl text-purple-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Semantic Search & RAG</h4>
+                                <p class="text-sm text-muted-foreground">
+                                    ChromaDB-powered vector search enables finding information based on meaning, 
+                                    not just keywords.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card bg-card p-6 rounded-lg border">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-clock text-3xl text-yellow-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Real-time Processing</h4>
+                                <p class="text-sm text-muted-foreground">
+                                    Groq-powered low-latency inference delivers instant insights and recommendations 
+                                    as data arrives.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card bg-card p-6 rounded-lg border">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-chart-line text-3xl text-red-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Priority Intelligence</h4>
+                                <p class="text-sm text-muted-foreground">
+                                    AI-driven priority scoring helps you focus on what matters most, reducing 
+                                    decision fatigue.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card bg-card p-6 rounded-lg border">
+                        <div class="flex items-start gap-4">
+                            <i class="fas fa-mobile-alt text-3xl text-indigo-400 mt-1"></i>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Modern Responsive UI</h4>
+                                <p class="text-sm text-muted-foreground">
+                                    Built with Next.js 15 and Tailwind CSS for a beautiful, fast, and mobile-friendly 
+                                    experience.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-layer-group text-purple-400"></i> Technology Stack
+                </h3>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="font-semibold text-blue-400 mb-3 text-lg flex items-center gap-2">
+                            <i class="fab fa-react"></i> Frontend
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> Next.js 15 (App Router)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> TypeScript
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> Tailwind CSS
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> shadcn/ui Components
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="font-semibold text-green-400 mb-3 text-lg flex items-center gap-2">
+                            <i class="fas fa-server"></i> Backend
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> FastAPI (Python 3.12)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> LangGraph & LangChain
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> PostgreSQL
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> SQLAlchemy ORM
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="font-semibold text-purple-400 mb-3 text-lg flex items-center gap-2">
+                            <i class="fas fa-brain"></i> AI/ML
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> OpenAI GPT-4
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> Groq (Fast Inference)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> ChromaDB (Vector DB)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-400"></i> Ollama (Local LLM)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-users text-indigo-400"></i> Use Cases
+                </h3>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-8">
+                    <div class="bg-gradient-to-br from-blue-900/20 to-blue-800/20 p-5 rounded-lg border border-blue-500/30">
+                        <h4 class="font-semibold mb-2 flex items-center gap-2">
+                            <i class="fas fa-briefcase text-blue-400"></i> For Professionals
+                        </h4>
+                        <p class="text-sm text-muted-foreground">
+                            Manage multiple inboxes, prioritize meetings, and stay on top of deadlines 
+                            with AI-powered daily briefings.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-green-900/20 to-green-800/20 p-5 rounded-lg border border-green-500/30">
+                        <h4 class="font-semibold mb-2 flex items-center gap-2">
+                            <i class="fas fa-building text-green-400"></i> For Teams
+                        </h4>
+                        <p class="text-sm text-muted-foreground">
+                            Coordinate across departments with intelligent priority matrices and 
+                            automated task delegation.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-purple-900/20 to-purple-800/20 p-5 rounded-lg border border-purple-500/30">
+                        <h4 class="font-semibold mb-2 flex items-center gap-2">
+                            <i class="fas fa-chart-pie text-purple-400"></i> For Analysts
+                        </h4>
+                        <p class="text-sm text-muted-foreground">
+                            Extract insights from large volumes of unstructured data using semantic 
+                            search and AI analysis.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-yellow-900/20 to-yellow-800/20 p-5 rounded-lg border border-yellow-500/30">
+                        <h4 class="font-semibold mb-2 flex items-center gap-2">
+                            <i class="fas fa-rocket text-yellow-400"></i> For Entrepreneurs
+                        </h4>
+                        <p class="text-sm text-muted-foreground">
+                            Stay focused on high-impact tasks while AI handles information triage 
+                            and prioritization.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Deployment -->
+        <div class="tab-content" id="deployment">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-rocket text-blue-400"></i> Deployment Guide
+                </h2>
+                
+                <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-400"></i> Quick Start
+                    </h3>
+                    <p class="text-muted-foreground mb-4">
+                        Deploy Londoolink AI to production in under 15 minutes using Railway (backend) 
+                        and Netlify (frontend). Both platforms offer generous free tiers perfect for getting started.
+                    </p>
+                </div>
                 
                 <div class="grid md:grid-cols-2 gap-8 mb-8">
                     <div class="bg-card p-6 rounded-lg border">
-                        <h3 class="text-xl font-semibold mb-4 text-blue-400">Backend (Railway)</h3>
-                        <ol class="space-y-2 text-sm">
-                            <li>1. Go to <a href="https://railway.app" target="_blank" class="text-blue-400 hover:underline">railway.app</a></li>
-                            <li>2. Create new project from GitHub</li>
-                            <li>3. Select <code>backend</code> folder</li>
-                            <li>4. Add PostgreSQL database</li>
-                            <li>5. Configure environment variables</li>
-                        </ol>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-train text-blue-400"></i> Backend (Railway)
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">1</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Create Railway Account</p>
+                                    <p class="text-sm text-muted-foreground">Visit <a href="https://railway.app" target="_blank" class="text-blue-400 hover:underline">railway.app</a> and sign up with GitHub</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">2</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">New Project from GitHub</p>
+                                    <p class="text-sm text-muted-foreground">Import your Londoolink-AI repository</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">3</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Select Backend Directory</p>
+                                    <p class="text-sm text-muted-foreground">Set root directory to <code>/backend</code></p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">4</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Add PostgreSQL</p>
+                                    <p class="text-sm text-muted-foreground">Add database from Railway's plugin marketplace</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">5</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Configure Environment</p>
+                                    <p class="text-sm text-muted-foreground">Add required environment variables (see below)</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="bg-card p-6 rounded-lg border">
-                        <h3 class="text-xl font-semibold mb-4 text-green-400">Frontend (Netlify)</h3>
-                        <ol class="space-y-2 text-sm">
-                            <li>1. Go to <a href="https://netlify.com" target="_blank" class="text-blue-400 hover:underline">netlify.com</a></li>
-                            <li>2. Import from GitHub</li>
-                            <li>3. Set base directory: <code>app-frontend</code></li>
-                            <li>4. Set build command: <code>npm run build</code></li>
-                            <li>5. Set publish directory: <code>out</code></li>
-                        </ol>
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-globe text-green-400"></i> Frontend (Netlify)
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">1</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Create Netlify Account</p>
+                                    <p class="text-sm text-muted-foreground">Visit <a href="https://netlify.com" target="_blank" class="text-blue-400 hover:underline">netlify.com</a> and sign up</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">2</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Import from GitHub</p>
+                                    <p class="text-sm text-muted-foreground">Connect your repository</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">3</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Configure Build Settings</p>
+                                    <p class="text-sm text-muted-foreground">Base: <code>app-frontend</code></p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">4</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Set Build Command</p>
+                                    <p class="text-sm text-muted-foreground"><code>npm run build</code></p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">5</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Set Publish Directory</p>
+                                    <p class="text-sm text-muted-foreground"><code>.next</code> or <code>out</code></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <h3 class="text-2xl font-semibold mb-4">Environment Variables</h3>
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-key text-yellow-400"></i> Environment Variables
+                </h3>
                 
-                <h4 class="text-lg font-medium mb-2">Backend (Railway)</h4>
-                <pre><code>SECRET_KEY=your-super-secret-jwt-key-make-it-long-and-random
+                <h4 class="text-lg font-medium mb-3">Backend Environment (Railway)</h4>
+                <div class="relative">
+                    <pre><code>SECRET_KEY=your-super-secret-jwt-key-make-it-long-and-random
 ENCRYPTION_KEY=your-32-character-fernet-encryption-key
 GROQ_API_KEY=your-groq-api-key-here
 OPENAI_API_KEY=your-openai-api-key-here
+GEMINI_API_KEY=your-gemini-api-key-here
 ENVIRONMENT=production
-ALLOWED_ORIGINS=https://your-frontend-url.netlify.app</code></pre>
+ALLOWED_ORIGINS=https://your-frontend-url.netlify.app
+DATABASE_URL=postgresql://user:pass@host:port/dbname  # Auto-provided by Railway
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30</code></pre>
+                    <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
 
-                <h4 class="text-lg font-medium mb-2 mt-4">Frontend (Netlify)</h4>
-                <pre><code>NEXT_PUBLIC_API_BASE_URL=https://your-backend-url.up.railway.app</code></pre>
+                <h4 class="text-lg font-medium mb-3 mt-6">Frontend Environment (Netlify)</h4>
+                <div class="relative">
+                    <pre><code>NEXT_PUBLIC_API_BASE_URL=https://your-backend-url.up.railway.app</code></pre>
+                    <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
 
-                <div class="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-4 mt-6">
-                    <h4 class="font-semibold text-yellow-400 mb-2">⚠️ Important</h4>
-                    <p class="text-sm">After deploying both services, update the <code>ALLOWED_ORIGINS</code> in Railway with your actual Netlify URL to fix CORS issues.</p>
+                <div class="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-6 mt-8">
+                    <h4 class="font-semibold text-yellow-400 mb-3 flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> Important Notes
+                    </h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-chevron-right text-yellow-400 mt-1"></i>
+                            <span>After deploying both services, update <code>ALLOWED_ORIGINS</code> in Railway with your actual Netlify URL</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-chevron-right text-yellow-400 mt-1"></i>
+                            <span>Generate a secure <code>SECRET_KEY</code> using: <code>openssl rand -hex 32</code></span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-chevron-right text-yellow-400 mt-1"></i>
+                            <span>Get your API keys from respective platforms (OpenAI, Groq, Gemini)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fas fa-chevron-right text-yellow-400 mt-1"></i>
+                            <span>The <code>DATABASE_URL</code> is automatically provided by Railway when you add PostgreSQL</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <div class="tab-content" id="technical">
+        <!-- Tab Content: Architecture -->
+        <div class="tab-content" id="architecture">
             <div class="prose prose-invert max-w-none">
-                <h2 class="text-3xl font-bold mb-6">🔧 Technical Documentation</h2>
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-project-diagram text-purple-400"></i> System Architecture
+                </h2>
                 
-                <h3 class="text-2xl font-semibold mb-4">System Architecture</h3>
-                <div class="bg-muted p-6 rounded-lg mb-6">
-                    <pre class="text-sm"><code>┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Backend       │    │   External      │
-│   (Next.js)     │◄──►│   (FastAPI)     │◄──►│   Services      │
-│   TypeScript    │    │   Python        │    │   (n8n, APIs)   │
-│   Tailwind CSS  │    │   LangGraph     │    │   Google, etc.  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │   AI Agents     │
-                    │   Email Agent   │
-                    │   Calendar Agent│
-                    │   Priority Agent│
-                    └─────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │   Data Layer    │
-                    │   PostgreSQL    │
-                    │   ChromaDB      │
-                    │   Vector Store  │
-                    └─────────────────┘</code></pre>
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6 mb-8">
+                    <p class="text-muted-foreground">
+                        Londoolink AI follows a modern microservices architecture with intelligent agent orchestration 
+                        at its core. The system processes data through a sophisticated pipeline designed for scalability, 
+                        reliability, and intelligent analysis.
+                    </p>
                 </div>
 
-                <h3 class="text-2xl font-semibold mb-4">Tech Stack</h3>
-                <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-blue-400 mb-2">Frontend</h4>
-                        <ul class="text-sm space-y-1">
-                            <li>• Next.js 15</li>
-                            <li>• TypeScript</li>
-                            <li>• Tailwind CSS</li>
-                            <li>• shadcn/ui</li>
-                        </ul>
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-sitemap text-blue-400"></i> Multi-Agent Workflow Architecture
+                </h3>
+                
+                <div class="diagram-container mb-8">
+                    <img src="../Diagrams/multi-agent-workflow-architecture.png" alt="Multi-Agent Workflow Architecture" />
+                    <p class="text-sm text-muted-foreground mt-3 text-center">
+                        The LangGraph-powered multi-agent system showing how specialized agents (Email, Calendar, Social, Priority) 
+                        collaborate through stateful orchestration with RAG tools and external service integration.
+                    </p>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-route text-green-400"></i> LangGraph State Flow
+                </h3>
+                
+                <div class="diagram-container mb-8">
+                    <img src="../Diagrams/langgraph-state-flow-diagram.png" alt="LangGraph State Flow Diagram" />
+                    <p class="text-sm text-muted-foreground mt-3 text-center">
+                        Detailed state transitions showing how data flows through the LangGraph coordinator, 
+                        from initial user query to final briefing generation with error handling and recovery.
+                    </p>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-tasks text-yellow-400"></i> Sequential Execution Flow
+                </h3>
+                
+                <div class="diagram-container mb-8">
+                    <img src="../Diagrams/sequential-execution-flow.png" alt="Sequential Execution Flow" />
+                    <p class="text-sm text-muted-foreground mt-3 text-center">
+                        Step-by-step execution flow showing the temporal sequence of operations from data ingestion 
+                        through agent processing to final output delivery.
+                    </p>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-exchange-alt text-red-400"></i> Complete Data Flow
+                </h3>
+                
+                <div class="diagram-container mb-8">
+                    <img src="../Diagrams/data-flow-architecture.png" alt="Data Flow Architecture" />
+                    <p class="text-sm text-muted-foreground mt-3 text-center">
+                        End-to-end data flow from external services through n8n automation, FastAPI endpoints, 
+                        LangGraph processing, to dual database storage and user presentation.
+                    </p>
+                </div>
+
+                <div class="bg-muted p-8 rounded-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center">High-Level Architecture Diagram</h3>
+                    <pre class="text-sm"><code>┌─────────────────────────────────────────────────────────────────┐
+│                         User Interface                          │
+│              (Next.js 15 + TypeScript + Tailwind)              │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ HTTPS / JWT Auth
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      API Gateway Layer                          │
+│                    (FastAPI Endpoints)                          │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
+│  │   Auth   │  │  Agents  │  │   RAG    │  │  Search  │      │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘      │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   Multi-Agent Orchestration                     │
+│                        (LangGraph)                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
+│  │  Email   │  │ Calendar │  │ Priority │  │  Social  │      │
+│  │  Agent   │  │  Agent   │  │  Agent   │  │  Agent   │      │
+│  └─────┬────┘  └─────┬────┘  └─────┬────┘  └─────┬────┘      │
+│        └──────────────┼──────────────┼─────────────┘           │
+│                       ▼              ▼                          │
+│            ┌────────────────────────────┐                       │
+│            │    Shared State Object     │                       │
+│            │   (Context & Decisions)    │                       │
+│            └────────────────────────────┘                       │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+      ┌────────────────────┼────────────────────┐
+      ▼                    ▼                    ▼
+┌──────────┐         ┌──────────┐        ┌──────────┐
+│   LLMs   │         │   Data   │        │ External │
+│ GPT-4    │         │  Layer   │        │   APIs   │
+│ Groq     │         │PostgreSQL│        │  Google  │
+│ Ollama   │         │ ChromaDB │        │   n8n    │
+└──────────┘         └──────────┘        └──────────┘</code></pre>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4">Agent System Deep Dive</h3>
+                
+                <div class="space-y-6">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-envelope text-blue-400"></i> Email Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Sentiment analysis of content</li>
+                                    <li>• Sender importance scoring</li>
+                                    <li>• Urgency detection</li>
+                                    <li>• Smart categorization</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Priority scores (0-1)</li>
+                                    <li>• Category labels</li>
+                                    <li>• Action items</li>
+                                    <li>• Deadline extraction</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-green-400 mb-2">Backend</h4>
-                        <ul class="text-sm space-y-1">
-                            <li>• FastAPI</li>
-                            <li>• Python 3.12</li>
-                            <li>• LangGraph</li>
-                            <li>• PostgreSQL</li>
-                        </ul>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-calendar text-green-400"></i> Calendar Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Event conflict detection</li>
+                                    <li>• Meeting importance assessment</li>
+                                    <li>• Time zone optimization</li>
+                                    <li>• Recurring pattern analysis</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Schedule optimization</li>
+                                    <li>• Conflict alerts</li>
+                                    <li>• Meeting prep time</li>
+                                    <li>• Travel time calculations</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-purple-400 mb-2">AI/ML</h4>
-                        <ul class="text-sm space-y-1">
-                            <li>• OpenAI GPT-4</li>
-                            <li>• Groq</li>
-                            <li>• ChromaDB</li>
-                            <li>• LangChain</li>
-                        </ul>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-sort-amount-down text-purple-400"></i> Priority Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Cross-domain priority scoring</li>
+                                    <li>• Deadline-aware ranking</li>
+                                    <li>• Resource allocation</li>
+                                    <li>• Decision tree analysis</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Unified priority matrix</li>
+                                    <li>• Task recommendations</li>
+                                    <li>• Focus time suggestions</li>
+                                    <li>• Delegation opportunities</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-share-alt text-yellow-400"></i> Social Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Social sentiment analysis</li>
+                                    <li>• Engagement trend detection</li>
+                                    <li>• Network relationship mapping</li>
+                                    <li>• Content relevance scoring</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Engagement insights</li>
+                                    <li>• Trending topics</li>
+                                    <li>• Network analytics</li>
+                                    <li>• Posting recommendations</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <h3 class="text-2xl font-semibold mb-4">API Endpoints</h3>
-                <div class="space-y-4">
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-green-400 mb-2">POST /api/v1/auth/login</h4>
-                        <p class="text-sm text-muted-foreground mb-2">Authenticate user and receive JWT token</p>
-                        <pre class="text-xs"><code>curl -X POST "https://your-backend.railway.app/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "password": "password"}'</code></pre>
-                    </div>
-                    
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-blue-400 mb-2">GET /api/v1/agent/briefing/daily</h4>
-                        <p class="text-sm text-muted-foreground mb-2">Generate daily briefing using multi-agent workflow</p>
-                        <pre class="text-xs"><code>curl -X GET "https://your-backend.railway.app/api/v1/agent/briefing/daily" \
-  -H "Authorization: Bearer your-jwt-token"</code></pre>
+                <h3 class="text-2xl font-semibold mb-4 mt-8">Data Flow Example: Daily Briefing</h3>
+                
+                <div class="bg-muted p-6 rounded-lg">
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold">1</div>
+                            <div>
+                                <p class="font-medium">System Initialization</p>
+                                <p class="text-sm text-muted-foreground">Load user preferences, historical context, and previous state</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center font-bold">2</div>
+                            <div>
+                                <p class="font-medium">Parallel Data Collection</p>
+                                <p class="text-sm text-muted-foreground">All agents simultaneously gather data from their respective sources</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold">3</div>
+                            <div>
+                                <p class="font-medium">Independent Analysis</p>
+                                <p class="text-sm text-muted-foreground">Each agent processes data using specialized AI models and algorithms</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center font-bold">4</div>
+                            <div>
+                                <p class="font-medium">Cross-Agent Communication</p>
+                                <p class="text-sm text-muted-foreground">Agents share insights through the LangGraph state object</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center font-bold">5</div>
+                            <div>
+                                <p class="font-medium">Priority Synthesis</p>
+                                <p class="text-sm text-muted-foreground">Priority Agent consolidates all insights into unified recommendations</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center font-bold">6</div>
+                            <div>
+                                <p class="font-medium">User Presentation</p>
+                                <p class="text-sm text-muted-foreground">Frontend displays intelligent briefing with actionable insights</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Tab Content: API Reference -->
+        <div class="tab-content" id="api">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-code text-green-400"></i> API Reference
+                </h2>
+                
+                <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3">Base URL</h3>
+                    <code class="block p-3 bg-muted rounded">https://your-backend-url.up.railway.app/api/v1</code>
+                    <p class="text-sm text-muted-foreground mt-3">
+                        All endpoints require JWT authentication except for registration and login.
+                    </p>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-lock text-blue-400"></i> Authentication Endpoints
+                </h3>
+
+                <div class="space-y-6">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded text-sm font-mono">POST</span>
+                            <code class="text-blue-400">/auth/register</code>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Register a new user account</p>
+                        <div class="relative">
+                            <pre><code>curl -X POST "https://your-backend.railway.app/api/v1/auth/register" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "email": "user@example.com",
+    "password": "securepassword123"
+  }'</code></pre>
+                            <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded text-sm font-mono">POST</span>
+                            <code class="text-blue-400">/auth/login</code>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Login and receive JWT access token</p>
+                        <div class="relative">
+                            <pre><code>curl -X POST "https://your-backend.railway.app/api/v1/auth/login" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "email": "user@example.com",
+    "password": "securepassword123"
+  }'</code></pre>
+                            <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 mt-8 flex items-center gap-2">
+                    <i class="fas fa-robot text-purple-400"></i> Agent Endpoints
+                </h3>
+
+                <div class="space-y-6">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded text-sm font-mono">GET</span>
+                            <code class="text-blue-400">/agent/briefing/daily</code>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Get AI-powered daily briefing with prioritized insights</p>
+                        <div class="relative">
+                            <pre><code>curl -X GET "https://your-backend.railway.app/api/v1/agent/briefing/daily" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"</code></pre>
+                            <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <p class="text-sm text-muted-foreground mt-4">Response includes priority scores, action items, and recommendations</p>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded text-sm font-mono">POST</span>
+                            <code class="text-blue-400">/agent/analyze/document</code>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Analyze document content using AI agents</p>
+                        <div class="relative">
+                            <pre><code>curl -X POST "https://your-backend.railway.app/api/v1/agent/analyze/document" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "content": "Document text here...",
+    "type": "email"
+  }'</code></pre>
+                            <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 mt-8 flex items-center gap-2">
+                    <i class="fas fa-search text-yellow-400"></i> RAG & Search Endpoints
+                </h3>
+
+                <div class="space-y-6">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded text-sm font-mono">POST</span>
+                            <code class="text-blue-400">/rag/search</code>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Perform semantic search using ChromaDB vector database</p>
+                        <div class="relative">
+                            <pre><code>curl -X POST "https://your-backend.railway.app/api/v1/rag/search" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "What are my urgent tasks?",
+    "limit": 5
+  }'</code></pre>
+                            <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded text-sm font-mono">GET</span>
+                            <code class="text-blue-400">/rag/stats</code>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Get RAG pipeline statistics and health</p>
+                        <div class="relative">
+                            <pre><code>curl -X GET "https://your-backend.railway.app/api/v1/rag/stats" \\
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"</code></pre>
+                            <button onclick="copyCode(this)" class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-6 mt-8">
+                    <h4 class="font-semibold text-green-400 mb-3 flex items-center gap-2">
+                        <i class="fas fa-book"></i> Interactive API Documentation
+                    </h4>
+                    <p class="text-sm text-muted-foreground mb-4">
+                        For complete interactive API documentation with request/response examples:
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-green-400"></i>
+                            <a href="https://your-backend.railway.app/docs" target="_blank" class="text-blue-400 hover:underline">
+                                Swagger UI: https://your-backend.railway.app/docs
+                            </a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-external-link-alt text-green-400"></i>
+                            <a href="https://your-backend.railway.app/redoc" target="_blank" class="text-blue-400 hover:underline">
+                                ReDoc: https://your-backend.railway.app/redoc
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Local Setup -->
         <div class="tab-content" id="setup">
             <div class="prose prose-invert max-w-none">
-                <h2 class="text-3xl font-bold mb-6">📋 Repository Setup</h2>
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-cog text-purple-400"></i> Local Development Setup
+                </h2>
                 
-                <h3 class="text-2xl font-semibold mb-4">Project Structure</h3>
-                <pre class="mb-6"><code>Londoolink-AI/
-├── app-frontend/          # Next.js frontend application
-│   ├── app/              # App router pages
-│   ├── components/       # React components
-│   ├── lib/             # Utility functions
-│   └── public/          # Static assets
-├── backend/             # FastAPI backend application
-│   ├── app/            # Application code
-│   ├── agents/         # LangGraph agents
-│   └── Dockerfile      # Container configuration
-├── docs/               # GitHub Pages documentation
-├── DEPLOYMENT_INSTRUCTIONS.md
-└── TECHNICAL_DOCUMENTATION.md</code></pre>
-
-                <h3 class="text-2xl font-semibold mb-4">Getting Started</h3>
-                <div class="space-y-4">
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold mb-2">1. Clone Repository</h4>
-                        <pre><code>git clone https://github.com/your-username/Londoolink-AI.git
-cd Londoolink-AI</code></pre>
-                    </div>
-                    
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold mb-2">2. Setup Backend</h4>
-                        <pre><code>cd backend
-cp .env.example .env
-# Edit .env with your API keys
-uv sync
-uv run uvicorn app.main:app --reload</code></pre>
-                    </div>
-                    
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold mb-2">3. Setup Frontend</h4>
-                        <pre><code>cd app-frontend
-cp .env.example .env.local
-# Edit .env.local with backend URL
-npm install
-npm run dev</code></pre>
-                    </div>
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3">Prerequisites</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            Python 3.12+
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            <a href="https://docs.astral.sh/uv/" target="_blank" class="text-blue-400 hover:underline">uv</a> package manager (recommended)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            Docker Desktop (for Windows/Mac) or Docker Engine (Linux)
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3">Getting Started</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>
+                            <p class="font-medium">Clone the Repository</p>
+                            <pre><code>git clone https://github.com/Shakiran-Nannyombi/Londoolink-AI.git</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Navigate to the Project Directory</p>
+                            <pre><code>cd Londoolink-AI</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Install Dependencies</p>
+                            <pre><code>uv install</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Start the Development Server</p>
+                            <pre><code>uv run</code></pre>
+                        </li>
+                    </ol>
                 </div>
 
-                <h3 class="text-2xl font-semibold mb-4 mt-8">Features</h3>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-blue-400 mb-2">🤖 Multi-Agent System</h4>
-                        <p class="text-sm">LangGraph-powered agents for email, calendar, and priority management</p>
-                    </div>
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-green-400 mb-2">🔒 Secure Authentication</h4>
-                        <p class="text-sm">JWT-based auth with encrypted credential storage</p>
-                    </div>
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-purple-400 mb-2">🔍 Semantic Search</h4>
-                        <p class="text-sm">ChromaDB vector database for intelligent content search</p>
-                    </div>
-                    <div class="bg-card p-4 rounded-lg border">
-                        <h4 class="font-semibold text-yellow-400 mb-2">📱 Modern UI</h4>
-                        <p class="text-sm">Responsive design with dark theme and smooth animations</p>
-                    </div>
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-3">Docker Setup (Optional)</h3>
+                    <p class="text-sm text-muted-foreground mb-4">
+                        If you prefer using Docker, follow these steps:
+                    </p>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>
+                            <p class="font-medium">Build the Docker Image</p>
+                            <pre><code>docker build -t londoolink-ai .</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Run the Docker Container</p>
+                            <pre><code>docker run -p 8000:8000 londoolink-ai</code></pre>
+                        </li>
+                    </ol>
+                    <p class="text-sm text-muted-foreground mt-4">
+                        Access the app at <code>http://localhost:8000</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Security -->
+        <div class="tab-content" id="security">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-lock text-red-400"></i> Security & Privacy
+                </h2>
+                
+                <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-red-400"></i> Data Security
+                    </h3>
+                    <p class="text-sm text-muted-foreground mb-4">
+                        Londoolink AI is built with a strong focus on data security and user privacy. We implement 
+                        industry-standard security practices to protect your data.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li>• End-to-end encryption for data in transit and at rest</li>
+                        <li>• Regular security audits and vulnerability assessments</li>
+                        <li>• Compliance with GDPR and other data protection regulations</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-user-shield text-red-400"></i> Access Control
+                    </h3>
+                    <p class="text-sm text-muted-foreground mb-4">
+                        We enforce strict access controls to ensure that only authorized users can access sensitive data and functionalities.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li>• Role-based access control (RBAC) for all users</li>
+                        <li>• Two-factor authentication (2FA) for an extra layer of security</li>
+                        <li>• Regular review and revocation of access rights</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -337,22 +1183,47 @@ npm run dev</code></pre>
 
     <script>
         function showTab(tabName) {
-            // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            // Remove active class from all buttons
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
             
-            // Show selected tab content
             document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked button
             event.target.classList.add('active');
+            
+            // Scroll to top when changing tabs
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        
+        function copyCode(button) {
+            const pre = button.parentElement.querySelector('pre code');
+            const text = pre.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                }, 2000);
+            });
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Show/hide scroll to top button
+        window.addEventListener('scroll', () => {
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (window.scrollY > 300) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+        });
     </script>
 </body>
 </html>
