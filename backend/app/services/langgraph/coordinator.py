@@ -6,6 +6,7 @@ from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
 
 from app.core.config import settings
+from app.utils.text_formatter import clean_ai_response
 
 from .state import AgentState, create_initial_state
 from .workflow import WorkflowBuilder
@@ -24,7 +25,7 @@ class LangGraphCoordinator:
     def _create_llm(self):
         # Create the main LLM for direct document analysis
         return ChatGroq(
-            model="llama-3.1-70b-versatile",
+            model="llama-3.1-8b-instant",
             temperature=0.1,
             api_key=settings.GROQ_API_KEY,
             max_tokens=4096,
@@ -96,7 +97,7 @@ class LangGraphCoordinator:
             response = self.llm.invoke(messages)
 
             return {
-                "analysis": response.content,
+                "analysis": clean_ai_response(response.content),
                 "status": "completed",
                 "agent_type": agent_type,
                 "document_type": document_type,
@@ -127,7 +128,7 @@ class LangGraphCoordinator:
             Be conversational and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
-            return response.content
+            return clean_ai_response(response.content)
             
         except Exception as e:
             logger.error(f"Email agent chat failed: {e}")
@@ -146,7 +147,7 @@ class LangGraphCoordinator:
             Be conversational and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
-            return response.content
+            return clean_ai_response(response.content)
             
         except Exception as e:
             logger.error(f"Calendar agent chat failed: {e}")
@@ -165,7 +166,7 @@ class LangGraphCoordinator:
             Be conversational and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
-            return response.content
+            return clean_ai_response(response.content)
             
         except Exception as e:
             logger.error(f"Priority agent chat failed: {e}")
@@ -184,7 +185,7 @@ class LangGraphCoordinator:
             Be conversational and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
-            return response.content
+            return clean_ai_response(response.content)
             
         except Exception as e:
             logger.error(f"Social agent chat failed: {e}")
@@ -202,7 +203,7 @@ class LangGraphCoordinator:
             Provide helpful, accurate information and assistance. Be conversational and professional."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
-            return response.content
+            return clean_ai_response(response.content)
             
         except Exception as e:
             logger.error(f"General chat failed: {e}")

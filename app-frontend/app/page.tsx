@@ -234,8 +234,108 @@ const AnimatedBackground = () => {
   )
 }
 
+// FormattedContent component to display structured text
+function FormattedContent({ content }: { content: string }) {
+  // Decode HTML entities
+  const decodeHtml = (text: string) => {
+    const entities: { [key: string]: string } = {
+      '&#39;': "'",
+      '&quot;': '"',
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>'
+    }
+    return Object.entries(entities).reduce((str, [entity, char]) => 
+      str.replace(new RegExp(entity, 'g'), char), text
+    )
+  }
+
+  const formatContent = (text: string) => {
+    const decoded = decodeHtml(text)
+    const sections = decoded.split(/(?=^[A-Z][A-Z\s]+:)/m).filter(Boolean)
+    
+    return sections.map((section, index) => {
+      const lines = section.trim().split('\n').filter(Boolean)
+      if (lines.length === 0) return null
+      
+      const firstLine = lines[0]
+      const titleMatch = firstLine.match(/^([A-Z][A-Z\s]+):/)
+      
+      if (titleMatch) {
+        const title = titleMatch[1].trim()
+        const content = lines.slice(1).join('\n')
+        const icon = getIconForSection(title)
+        
+        return (
+          <div key={index} className="mb-6 bg-muted/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">{icon}</span>
+              <h4 className="font-semibold text-foreground text-sm uppercase tracking-wide">
+                {title}
+              </h4>
+            </div>
+            <div className="space-y-2">
+              {content.split('\n').map((line, i) => {
+                const trimmed = line.trim()
+                if (!trimmed) return null
+                
+                if (trimmed.startsWith('•') || trimmed.match(/^\d+\./)) {
+                  return (
+                    <div key={i} className="flex items-start gap-3 p-2 bg-background/50 rounded">
+                      <span className="text-primary text-sm mt-0.5">•</span>
+                      <span className="flex-1 text-sm">{trimmed.replace(/^[•\d\.\s]+/, '')}</span>
+                    </div>
+                  )
+                }
+                
+                return (
+                  <p key={i} className="text-sm leading-relaxed p-2 bg-background/50 rounded">
+                    {trimmed}
+                  </p>
+                )
+              })}
+            </div>
+          </div>
+        )
+      }
+      
+      return (
+        <div key={index} className="mb-4 p-3 bg-muted/20 rounded">
+          <p className="text-sm leading-relaxed">{section.trim()}</p>
+        </div>
+      )
+    })
+  }
+
+  const getIconForSection = (title: string) => {
+    const icons: { [key: string]: string } = {
+      'TOP PRIORITIES': '🔥',
+      'TODAY\'S SCHEDULE': '📅',
+      'ACTION ITEMS': '✅',
+      'COMMUNICATIONS': '💬',
+      'PREPARATION NEEDED': '📋',
+      'STRATEGIC INSIGHTS': '💡',
+      'RECOMMENDATIONS': '⭐',
+      'NEXT STEPS': '➡️'
+    }
+    return icons[title] || '📌'
+  }
+
+  return <div className="space-y-4">{formatContent(content)}</div>
+}
+
 // DetailModal component
-function DetailModal({ item, onClose }: { item: BriefingItem; onClose: () => void }) {
+function DetailModal({ 
+  item, 
+  onClose, 
+  onMarkComplete, 
+  onSnooze 
+}: { 
+  item: BriefingItem; 
+  onClose: () => void;
+  onMarkComplete: (itemId: string) => void;
+  onSnooze: (itemId: string) => void;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -290,9 +390,9 @@ function DetailModal({ item, onClose }: { item: BriefingItem; onClose: () => voi
         {/* Full Description */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-foreground mb-3">Details</h3>
-          <p className="text-muted-foreground leading-relaxed text-pretty">
-            {item.fullDescription || item.description}
-          </p>
+          <div className="prose prose-sm max-w-none text-muted-foreground">
+            <FormattedContent content={item.fullDescription || item.description} />
+          </div>
         </div>
 
         {/* Tags */}
@@ -366,8 +466,19 @@ function DetailModal({ item, onClose }: { item: BriefingItem; onClose: () => voi
 
         {/* Footer Actions */}
         <div className="flex gap-3 pt-6 border-t border-border">
-          <Button className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">Mark as Complete</Button>
-          <Button variant="outline" className="flex-1 bg-transparent">
+          <Button 
+            className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+            onClick={() => onMarkComplete(item.id)}
+          >
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            Mark as Complete
+          </Button>
+          <Button 
+            variant="outline" 
+            className="flex-1 bg-transparent"
+            onClick={() => onSnooze(item.id)}
+          >
+            <Clock className="w-4 h-4 mr-2" />
             Snooze
           </Button>
         </div>
@@ -387,16 +498,23 @@ export default function LondoolinkAI() {
   const [searchQuery, setSearchQuery] = useState("")
   const [user, setUser] = useState<User | null>(null)
   const [theme, setTheme] = useState<string>("light")
-  const [activeFilter, setActiveFilter] = useState<"all" | "high" | "medium" | "low">("all")
+  const [activeFilter, setActiveFilter] = useState<"all" | "high" | "medium" | "low" | "completed" | "snoozed">("all")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<BriefingItem | null>(null)
   const [error, setError] = useState<AppError | null>(null)
   const [isHydrated, setIsHydrated] = useState(false)
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'completed' | 'snoozed'>('dashboard')
+  const [notifications, setNotifications] = useState<Array<{id: string, message: string, type: 'success' | 'info' | 'warning'}>>([])
   
   // Agent chat states
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [selectedAgent, setSelectedAgent] = useState<string>("email")
-  const [chatMessages, setChatMessages] = useState<Array<{id: string, type: 'user' | 'agent', content: string, timestamp: Date}>>([])
+  const [agentChats, setAgentChats] = useState<Record<string, Array<{id: string, type: 'user' | 'agent', content: string, timestamp: Date}>>>({
+    email: [],
+    calendar: [],
+    priority: [],
+    social: []
+  })
   const [chatInput, setChatInput] = useState("")
   const [isChatLoading, setIsChatLoading] = useState(false)
   const [availableAgents, setAvailableAgents] = useState<Array<{id: string, name: string, description: string, icon: string}>>([
@@ -405,6 +523,8 @@ export default function LondoolinkAI() {
     { id: "priority", name: "Priority Agent", description: "Help prioritize your tasks", icon: "⚡" },
     { id: "social", name: "Social Agent", description: "Monitor social media insights", icon: "🌐" }
   ])
+  const [completedItems, setCompletedItems] = useState<Set<string>>(new Set())
+  const [snoozedItems, setSnoozedItems] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     // Only run on client side to avoid hydration mismatch
@@ -563,7 +683,18 @@ export default function LondoolinkAI() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("[v0] Search query:", searchQuery)
+    if (!searchQuery.trim()) return
+    
+    setIsLoading(true)
+    try {
+      const response = await apiClient.chatWithAgent('general', searchQuery)
+      addNotification(`Londoolink: ${response.message?.substring(0, 50)}...`, 'info')
+      setSearchQuery('')
+    } catch (error) {
+      addNotification('Failed to get response from Londoolink', 'warning')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleChatSubmit = async (e: React.FormEvent) => {
@@ -577,7 +708,10 @@ export default function LondoolinkAI() {
       timestamp: new Date()
     }
 
-    setChatMessages(prev => [...prev, userMessage])
+    setAgentChats(prev => ({
+      ...prev,
+      [selectedAgent]: [...prev[selectedAgent], userMessage]
+    }))
     setChatInput("")
     setIsChatLoading(true)
 
@@ -591,7 +725,10 @@ export default function LondoolinkAI() {
         timestamp: new Date()
       }
 
-      setChatMessages(prev => [...prev, agentMessage])
+      setAgentChats(prev => ({
+        ...prev,
+        [selectedAgent]: [...prev[selectedAgent], agentMessage]
+      }))
     } catch (error) {
       console.error('Chat failed:', error)
       const errorMessage = {
@@ -600,16 +737,48 @@ export default function LondoolinkAI() {
         content: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
         timestamp: new Date()
       }
-      setChatMessages(prev => [...prev, errorMessage])
+      setAgentChats(prev => ({
+        ...prev,
+        [selectedAgent]: [...prev[selectedAgent], errorMessage]
+      }))
     } finally {
       setIsChatLoading(false)
     }
   }
 
   const filteredBriefing = briefing.filter((item) => {
-    if (activeFilter === "all") return true
-    return item.priority === activeFilter
+    if (currentPage === 'completed') return completedItems.has(item.id)
+    if (currentPage === 'snoozed') return snoozedItems.has(item.id)
+    
+    // Dashboard page - exclude completed and snoozed items
+    if (currentPage === 'dashboard') {
+      if (completedItems.has(item.id) || snoozedItems.has(item.id)) return false
+      if (activeFilter === "all") return true
+      return item.priority === activeFilter
+    }
+    
+    return false
   })
+
+  const handleMarkComplete = (itemId: string) => {
+    setCompletedItems(prev => new Set([...prev, itemId]))
+    setSelectedItem(null)
+    addNotification('Task marked as complete!', 'success')
+  }
+
+  const handleSnooze = (itemId: string) => {
+    setSnoozedItems(prev => new Set([...prev, itemId]))
+    setSelectedItem(null)
+    addNotification('Task snoozed for later', 'info')
+  }
+
+  const addNotification = (message: string, type: 'success' | 'info' | 'warning') => {
+    const id = Date.now().toString()
+    setNotifications(prev => [...prev, { id, message, type }])
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id))
+    }, 3000)
+  }
 
   // Skip hydration loading screen - render immediately
 
@@ -761,21 +930,44 @@ export default function LondoolinkAI() {
           </div>
 
           <div className="flex items-center gap-4">
+            <Button
+              variant={currentPage === 'dashboard' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentPage('dashboard')}
+            >
+              Dashboard
+            </Button>
+            <Button
+              variant={currentPage === 'completed' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentPage('completed')}
+              className="relative"
+            >
+              Completed
+              {completedItems.size > 0 && (
+                <Badge className="ml-1 bg-success text-success-foreground px-1.5 py-0 text-xs">
+                  {completedItems.size}
+                </Badge>
+              )}
+            </Button>
+            <Button
+              variant={currentPage === 'snoozed' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setCurrentPage('snoozed')}
+              className="relative"
+            >
+              Snoozed
+              {snoozedItems.size > 0 && (
+                <Badge className="ml-1 bg-warning text-warning-foreground px-1.5 py-0 text-xs">
+                  {snoozedItems.size}
+                </Badge>
+              )}
+            </Button>
             <ThemeToggle theme={theme} setTheme={setTheme} />
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50">
               <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
               <span className="text-sm text-muted-foreground">{user?.email}</span>
             </div>
-            <Link href="/documentation">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hover:bg-primary/10 hover:text-primary"
-              >
-                <BookOpen className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">Docs</span>
-              </Button>
-            </Link>
             <Button
               variant="ghost"
               size="sm"
@@ -789,6 +981,27 @@ export default function LondoolinkAI() {
         </div>
       </motion.nav>
 
+      {/* Notifications */}
+      <div className="fixed top-20 right-4 z-50 space-y-2">
+        <AnimatePresence>
+          {notifications.map((notification) => (
+            <motion.div
+              key={notification.id}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              className={`p-3 rounded-lg shadow-lg border ${
+                notification.type === 'success' ? 'bg-success/10 border-success/20 text-success' :
+                notification.type === 'warning' ? 'bg-warning/10 border-warning/20 text-warning' :
+                'bg-info/10 border-info/20 text-info'
+              }`}
+            >
+              <p className="text-sm font-medium">{notification.message}</p>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-6 py-10">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-10">
@@ -796,9 +1009,15 @@ export default function LondoolinkAI() {
           <motion.div variants={itemVariants} className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-5xl font-bold text-balance mb-2 text-foreground">Your Daily Briefing</h2>
+                <h2 className="text-5xl font-bold text-balance mb-2 text-foreground">
+                  {currentPage === 'dashboard' ? 'Your Daily Briefing' :
+                   currentPage === 'completed' ? 'Completed Tasks' :
+                   'Snoozed Tasks'}
+                </h2>
                 <p className="text-muted-foreground text-pretty text-xl">
-                  Prioritized insights to keep you focused and in control
+                  {currentPage === 'dashboard' ? 'Prioritized insights to keep you focused and in control' :
+                   currentPage === 'completed' ? 'Tasks you\'ve successfully completed' :
+                   'Tasks you\'ve snoozed for later'}
                 </p>
               </div>
               <div className="relative">
@@ -830,21 +1049,31 @@ export default function LondoolinkAI() {
                     >
                       <div className="p-2">
                         {[
-                          { value: "all", label: "All Items", count: briefing.length },
+                          { value: "all", label: "All Items", count: briefing.filter(b => !completedItems.has(b.id) && !snoozedItems.has(b.id)).length },
                           {
                             value: "high",
                             label: "High Priority",
-                            count: briefing.filter((b) => b.priority === "high").length,
+                            count: briefing.filter((b) => b.priority === "high" && !completedItems.has(b.id) && !snoozedItems.has(b.id)).length,
                           },
                           {
                             value: "medium",
                             label: "Medium Priority",
-                            count: briefing.filter((b) => b.priority === "medium").length,
+                            count: briefing.filter((b) => b.priority === "medium" && !completedItems.has(b.id) && !snoozedItems.has(b.id)).length,
                           },
                           {
                             value: "low",
                             label: "Low Priority",
-                            count: briefing.filter((b) => b.priority === "low").length,
+                            count: briefing.filter((b) => b.priority === "low" && !completedItems.has(b.id) && !snoozedItems.has(b.id)).length,
+                          },
+                          {
+                            value: "completed",
+                            label: "Completed",
+                            count: completedItems.size,
+                          },
+                          {
+                            value: "snoozed",
+                            label: "Snoozed",
+                            count: snoozedItems.size,
                           },
                         ].map((filter) => (
                           <motion.button
@@ -890,8 +1119,23 @@ export default function LondoolinkAI() {
                 placeholder="Ask Londoolink anything..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-14 pr-5 py-7 bg-card border-border text-lg shadow-md hover:shadow-lg focus:shadow-xl focus:border-primary transition-all rounded-2xl"
+                className="pl-14 pr-20 py-7 bg-card border-border text-lg shadow-md hover:shadow-lg focus:shadow-xl focus:border-primary transition-all rounded-2xl"
+                disabled={isLoading}
               />
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!searchQuery.trim() || isLoading}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/90"
+              >
+                {isLoading ? (
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}>
+                    <Zap className="w-4 h-4" />
+                  </motion.div>
+                ) : (
+                  <ArrowRight className="w-4 h-4" />
+                )}
+              </Button>
             </form>
           </motion.div>
 
@@ -1024,7 +1268,7 @@ export default function LondoolinkAI() {
                       <button
                         key={agent.id}
                         onClick={() => setSelectedAgent(agent.id)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                        className={`relative flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
                           selectedAgent === agent.id
                             ? 'bg-primary text-primary-foreground'
                             : 'hover:bg-muted text-muted-foreground'
@@ -1032,13 +1276,27 @@ export default function LondoolinkAI() {
                       >
                         <span>{agent.icon}</span>
                         <span>{agent.name.replace(' Agent', '')}</span>
+                        {agentChats[agent.id].length > 0 && (
+                          <span className={`absolute -top-1 -right-1 w-4 h-4 text-xs rounded-full flex items-center justify-center ${
+                            selectedAgent === agent.id ? 'bg-primary-foreground text-primary' : 'bg-primary text-primary-foreground'
+                          }`}>
+                            {agentChats[agent.id].length}
+                          </span>
+                        )}
                       </button>
                     ))}
+                    <button
+                      onClick={() => setAgentChats(prev => ({ ...prev, [selectedAgent]: [] }))}
+                      className="ml-auto px-2 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      title="Clear chat"
+                    >
+                      Clear
+                    </button>
                   </div>
 
                   {/* Chat Messages */}
                   <div className="h-96 overflow-y-auto mb-4 p-4 bg-muted/20 rounded-lg space-y-4">
-                    {chatMessages.length === 0 ? (
+                    {agentChats[selectedAgent].length === 0 ? (
                       <div className="text-center text-muted-foreground py-8">
                         <div className="text-4xl mb-2">
                           {availableAgents.find(a => a.id === selectedAgent)?.icon}
@@ -1047,7 +1305,7 @@ export default function LondoolinkAI() {
                         <p className="text-sm mt-2">Ask questions about your data, get insights, or request analysis.</p>
                       </div>
                     ) : (
-                      chatMessages.map((message) => (
+                      agentChats[selectedAgent].map((message) => (
                         <div
                           key={message.id}
                           className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -1106,7 +1364,7 @@ export default function LondoolinkAI() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-2xl font-semibold text-foreground">Priority Items</h3>
               <span className="text-sm text-muted-foreground">
-                {filteredBriefing.length} {activeFilter !== "all" && `${activeFilter} priority`} item
+                {filteredBriefing.length} {activeFilter !== "all" && activeFilter} item
                 {filteredBriefing.length !== 1 && "s"}
               </span>
             </div>
@@ -1211,7 +1469,14 @@ export default function LondoolinkAI() {
 
       {/* Detail Modal */}
       <AnimatePresence>
-        {selectedItem && <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />}
+        {selectedItem && (
+          <DetailModal 
+            item={selectedItem} 
+            onClose={() => setSelectedItem(null)}
+            onMarkComplete={handleMarkComplete}
+            onSnooze={handleSnooze}
+          />
+        )}
       </AnimatePresence>
     </div>
   )
