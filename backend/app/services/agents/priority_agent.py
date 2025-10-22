@@ -20,10 +20,9 @@ class PriorityAgent:
         # Create the master prioritization agent
         try:
             llm = ChatGroq(
-                model="llama-3.1-70b-versatile",
+                model="llama-3.1-8b-instant",
                 temperature=0.1,
                 api_key=settings.GROQ_API_KEY,
-                max_tokens=4096,
             )
 
             system_prompt = """You are the Master Prioritization Agent for Londoolink AI. Your role is to:
