@@ -3,6 +3,46 @@ declare const process: { env: { NEXT_PUBLIC_API_BASE_URL?: string } }
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
 const API_VERSION = "/api/v1"
 
+// Utility function to decode HTML entities and clean up text
+function decodeHtmlEntities(text: string): string {
+  if (!text) return text
+  
+  const entities: { [key: string]: string } = {
+    '&quot;': '"',
+    '&#39;': "'",
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&nbsp;': ' '
+  }
+  
+  let decoded = text
+  Object.entries(entities).forEach(([entity, char]) => {
+    decoded = decoded.replace(new RegExp(entity, 'g'), char)
+  })
+  
+  return decoded
+}
+
+// Utility function to format text for display
+function formatTextForDisplay(text: string): string {
+  if (!text) return text
+  
+  // First decode HTML entities
+  let formatted = decodeHtmlEntities(text)
+  
+  // Clean up markdown formatting for better readability
+  formatted = formatted
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+    .replace(/\*(.*?)\*/g, '$1')   // Remove italic markdown
+    .replace(/#{1,6}\s/g, '')      // Remove markdown headers
+    .replace(/^\s*[-*+]\s/gm, '• ') // Convert list markers to bullets
+    .replace(/^\s*\d+\.\s/gm, '• ') // Convert numbered lists to bullets
+    .trim()
+  
+  return formatted
+}
+
 interface ApiResponse<T = any> {
   success?: boolean
   data?: T
@@ -120,7 +160,17 @@ class ApiClient {
 
   // Chat with agents
   async chatWithAgent(agentType: string, message: string): Promise<ApiResponse> {
-    return this.post('/agent/chat', { agent_type: agentType, message })
+    const response = await this.post('/agent/chat', { agent_type: agentType, message })
+    
+    // Format the response message if it exists
+    if (response.message) {
+      response.message = formatTextForDisplay(response.message)
+    }
+    if (response.analysis) {
+      response.analysis = formatTextForDisplay(response.analysis)
+    }
+    
+    return response
   }
 
   // Get available agents

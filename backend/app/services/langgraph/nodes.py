@@ -5,6 +5,7 @@ from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
 
 from app.core.config import settings
+from app.utils.text_formatter import clean_ai_response
 
 from .state import AgentState
 
@@ -16,7 +17,7 @@ class AgentNodes:
 
     def __init__(self):
         self.llm = ChatGroq(
-            model="llama3-70b-8192",
+            model="llama-3.1-8b-instant",
             temperature=0.1,
             api_key=settings.GROQ_API_KEY,
             max_tokens=4096,
@@ -67,7 +68,7 @@ class AgentNodes:
             response = self.llm.invoke(messages)
 
             state["email_analysis"] = {
-                "analysis": response.content,
+                "analysis": clean_ai_response(response.content),
                 "status": "completed",
                 "agent_type": "email",
                 "timestamp": datetime.utcnow().isoformat(),
@@ -105,7 +106,7 @@ class AgentNodes:
             response = self.llm.invoke(messages)
 
             state["calendar_analysis"] = {
-                "analysis": response.content,
+                "analysis": clean_ai_response(response.content),
                 "status": "completed",
                 "agent_type": "calendar",
                 "timestamp": datetime.utcnow().isoformat(),
@@ -143,7 +144,7 @@ class AgentNodes:
             response = self.llm.invoke(messages)
 
             state["social_analysis"] = {
-                "analysis": response.content,
+                "analysis": clean_ai_response(response.content),
                 "status": "completed",
                 "agent_type": "social",
                 "timestamp": datetime.utcnow().isoformat(),
@@ -204,13 +205,13 @@ class AgentNodes:
             response = self.llm.invoke(messages)
 
             state["priority_recommendations"] = {
-                "analysis": response.content,
+                "analysis": clean_ai_response(response.content),
                 "status": "completed",
                 "agent_type": "priority",
                 "timestamp": datetime.utcnow().isoformat(),
             }
 
-            state["final_briefing"] = response.content
+            state["final_briefing"] = clean_ai_response(response.content)
             state["current_step"] = "priority_done"
 
         except Exception as e:

@@ -2,6 +2,46 @@
 
 import type { BackendBriefing } from './api'
 
+// Utility function to decode HTML entities and clean up text
+function decodeHtmlEntities(text: string): string {
+  if (!text) return text
+  
+  const entities: { [key: string]: string } = {
+    '&quot;': '"',
+    '&#39;': "'",
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&nbsp;': ' '
+  }
+  
+  let decoded = text
+  Object.entries(entities).forEach(([entity, char]) => {
+    decoded = decoded.replace(new RegExp(entity, 'g'), char)
+  })
+  
+  return decoded
+}
+
+// Utility function to format markdown-like text for display
+function formatTextForDisplay(text: string): string {
+  if (!text) return text
+  
+  // First decode HTML entities
+  let formatted = decodeHtmlEntities(text)
+  
+  // Remove excessive markdown formatting for cleaner display
+  formatted = formatted
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+    .replace(/\*(.*?)\*/g, '$1')   // Remove italic markdown
+    .replace(/#{1,6}\s/g, '')      // Remove markdown headers
+    .replace(/^\s*[-*+]\s/gm, '• ') // Convert list markers to bullets
+    .replace(/^\s*\d+\.\s/gm, '• ') // Convert numbered lists to bullets
+    .trim()
+  
+  return formatted
+}
+
 // Frontend interface for briefing items
 export interface BriefingItem {
   id: string
@@ -25,14 +65,15 @@ export function transformBackendBriefing(backendData: BackendBriefing): Briefing
   // Transform email insights
   if (backendData.email_insights && Object.keys(backendData.email_insights).length > 0) {
     const emailInsight = backendData.email_insights
+    const analysis = emailInsight.analysis || emailInsight.summary || 'Email insights available'
     items.push({
       id: `email-${backendData.user_id}-${Date.now()}`,
       type: 'email',
-      title: emailInsight.title || 'Email Analysis',
-      description: emailInsight.summary || emailInsight.analysis || 'Email insights available',
+      title: 'Email Analysis',
+      description: formatTextForDisplay(analysis).substring(0, 200) + (analysis.length > 200 ? '...' : ''),
       priority: determinePriority(emailInsight),
       time: timestamp,
-      fullDescription: emailInsight.detailed_analysis || emailInsight.analysis,
+      fullDescription: formatTextForDisplay(analysis),
       sender: emailInsight.key_sender || 'Multiple senders',
       tags: emailInsight.categories || ['email', 'communication'],
       actionItems: emailInsight.action_items || [],
@@ -43,14 +84,15 @@ export function transformBackendBriefing(backendData: BackendBriefing): Briefing
   // Transform calendar insights
   if (backendData.calendar_insights && Object.keys(backendData.calendar_insights).length > 0) {
     const calendarInsight = backendData.calendar_insights
+    const analysis = calendarInsight.analysis || calendarInsight.summary || 'Calendar insights available'
     items.push({
       id: `calendar-${backendData.user_id}-${Date.now()}`,
       type: 'event',
-      title: calendarInsight.title || 'Calendar Analysis',
-      description: calendarInsight.summary || calendarInsight.analysis || 'Calendar insights available',
+      title: 'Calendar Analysis',
+      description: formatTextForDisplay(analysis).substring(0, 200) + (analysis.length > 200 ? '...' : ''),
       priority: determinePriority(calendarInsight),
       time: timestamp,
-      fullDescription: calendarInsight.detailed_analysis || calendarInsight.analysis,
+      fullDescription: formatTextForDisplay(analysis),
       tags: calendarInsight.categories || ['calendar', 'meetings'],
       actionItems: calendarInsight.action_items || calendarInsight.upcoming_events || [],
       relatedLinks: calendarInsight.meeting_links || []
@@ -60,14 +102,15 @@ export function transformBackendBriefing(backendData: BackendBriefing): Briefing
   // Transform social insights
   if (backendData.social_insights && Object.keys(backendData.social_insights).length > 0) {
     const socialInsight = backendData.social_insights
+    const analysis = socialInsight.analysis || socialInsight.summary || 'Social media insights available'
     items.push({
       id: `social-${backendData.user_id}-${Date.now()}`,
       type: 'reminder',
-      title: socialInsight.title || 'Social Media Analysis',
-      description: socialInsight.summary || socialInsight.analysis || 'Social media insights available',
+      title: 'Social Media Analysis',
+      description: formatTextForDisplay(analysis).substring(0, 200) + (analysis.length > 200 ? '...' : ''),
       priority: determinePriority(socialInsight),
       time: timestamp,
-      fullDescription: socialInsight.detailed_analysis || socialInsight.analysis,
+      fullDescription: formatTextForDisplay(analysis),
       tags: socialInsight.platforms || ['social', 'messages'],
       actionItems: socialInsight.action_items || [],
       relatedLinks: socialInsight.platform_links || []
@@ -77,14 +120,15 @@ export function transformBackendBriefing(backendData: BackendBriefing): Briefing
   // Transform priority recommendations as tasks
   if (backendData.priority_recommendations && Object.keys(backendData.priority_recommendations).length > 0) {
     const priorityRec = backendData.priority_recommendations
+    const analysis = priorityRec.analysis || priorityRec.summary || backendData.summary || 'AI-generated priority recommendations'
     items.push({
       id: `priority-${backendData.user_id}-${Date.now()}`,
       type: 'task',
-      title: priorityRec.title || 'Priority Recommendations',
-      description: priorityRec.summary || backendData.summary || 'AI-generated priority recommendations',
+      title: 'Priority Recommendations',
+      description: formatTextForDisplay(analysis).substring(0, 200) + (analysis.length > 200 ? '...' : ''),
       priority: 'high',
       time: timestamp,
-      fullDescription: priorityRec.detailed_recommendations || backendData.summary,
+      fullDescription: formatTextForDisplay(analysis),
       tags: ['ai-recommendations', 'priority'],
       actionItems: priorityRec.top_priorities || priorityRec.recommendations || [],
       relatedLinks: []
@@ -93,14 +137,15 @@ export function transformBackendBriefing(backendData: BackendBriefing): Briefing
 
   // If no specific insights, create a general summary item
   if (items.length === 0 && backendData.summary) {
+    const summary = backendData.summary
     items.push({
       id: `summary-${backendData.user_id}-${Date.now()}`,
       type: 'task',
       title: 'Daily Summary',
-      description: backendData.summary,
+      description: formatTextForDisplay(summary).substring(0, 200) + (summary.length > 200 ? '...' : ''),
       priority: 'medium',
       time: timestamp,
-      fullDescription: backendData.summary,
+      fullDescription: formatTextForDisplay(summary),
       tags: ['daily-summary', 'ai-generated'],
       actionItems: [],
       relatedLinks: []
