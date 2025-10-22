@@ -160,7 +160,9 @@ class ApiClient {
 
   // Chat with agents
   async chatWithAgent(agentType: string, message: string): Promise<ApiResponse> {
-    const response = await this.post('/agent/chat', { agent_type: agentType, message })
+    // For general chat, use a different endpoint or agent type
+    const endpoint = agentType === 'general' ? '/agent/chat' : '/agent/chat'
+    const response = await this.post(endpoint, { agent_type: agentType, message })
     
     // Format the response message if it exists
     if (response.message) {
