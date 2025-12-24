@@ -4,10 +4,10 @@
 
 ## 🚀 Live Demo & Documentation
 
-**📚 Documentation:** [https://your-username.github.io/Londoolink-AI/](https://your-username.github.io/Londoolink-AI/)  
-**Frontend:** [https://londoolink-ai.netlify.app](https://londoolink-ai.netlify.app)  
-**Backend API:** [https://londoolink-backend.up.railway.app](https://londoolink-backend.up.railway.app)  
-**API Documentation:** [https://londoolink-backend.up.railway.app/docs](https://londoolink-backend.up.railway.app/docs)
+**📚 Documentation:** [https://shakiran-nannyombi.github.io/Londoolink-AI/](https://shakiran-nannyombi.github.io/Londoolink-AI/)  
+**Frontend:** [https://londoolink-ai.vercel.app/](https://londoolink-ai.vercel.app/)  
+**Backend API:** [https://londoolink-ai.onrender.com](https://londoolink-ai.onrender.com)  
+**API Documentation:** [https://londoolink-ai.onrender.com/docs](https://londoolink-ai.onrender.com/docs)
 
 > **Note:** The live demo is currently in development mode. For production deployment, environment variables need to be configured with actual API keys and database connections.
 
@@ -113,7 +113,7 @@ Comprehensive data flow showing the complete journey from external services thro
    - `DATABASE_URL`: Your PostgreSQL connection string
    - `GROQ_API_KEY`: Your Groq API key
    - `OPENAI_API_KEY`: Your OpenAI API key (optional)
-   - `ALLOWED_ORIGINS`: Your frontend domain (e.g., `https://your-frontend.vercel.app`)
+   - `ALLOWED_ORIGINS`: Your frontend domain (e.g., `https://londoolink-ai.vercel.app`)
    - `ENVIRONMENT`: Set to `production`
 5. **Deploy** and get your backend URL
 
@@ -126,7 +126,7 @@ Comprehensive data flow showing the complete journey from external services thro
    - Build command: `npm run build`
    - Output directory: `.next`
 4. **Add environment variable**:
-   - `NEXT_PUBLIC_API_BASE_URL`: Your backend URL (e.g., `https://your-backend.onrender.com`)
+   - `NEXT_PUBLIC_API_BASE_URL`: Your backend URL (e.g., `https://londoolink-ai.onrender.com`)
 5. **Deploy** and get your frontend URL
 
 ### CORS Configuration
