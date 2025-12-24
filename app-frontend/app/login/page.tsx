@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,7 +13,7 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle"
 import { apiClient } from "@/lib/api"
 import { transformUserData, transformError, type AppError } from "@/lib/transformers"
 
-export default function LoginPage() {
+function LoginPageContent() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [email, setEmail] = useState("")
@@ -79,6 +80,59 @@ export default function LoginPage() {
         }
     }
 
+    const handleGoogleSuccess = async (credentialResponse: any) => {
+        setIsLoading(true)
+        setError(null)
+
+        try {
+            // Send the ID token to our backend
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/auth/google-login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_token: credentialResponse.credential
+                })
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.detail || 'Google login failed')
+            }
+
+            if (data.access_token) {
+                // Decode the JWT to get the email (simple base64 decode of payload)
+                const payload = JSON.parse(atob(data.access_token.split('.')[1]))
+                const userEmail = payload.sub
+
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem("londoolink_token", data.access_token)
+                    localStorage.setItem("londoolink_email", userEmail)
+                }
+                router.push("/")
+            } else {
+                throw new Error('No access token received')
+            }
+        } catch (err: any) {
+            console.error('Google login failed:', err)
+            setError({
+                type: 'auth',
+                message: err.message || 'Google login failed. Please try again.'
+            })
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleGoogleError = () => {
+        setError({
+            type: 'auth',
+            message: 'Google login was cancelled or failed'
+        })
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/10 relative overflow-hidden">
             <AnimatedBackground />
@@ -111,7 +165,11 @@ export default function LoginPage() {
                             <div className="absolute inset-0 bg-primary/20 rounded-2xl rotate-6 backdrop-blur-sm" />
                             <div className="absolute inset-0 bg-secondary/20 rounded-2xl -rotate-6 backdrop-blur-sm" />
                             <div className="relative w-full h-full bg-background/50 rounded-2xl flex items-center justify-center border border-primary/20 shadow-inner">
-                                <span className="text-4xl">🤖</span>
+                                <img
+                                    src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                                    alt="Londoolink Logo"
+                                    className="w-16 h-16 object-contain"
+                                />
                             </div>
                         </div>
                         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent mb-3">
@@ -169,6 +227,28 @@ export default function LoginPage() {
                         </Button>
                     </motion.form>
 
+                    {/* Divider */}
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-border"></div>
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                        </div>
+                    </div>
+
+                    {/* Google Login Button */}
+                    <div className="flex justify-center">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={handleGoogleError}
+                            useOneTap
+                            theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                            size="large"
+                            width="100%"
+                        />
+                    </div>
+
                     {error && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -199,5 +279,19 @@ export default function LoginPage() {
                 </Card>
             </motion.div>
         </div>
+    )
+}
+
+export default function LoginPage() {
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+    if (!googleClientId) {
+        console.warn('NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google login will not work.')
+    }
+
+    return (
+        <GoogleOAuthProvider clientId={googleClientId || ''}>
+            <LoginPageContent />
+        </GoogleOAuthProvider>
     )
 }

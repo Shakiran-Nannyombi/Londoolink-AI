@@ -36,5 +36,8 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str
 
+    # Google OAuth
+    GOOGLE_CLIENT_ID: Optional[str] = None
+
 
 settings = Settings()
