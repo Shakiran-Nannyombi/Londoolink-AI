@@ -17,6 +17,11 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Londoolink AI",
   },
+  icons: {
+    icon: "/logoLondo.png",
+    shortcut: "/logoLondo.png",
+    apple: "/logoLondo.png",
+  },
 }
 
 export default function RootLayout({
@@ -26,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body 
+      <body
         className={`${inter.variable} font-sans antialiased`}
         suppressHydrationWarning={true}
       >
