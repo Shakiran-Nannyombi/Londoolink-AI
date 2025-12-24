@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - Londoolink AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+                        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen">
+    <button onclick="scrollToTop()"
+        class="scroll-to-top bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+        id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 gradient-text">Security & Privacy</h1>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg sticky top-4 z-10 shadow-lg">
+            <a href="index.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-home"></i> Overview
+            </a>
+            <a href="deployment.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-rocket"></i> Deployment
+            </a>
+            <a href="architecture.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-project-diagram"></i> Architecture
+            </a>
+            <a href="api.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-code"></i> API Reference
+            </a>
+            <a href="setup.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-cog"></i> Local Setup
+            </a>
+            <a href="security.html" class="nav-link active px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-lock"></i> Security
+            </a>
+        </div>
+
+        <!-- Content -->
+        <div class="animate-fade-in">
+            <div class="prose prose-invert max-w-none">
+                <p class="text-lg text-muted-foreground mb-8">
+                    Londoolink AI employs a sophisticated dual-database architecture and military-grade encryption
+                    to ensure optimal performance and maximum security for user data.
+                </p>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-database text-blue-400"></i> Dual-Database Architecture
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-table text-blue-400"></i> PostgreSQL (Relational)
+                        </h4>
+                        <p class="text-sm text-muted-foreground mb-2"><strong>Purpose:</strong> User accounts, auth
+                            tokens, structured metadata.</p>
+                        <ul class="text-sm space-y-1 text-muted-foreground">
+                            <li>• ACID compliance for transactional integrity</li>
+                            <li>• Normalized schema for complex relationships</li>
+                            <li>• Stores user profiles and system config</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-vector-square text-purple-400"></i> ChromaDB (Vector)
+                        </h4>
+                        <p class="text-sm text-muted-foreground mb-2"><strong>Purpose:</strong> Semantic search,
+                            embeddings, unstructured content.</p>
+                        <ul class="text-sm space-y-1 text-muted-foreground">
+                            <li>• Optimized for high-dimensional vector search</li>
+                            <li>• Stores email/calendar content embeddings</li>
+                            <li>• Enables RAG (Retrieval Augmented Generation)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-red-400"></i> Security Measures
+                </h3>
+
+                <div class="space-y-6">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3">Password Security</h4>
+                        <p class="text-sm text-muted-foreground mb-3">
+                            User passwords are never stored in plain text. We use <strong>Argon2</strong>,
+                            a memory-hard password hashing function.
+                        </p>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3">Credential Encryption</h4>
+                        <p class="text-sm text-muted-foreground mb-3">
+                            Third-party credentials (API keys, OAuth tokens) are encrypted at rest using
+                            <strong>AES-256 encryption</strong> (Fernet). Keys are managed via environment variables
+                            and never committed to code.
+                        </p>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3">JWT Authentication</h4>
+                        <ul class="text-sm space-y-2 text-muted-foreground">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-400 mt-1"></i>
+                                <span><strong>Algorithm:</strong> HS256 with rotating secret keys</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-400 mt-1"></i>
+                                <span><strong>Expiration:</strong> Short-lived access tokens (30 mins) with secure
+                                    refresh mechanism</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-6 mt-8">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-user-shield text-red-400"></i> Privacy & Compliance
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <ul class="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                            <li><strong>GDPR Compliance:</strong> Data handling follows strict privacy principles</li>
+                            <li><strong>Data Minimization:</strong> collecting only necessary data</li>
+                        </ul>
+                        <ul class="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                            <li><strong>Right to Deletion:</strong> Users can request full data purge</li>
+                            <li><strong>Audit Logging:</strong> Trails for all data access</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

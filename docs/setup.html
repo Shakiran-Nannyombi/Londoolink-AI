@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Setup - Londoolink AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+                        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen">
+    <button onclick="scrollToTop()"
+        class="scroll-to-top bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+        id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 gradient-text">Local Development Setup</h1>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg sticky top-4 z-10 shadow-lg">
+            <a href="index.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-home"></i> Overview
+            </a>
+            <a href="deployment.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-rocket"></i> Deployment
+            </a>
+            <a href="architecture.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-project-diagram"></i> Architecture
+            </a>
+            <a href="api.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-code"></i> API Reference
+            </a>
+            <a href="setup.html" class="nav-link active px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-cog"></i> Local Setup
+            </a>
+            <a href="security.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-lock"></i> Security
+            </a>
+        </div>
+
+        <!-- Content -->
+        <div class="animate-fade-in">
+            <div class="prose prose-invert max-w-none">
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3">Prerequisites</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            Python 3.12+
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            <a href="https://docs.astral.sh/uv/" target="_blank"
+                                class="text-blue-400 hover:underline">uv</a> package manager (recommended)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            Docker Desktop (for Windows/Mac) or Docker Engine (Linux)
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-400"></i>
+                            Node.js 18+ (for frontend)
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3">Backend Setup</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>
+                            <p class="font-medium">Clone the Repository</p>
+                            <pre><code>git clone https://github.com/Shakiran-Nannyombi/Londoolink-AI.git
+cd Londoolink-AI/backend</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Install Dependencies</p>
+                            <pre><code>uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Environment Variables</p>
+                            <p class="mb-2">Create a <code>.env</code> file in the <code>backend</code> directory:</p>
+                            <pre><code>cp .env.example .env
+# Edit .env and add your API keys (OPENAI_API_KEY, etc.)</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Run the Server</p>
+                            <pre><code>uvicorn app.main:app --reload</code></pre>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-3">Frontend Setup</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-sm">
+                        <li>
+                            <p class="font-medium">Navigate to Frontend</p>
+                            <pre><code>cd ../app-frontend</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Install Dependencies</p>
+                            <pre><code>npm install</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Run Development Server</p>
+                            <pre><code>npm run dev</code></pre>
+                        </li>
+                        <li>
+                            <p class="font-medium">Access App</p>
+                            <p>Open <a href="http://localhost:3000"
+                                    class="text-blue-400 hover:underline">http://localhost:3000</a> in your browser.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>
