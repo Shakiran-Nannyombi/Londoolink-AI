@@ -161,7 +161,7 @@ Register a new user account.
 
 **Request:**
 ```bash
-curl -X POST "https://your-backend-url.com/api/v1/auth/register" \
+curl -X POST "https://londoolink-ai.onrender.com/api/v1/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -184,7 +184,7 @@ Authenticate user and receive JWT token.
 
 **Request:**
 ```bash
-curl -X POST "https://your-backend-url.com/api/v1/auth/login" \
+curl -X POST "https://londoolink-ai.onrender.com/api/v1/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",
@@ -208,7 +208,7 @@ Generate daily briefing using multi-agent workflow.
 
 **Request:**
 ```bash
-curl -X POST "https://your-backend-url.com/api/v1/agent/briefing/daily" \
+curl -X POST "https://londoolink-ai.onrender.com/api/v1/agent/briefing/daily" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -259,7 +259,7 @@ Analyze email content for priority and insights.
 
 **Request:**
 ```bash
-curl -X POST "https://your-backend-url.com/api/v1/agent/analyze/email" \
+curl -X POST "https://londoolink-ai.onrender.com/api/v1/agent/analyze/email" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
@@ -297,7 +297,7 @@ Search through user's data using semantic search.
 
 **Request:**
 ```bash
-curl -X POST "https://your-backend-url.com/api/v1/rag/search" \
+curl -X POST "https://londoolink-ai.onrender.com/api/v1/rag/search" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
