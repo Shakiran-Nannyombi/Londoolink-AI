@@ -168,15 +168,6 @@ div[style*="position: absolute"][style*="bottom"][style*="right"] {
   display: none !important;
 }
 
-/* Hide buttons containing debug text */
-button:contains("Send element"),
-button:contains("Send console"),
-button:contains("debug"),
-div:contains("Send element"),
-div:contains("Send console") {
-  display: none !important;
-}
-
 /* Hide React DevTools and similar extensions */
 #react-devtools-portal,
 .__react-devtools-portal__,
