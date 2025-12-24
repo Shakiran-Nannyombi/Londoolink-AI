@@ -59,6 +59,12 @@
       "regex": "^/documentation(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/documentation(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
     }
   ],
   "dataRoutes": [],
