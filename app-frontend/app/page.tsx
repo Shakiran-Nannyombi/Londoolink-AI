@@ -266,8 +266,12 @@ export default function DashboardPage() {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-3"
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center text-2xl shadow-lg shadow-primary/20">
-              🤖
+            <div className="w-16 h-16 flex items-center justify-center">
+              <img
+                src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                alt="Londoolink Logo"
+                className="w-16 h-16 object-contain"
+              />
             </div>
             <div>
               <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
