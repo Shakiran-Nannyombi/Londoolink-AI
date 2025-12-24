@@ -5,6 +5,7 @@ An intelligent agent backend powered by LangGraph multi-agent orchestration that
 ## Quick Start
 
 ### Prerequisites
+
 - Python 3.12+
 - [uv](https://github.com/astral-sh/uv) package manager
 - Docker and Docker Compose
@@ -40,21 +41,25 @@ uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 **API Available at:**
-- **Base URL**: http://localhost:8000
-- **Interactive Docs**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+
+- **Base URL**: <http://localhost:8000>
+- **Interactive Docs**: <http://localhost:8000/docs>
+- **ReDoc**: <http://localhost:8000/redoc>
 
 ## Key API Endpoints
 
 **Authentication:**
+
 - `POST /api/v1/auth/register` - Register new user
 - `POST /api/v1/auth/login` - Login and get JWT token
 
 **LangGraph Multi-Agent System:**
+
 - `GET /api/v1/agent/briefing/daily` - Get AI-powered daily briefing
 - `POST /api/v1/agent/analyze/document` - Analyze document with AI
 
 **Data Ingestion:**
+
 - `POST /api/v1/ingest/email` - Ingest email data
 - `POST /api/v1/ingest/calendar` - Ingest calendar data
 - `POST /api/v1/ingest/generic` - Ingest social media/messages
@@ -100,4 +105,4 @@ curl -X GET "http://localhost:8000/api/v1/agent/briefing/daily" \
 
 ---
 
-**Backend is ready!** Visit http://localhost:8000/docs for interactive API documentation.
+**Backend is ready!** Visit <http://localhost:8000/docs> for interactive API documentation.
