@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment - Londoolink AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+                        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen">
+    <button onclick="scrollToTop()"
+        class="scroll-to-top bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+        id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 gradient-text">Deployment Guide</h1>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg sticky top-4 z-10 shadow-lg">
+            <a href="index.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-home"></i> Overview
+            </a>
+            <a href="deployment.html" class="nav-link active px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-rocket"></i> Deployment
+            </a>
+            <a href="architecture.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-project-diagram"></i> Architecture
+            </a>
+            <a href="api.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-code"></i> API Reference
+            </a>
+            <a href="setup.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-cog"></i> Local Setup
+            </a>
+            <a href="security.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-lock"></i> Security
+            </a>
+        </div>
+
+        <!-- Content -->
+        <div class="animate-fade-in">
+            <div class="prose prose-invert max-w-none">
+                <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6 mb-8">
+                    <h3 class="text-xl font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-400"></i> Production URLs
+                    </h3>
+                    <p class="text-muted-foreground mb-4">
+                        The application is currently deployed and accessible at:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-muted-foreground">
+                        <li><strong>Frontend (Vercel):</strong> <a href="https://londoolink-ai.vercel.app/"
+                                class="text-blue-400 hover:underline">https://londoolink-ai.vercel.app/</a></li>
+                        <li><strong>Backend (Render):</strong> <a href="https://londoolink-ai.onrender.com"
+                                class="text-blue-400 hover:underline">https://londoolink-ai.onrender.com</a></li>
+                    </ul>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-server text-blue-400"></i> Backend (Render)
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">1</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Connect Repository</p>
+                                    <p class="text-sm text-muted-foreground">Link your GitHub repo to Render.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">2</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Configuration</p>
+                                    <p class="text-sm text-muted-foreground">Root Directory: <code>backend</code></p>
+                                    <p class="text-sm text-muted-foreground">Build Command:
+                                        <code>pip install -r requirements.txt</code></p>
+                                    <p class="text-sm text-muted-foreground">Start Command:
+                                        <code>uvicorn app.main:app --host 0.0.0.0 --port 10000</code></p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">3</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Environment Variables</p>
+                                    <p class="text-sm text-muted-foreground">Add all strictly required variables (Keys,
+                                        DB URL, etc.).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-globe text-green-400"></i> Frontend (Vercel)
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">1</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Import Project</p>
+                                    <p class="text-sm text-muted-foreground">Import the same repo into Vercel.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">2</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Configuration</p>
+                                    <p class="text-sm text-muted-foreground">Root Directory: <code>app-frontend</code>
+                                    </p>
+                                    <p class="text-sm text-muted-foreground">Framework Preset: Next.js</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="step-number">3</span>
+                                <div class="flex-1">
+                                    <p class="font-medium">Environment Variables</p>
+                                    <p class="text-sm text-muted-foreground">Set <code>NEXT_PUBLIC_API_BASE_URL</code>
+                                        to your Render backend URL.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 flex items-center gap-2">
+                    <i class="fas fa-key text-yellow-400"></i> Environment Variables
+                </h3>
+
+                <h4 class="text-lg font-medium mb-3">Backend Variables</h4>
+                <div class="relative">
+                    <pre><code>SECRET_KEY=...
+ENCRYPTION_KEY=...
+GROQ_API_KEY=...
+OPENAI_API_KEY=...
+GEMINI_API_KEY=...
+ENVIRONMENT=production
+ALLOWED_ORIGINS=https://londoolink-ai.vercel.app,http://localhost:3000
+DATABASE_URL=postgresql://...
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30</code></pre>
+                    <button onclick="copyCode(this)"
+                        class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+
+                <h4 class="text-lg font-medium mb-3 mt-6">Frontend Variables</h4>
+                <div class="relative">
+                    <pre><code>NEXT_PUBLIC_API_BASE_URL=https://londoolink-ai.onrender.com</code></pre>
+                    <button onclick="copyCode(this)"
+                        class="copy-button px-3 py-1 bg-primary text-primary-foreground rounded text-sm hover:opacity-80">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

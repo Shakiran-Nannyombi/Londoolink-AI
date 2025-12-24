@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture - Londoolink AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+                        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+                        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+                        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen">
+    <button onclick="scrollToTop()"
+        class="scroll-to-top bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+        id="scrollTopBtn">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 gradient-text">System Architecture</h1>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8 bg-muted p-2 rounded-lg sticky top-4 z-10 shadow-lg">
+            <a href="index.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-home"></i> Overview
+            </a>
+            <a href="deployment.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-rocket"></i> Deployment
+            </a>
+            <a href="architecture.html"
+                class="nav-link active px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-project-diagram"></i> Architecture
+            </a>
+            <a href="api.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-code"></i> API Reference
+            </a>
+            <a href="setup.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-cog"></i> Local Setup
+            </a>
+            <a href="security.html" class="nav-link px-6 py-3 rounded-md font-medium flex items-center gap-2">
+                <i class="fas fa-lock"></i> Security
+            </a>
+        </div>
+
+        <!-- Content -->
+        <div class="animate-fade-in">
+            <div class="prose prose-invert max-w-none">
+                <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <i class="fas fa-sitemap text-blue-400"></i> High-Level Overview
+                </h2>
+
+                <div class="diagram-container mb-8">
+                    <!-- Mermaid Diagram Replacement with descriptive list since raw mermaid rendering requires parser -->
+                    <div class="bg-gray-900 p-4 rounded text-center">
+                        <div class="grid md:grid-cols-4 gap-4 items-center">
+                            <div class="p-4 bg-blue-900/40 rounded border border-blue-500/20">
+                                <strong>Client Layer</strong><br>
+                                Next.js Frontend<br>
+                                <span class="text-xs text-muted-foreground">(Vercel)</span>
+                            </div>
+                            <div class="text-2xl text-muted-foreground">↔</div>
+                            <div class="p-4 bg-green-900/40 rounded border border-green-500/20">
+                                <strong>API Gateway</strong><br>
+                                FastAPI Backend<br>
+                                <span class="text-xs text-muted-foreground">(Render)</span>
+                            </div>
+                            <div class="text-2xl text-muted-foreground">↔</div>
+                            <div class="p-4 bg-purple-900/40 rounded border border-purple-500/20">
+                                <strong>Agent Core</strong><br>
+                                LangGraph + Groq<br>
+                                <span class="text-xs text-muted-foreground">(Orchestration)</span>
+                            </div>
+                            <!-- Side Databases -->
+                            <div class="ml-4 flex flex-col gap-2">
+                                <div class="px-3 py-1 bg-gray-800 rounded text-xs border border-gray-700">PostgreSQL
+                                    (Users)</div>
+                                <div class="px-3 py-1 bg-gray-800 rounded text-xs border border-gray-700">ChromaDB
+                                    (Vectors)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-envelope text-blue-400"></i> Email Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Summarizes threads</li>
+                                    <li>• Extracts action items</li>
+                                    <li>• Detects urgency</li>
+                                    <li>• Drafts responses</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Smart summaries</li>
+                                    <li>• Priority labels</li>
+                                    <li>• Calendar invites</li>
+                                    <li>• Task entries</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-calendar-alt text-green-400"></i> Calendar Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Conflict detection</li>
+                                    <li>• Meeting optimization</li>
+                                    <li>• Smart scheduling</li>
+                                    <li>• Preparation briefs</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Schedule Blocks</li>
+                                    <li>• Focus time slots</li>
+                                    <li>• Meeting briefs</li>
+                                    <li>• Rescheduling options</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-sort-amount-down text-purple-400"></i> Priority Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Cross-domain scoring</li>
+                                    <li>• Deadline ranking</li>
+                                    <li>• Resource allocation</li>
+                                    <li>• Decision tree analysis</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Unified matrix</li>
+                                    <li>• Task recommendations</li>
+                                    <li>• Focus suggestions</li>
+                                    <li>• Delegation tips</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border">
+                        <h4 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                            <i class="fas fa-share-alt text-yellow-400"></i> Social Agent
+                        </h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm font-medium mb-2">Capabilities:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Sentiment analysis</li>
+                                    <li>• Trend detection</li>
+                                    <li>• Relationship mapping</li>
+                                    <li>• Content scoring</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium mb-2">Output:</p>
+                                <ul class="text-sm space-y-1 text-muted-foreground">
+                                    <li>• Engagement insights</li>
+                                    <li>• Trending topics</li>
+                                    <li>• Network analytics</li>
+                                    <li>• Post ideas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-semibold mb-4 mt-8">Data Flow Example: Daily Briefing</h3>
+
+                <div class="bg-muted p-6 rounded-lg">
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold">
+                                1</div>
+                            <div>
+                                <p class="font-medium">System Initialization</p>
+                                <p class="text-sm text-muted-foreground">Load user preferences, historical context, and
+                                    previous state</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center font-bold">
+                                2</div>
+                            <div>
+                                <p class="font-medium">Parallel Data Collection</p>
+                                <p class="text-sm text-muted-foreground">All agents simultaneously gather data from
+                                    their respective sources</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center font-bold">
+                                3</div>
+                            <div>
+                                <p class="font-medium">Independent Analysis</p>
+                                <p class="text-sm text-muted-foreground">Each agent processes data using specialized AI
+                                    models and algorithms</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center font-bold">
+                                4</div>
+                            <div>
+                                <p class="font-medium">Cross-Agent Communication</p>
+                                <p class="text-sm text-muted-foreground">Agents share insights through the LangGraph
+                                    state object</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center font-bold">
+                                5</div>
+                            <div>
+                                <p class="font-medium">Priority Synthesis</p>
+                                <p class="text-sm text-muted-foreground">Priority Agent consolidates all insights into
+                                    unified recommendations</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center font-bold">
+                                6</div>
+                            <div>
+                                <p class="font-medium">User Presentation</p>
+                                <p class="text-sm text-muted-foreground">Frontend displays intelligent briefing with
+                                    actionable insights</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

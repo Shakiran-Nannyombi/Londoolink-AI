@@ -4,12 +4,12 @@ import React, { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { 
-  BookOpen, 
-  Code, 
-  Database, 
-  Shield, 
-  Zap, 
+import {
+  BookOpen,
+  Code,
+  Database,
+  Shield,
+  Zap,
   ArrowLeft,
   ExternalLink,
   CheckCircle,
@@ -35,7 +35,7 @@ export default function DocumentationPage() {
         </CardHeader>
         <CardContent className="text-slate-300 space-y-4">
           <p>Deploy your project to make it live and accessible on the internet.</p>
-          
+
           <div className="space-y-4">
             <div>
               <h4 className="font-semibold text-white mb-2">Backend Deployment (Railway/Render)</h4>
@@ -92,7 +92,7 @@ export default function DocumentationPage() {
               Add this to your backend/app/main.py:
             </p>
             <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`from fastapi.middleware.cors import CORSMiddleware
+              {`from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
     "http://localhost:5173",
@@ -121,7 +121,7 @@ app.add_middleware(
         </CardHeader>
         <CardContent className="text-slate-300 space-y-4">
           <p>Ensure your repository is clean, professional, and portfolio-ready.</p>
-          
+
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-green-400" />
@@ -160,11 +160,11 @@ app.add_middleware(
         </CardHeader>
         <CardContent className="text-slate-300 space-y-4">
           <p>Follow these guidelines to maintain a professional repository structure.</p>
-          
+
           <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
             <h4 className="font-semibold text-white mb-3">Recommended Directory Structure</h4>
             <pre className="text-sm text-slate-300">
-{`londoolink-ai/
+              {`londoolink-ai/
 ├── backend/
 │   ├── app/
 │   │   ├── main.py
@@ -252,24 +252,24 @@ app.add_middleware(
         <Card className="mb-8 bg-white/5 border-white/10">
           <CardContent className="p-6">
             <div className="flex flex-wrap gap-2">
-              <Button 
-                variant={activeTab === "deployment" ? "default" : "ghost"} 
+              <Button
+                variant={activeTab === "deployment" ? "default" : "ghost"}
                 className={`justify-start ${activeTab === "deployment" ? "bg-primary text-primary-foreground" : "text-slate-300 hover:bg-white/10"}`}
                 onClick={() => setActiveTab("deployment")}
               >
                 <GitBranch className="w-4 h-4 mr-2" />
                 Deployment Guide
               </Button>
-              <Button 
-                variant={activeTab === "technical" ? "default" : "ghost"} 
+              <Button
+                variant={activeTab === "technical" ? "default" : "ghost"}
                 className={`justify-start ${activeTab === "technical" ? "bg-primary text-primary-foreground" : "text-slate-300 hover:bg-white/10"}`}
                 onClick={() => setActiveTab("technical")}
               >
                 <Code className="w-4 h-4 mr-2" />
                 Technical Documentation
               </Button>
-              <Button 
-                variant={activeTab === "repository" ? "default" : "ghost"} 
+              <Button
+                variant={activeTab === "repository" ? "default" : "ghost"}
                 className={`justify-start ${activeTab === "repository" ? "bg-primary text-primary-foreground" : "text-slate-300 hover:bg-white/10"}`}
                 onClick={() => setActiveTab("repository")}
               >
@@ -291,7 +291,7 @@ app.add_middleware(
 
           {/* Right Column - Quick Reference */}
           <div className="space-y-6">
-            
+
             {/* Tech Stack */}
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
@@ -310,7 +310,7 @@ app.add_middleware(
                     <Badge variant="secondary" className="text-xs">Tailwind CSS</Badge>
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold text-white text-sm mb-2">Backend</h4>
                   <div className="flex flex-wrap gap-1">
@@ -320,7 +320,7 @@ app.add_middleware(
                     <Badge variant="secondary" className="text-xs">PostgreSQL</Badge>
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold text-white text-sm mb-2">AI & ML</h4>
                   <div className="flex flex-wrap gap-1">
