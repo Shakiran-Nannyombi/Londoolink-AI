@@ -1,247 +1,207 @@
-# Londoolink AI
+# Londoolink AI - Your Intelligent Digital Twin
 
-*An intelligent agent that securely tracks and links your digital life, ensuring you never miss what truly matters.*
+A comprehensive AI-powered personal assistant that manages your emails, calendar, and communications with advanced LangGraph multi-agent architecture.
 
-## 🚀 Live Demo & Documentation
+## 🌟 Features
 
-**📚 Documentation:** [https://shakiran-nannyombi.github.io/Londoolink-AI/](https://shakiran-nannyombi.github.io/Londoolink-AI/)  
-**Frontend:** [https://londoolink-ai.vercel.app/](https://londoolink-ai.vercel.app/)  
-**Backend API:** [https://londoolink-ai.onrender.com](https://londoolink-ai.onrender.com)  
-**API Documentation:** [https://londoolink-ai.onrender.com/docs](https://londoolink-ai.onrender.com/docs)
+### Core Functionality
+- **Multi-Agent AI System**: Specialized agents for email, calendar, social media, and general assistance
+- **Daily Briefings**: AI-generated summaries of your important tasks and communications
+- **Smart Prioritization**: Automatic categorization of tasks by urgency and importance
+- **Real-time Chat**: Interactive chatbot for instant assistance
 
-> **Note:** The live demo is currently in development mode. For production deployment, environment variables need to be configured with actual API keys and database connections.
+### Authentication & Security
+- **Multi-Step Registration**: GDPR-compliant signup with consent management
+- **Two-Factor Authentication (2FA)**: TOTP-based security with QR codes and backup codes
+- **Secure Token Management**: JWT-based authentication with automatic refresh
+- **Privacy First**: Encrypted storage and user consent tracking
+
+### Service Integrations
+- **Email**: Connect Gmail or Outlook (OAuth ready)
+- **WhatsApp**: Business API integration (QR code setup)
+- **SMS**: Twilio/MessageBird support
+- **Status Tracking**: Real-time connection monitoring
+
+### User Management
+- **Comprehensive Profile**: Editable user information with stats
+- **Settings Dashboard**: 5 tabs (General, Notifications, Privacy, Integrations, Security)
+- **Theme Support**: Light/Dark mode with system preference detection
+- **Internationalization**: Multi-language and timezone support
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+- PostgreSQL or SQLite
+
+### Backend Setup
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Run migrations
+alembic upgrade head
+
+# Start server
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Frontend Setup
+```bash
+cd app-frontend
+npm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Edit .env.local with your API URL
+
+# Start development server
+npm run dev
+```
+
+Visit `http://localhost:3000` to access the application.
+
+## 📱 Usage
+
+### Registration
+1. Navigate to `/login`
+2. Click "Sign Up"
+3. Fill in your details (name, email, password, optional phone)
+4. Review and accept consent for data processing
+5. Automatically logged in after registration
+
+### Enable 2FA
+1. Go to Settings → Security
+2. Enter your password
+3. Scan QR code with Google Authenticator or similar app
+4. Enter verification code
+5. Save your backup codes securely
+
+### Connect Services
+1. Go to Settings → Integrations
+2. Click "Connect" on desired service
+3. Follow authentication flow
+4. Service will sync automatically
+
+## 🏗️ Architecture
+
+### Backend
+- **Framework**: FastAPI with async/await
+- **Database**: SQLAlchemy ORM with Alembic migrations
+- **AI**: LangGraph multi-agent system with OpenAI
+- **Security**: JWT tokens, password hashing, 2FA with pyotp
+- **Storage**: PostgreSQL/SQLite with encrypted sensitive data
+
+### Frontend
+- **Framework**: Next.js 14 with App Router
+- **UI**: Tailwind CSS with custom design system
+- **State**: Zustand for global state management
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+
+### Multi-Agent System
+- **Email Agent**: Analyzes and prioritizes emails
+- **Calendar Agent**: Manages events and scheduling
+- **Social Agent**: Monitors social media insights
+- **General Agent**: Handles queries and assistance
+- **Coordinator**: Routes requests to appropriate agents
+
+## 🔐 Security Features
+
+- **Password Hashing**: Bcrypt with salt
+- **JWT Tokens**: Secure access and refresh tokens
+- **2FA**: Time-based one-time passwords (TOTP)
+- **Backup Codes**: 10 single-use recovery codes
+- **Encrypted Storage**: Sensitive data encryption at rest
+- **GDPR Compliance**: User consent tracking and data management
+
+## 📊 API Endpoints
+
+### Authentication
+- `POST /api/v1/auth/register` - User registration
+- `POST /api/v1/auth/login` - User login
+- `POST /api/v1/auth/google-login` - Google OAuth login
+
+### Profile & Settings
+- `GET /api/v1/profile` - Get user profile
+- `PUT /api/v1/profile` - Update profile
+- `GET /api/v1/settings` - Get user settings
+- `PUT /api/v1/settings` - Update settings
+
+### Integrations
+- `GET /api/v1/integrations/status` - Get all integration statuses
+- `POST /api/v1/integrations/email/connect` - Connect email
+- `POST /api/v1/integrations/whatsapp/connect` - Connect WhatsApp
+- `POST /api/v1/integrations/sms/connect` - Connect SMS
+
+### Two-Factor Authentication
+- `GET /api/v1/2fa/status` - Check 2FA status
+- `POST /api/v1/2fa/enable` - Enable 2FA (returns QR code)
+- `POST /api/v1/2fa/verify` - Verify and activate 2FA
+- `POST /api/v1/2fa/disable` - Disable 2FA
+
+### Agent System
+- `POST /api/v1/agent/chat` - Chat with specific agent
+- `GET /api/v1/agent/briefing/daily` - Get daily briefing
+
+## 🛠️ Development
+
+### Project Structure
+```
+Londoolink-AI/
+├── backend/
+│   ├── app/
+│   │   ├── api/endpoints/     # API route handlers
+│   │   ├── models/            # SQLAlchemy models
+│   │   ├── schemas/           # Pydantic schemas
+│   │   ├── security/          # Auth & encryption
+│   │   └── services/          # Business logic
+│   ├── migrations/            # Alembic migrations
+│   └── requirements.txt
+├── app-frontend/
+│   ├── app/                   # Next.js pages
+│   ├── components/            # React components
+│   ├── lib/                   # Utilities & API client
+│   └── store/                 # Zustand stores
+└── README.md
+```
+
+### Environment Variables
+
+**Backend (.env)**
+```
+DATABASE_URL=sqlite:///./londoolink.db
+SECRET_KEY=your-secret-key-here
+OPENAI_API_KEY=your-openai-key
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
+
+**Frontend (.env.local)**
+```
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
+```
+
+## 📝 License
+
+MIT License - see LICENSE file for details
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📧 Support
+
+For issues and questions, please open an issue on GitHub.
 
 ---
 
-**Londoolink** (from the Luganda word *Okulondoola*, meaning "to track" or "to follow up on") is a backend system designed to be the central nervous system for your personal information. It combats digital overload by ingesting data from your various platforms, using an AI-powered multi-agent system to understand, prioritize, and summarize your most critical tasks, messages, and events.
-
-## The Problem
-
-In today's hyper-connected world, we are flooded with information from emails, calendars, and messaging apps. This leads to:
-
-* **Information Overload:** It's impossible to keep up with every notification.
-* **Missed Priorities:** Important emails from your manager get lost in a sea of newsletters.
-* **Forgotten Commitments:** Key deadlines and loved ones' birthdays slip through the cracks.
-* **Security Risks:** Centralizing this data requires a system built on a foundation of trust and security.
-
-## The Solution
-
-Londoolink provides a secure and intelligent backend powered by **LangGraph multi-agent orchestration** that connects to your digital world via automated workflows. It doesn't just aggregate data; it understands it. The system uses a sophisticated **LangGraph state machine** with specialized AI agents and a Retrieval-Augmented Generation (RAG) pipeline to deliver prioritized daily briefings, helping you focus on what's important.
-
-### Core Features
-
-* **LangGraph Multi-Agent System:** Advanced stateful workflow orchestration with specialized agents for email triage, calendar management, social media analysis, and priority synthesis.
-* **AI-Powered Daily Briefings:** Start your day with a comprehensive, AI-generated summary of your top priorities, including urgent emails, upcoming meetings, and important communications.
-* **Enterprise-Grade Security:** All sensitive credentials are protected with AES-256 encryption, JWT authentication, and Argon2 password hashing. Your data is never stored in plaintext.
-* **Context-Aware Memory (RAG):** Using ChromaDB vector database, Londoolink remembers past interactions and context, enabling intelligent insights across sessions.
-* **Stateful Workflow Management:** LangGraph provides durable execution, error recovery, and human-in-the-loop capabilities for reliable agent coordination.
-* **Automated Data Ingestion:** Integrated with n8n for continuous, automated data fetching from your connected services without manual intervention.
-* **Production-Ready Architecture:** Built with FastAPI, featuring comprehensive testing, modular design, and scalable deployment options.
-
-## System Architecture
-
-### **LangGraph Multi-Agent Workflow**
-
-Londoolink uses **LangGraph** for sophisticated multi-agent orchestration, providing stateful workflow management and reliable agent coordination.
-
-![Multi-Agent Workflow Architecture](./Diagrams/multi-agent-workflow-architecture.png)
-
-*The architecture shows how specialized AI agents (Email, Calendar, Social, Priority) work together through LangGraph's stateful orchestration, with RAG tools and external services integration.*
-
-### **Additional Architecture Diagrams**
-
-- [LangGraph State Flow Diagram](./Diagrams/langgraph-state-flow-diagram.png)
-- [Sequential Execution Flow](./Diagrams/sequential-execution-flow.png)
-- [Additional Workflow Diagrams](./Diagrams/)
-
-### **Key Architecture Components**
-
-#### **LangGraph Coordinator**
-- **Stateful Orchestration**: Manages workflow state across agent interactions
-- **Error Recovery**: Graceful handling of agent failures with partial results
-- **Conditional Routing**: Smart agent selection based on workflow state
-
-#### **Specialized AI Agents**
-- **Email Agent**: Analyzes emails for urgency, action items, and key contacts
-- **Calendar Agent**: Processes meetings, deadlines, and scheduling conflicts  
-- **Social Agent**: Handles social media and messaging platform analysis
-- **Priority Agent**: Synthesizes all analyses into prioritized daily briefings
-
-#### **RAG Pipeline Integration**
-- **Semantic Search**: ChromaDB vector database for context retrieval
-- **Document Memory**: Persistent storage of analyzed content
-- **Context Awareness**: Long-term memory across user sessions
-
-#### **Complete Data Flow Architecture**
-
-Comprehensive data flow showing the complete journey from external services through n8n automation, FastAPI endpoints, LangGraph multi-agent processing, to final daily briefing generation.
-
-- [Data Flow Architecture](./Diagrams/data-flow-architecture.png)
-
-**Data Flow Stages:**
-1. **Data Collection**: External APIs → n8n Workflows → FastAPI Ingestion
-2. **API Processing**: Authentication → Endpoint Routing → Business Logic  
-3. **AI Processing**: LangGraph Coordinator → Specialized Agents → LLM Analysis
-4. **Data Storage**: PostgreSQL (relational) + ChromaDB (vector embeddings)
-5. **Output Generation**: Agent Synthesis → Prioritization → JSON Response
-
-## Technology Stack
-
-| Category | Technology |
-| :--- | :--- |
-| **Backend** | FastAPI, Pydantic, SQLAlchemy, uvicorn |
-| **AI Orchestration** | **LangGraph** (stateful multi-agent workflows), LangChain |
-| **LLM Provider** | Groq (llama3-70b-8192), OpenAI (fallback) |
-| **Vector Database** | ChromaDB (embeddings & semantic search) |
-| **Embeddings** | Ollama (local embeddings), Sentence Transformers |
-| **Databases** | PostgreSQL (relational data), ChromaDB (vector storage) |
-| **Security** | Argon2 (password hashing), JWT (authentication), AES-256 (encryption) |
-| **Automation** | n8n (workflow automation & data ingestion) |
-| **Testing** | Custom test runners, comprehensive security testing |
-| **Deployment** | Docker, Railway / Render, uv (dependency management) |
-
-## Deployment
-
-### Backend Deployment (Railway/Render)
-
-1. **Create a Dockerfile** (already included in the repository)
-2. **Push your code** to a public GitHub repository
-3. **Create a new project** on Railway or Render and link it to your GitHub repo
-4. **Add environment variables** in the platform's secure environment section:
-   - `SECRET_KEY`: Generate with `openssl rand -hex 32`
-   - `ENCRYPTION_KEY`: Generate with `python -c "import os; print(os.urandom(32).hex())"`
-   - `DATABASE_URL`: Your PostgreSQL connection string
-   - `GROQ_API_KEY`: Your Groq API key
-   - `OPENAI_API_KEY`: Your OpenAI API key (optional)
-   - `ALLOWED_ORIGINS`: Your frontend domain (e.g., `https://londoolink-ai.vercel.app`)
-   - `ENVIRONMENT`: Set to `production`
-5. **Deploy** and get your backend URL
-
-### Frontend Deployment (Vercel/Netlify)
-
-1. **Push your code** to GitHub
-2. **Create a new project** on Vercel or Netlify and link to your GitHub repo
-3. **Configure build settings**:
-   - Root directory: `app-frontend`
-   - Build command: `npm run build`
-   - Output directory: `.next`
-4. **Add environment variable**:
-   - `NEXT_PUBLIC_API_BASE_URL`: Your backend URL (e.g., `https://londoolink-ai.onrender.com`)
-5. **Deploy** and get your frontend URL
-
-### CORS Configuration
-
-The backend automatically configures CORS based on the `ALLOWED_ORIGINS` environment variable. Make sure to include your frontend URL in this variable for production deployment.
-
-## Getting Started
-
-Follow these instructions to get the Londoolink backend up and running on your local machine.
-
-### Prerequisites
-
-* Python 3.12+
-* [uv](https://docs.astral.sh/uv/) (fast Python package manager)
-* Docker and Docker Compose (for databases)
-* An n8n instance (for automation)
-* API keys for Groq and/or OpenAI
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/Shakiran-Nannyombi/Londoolink-AI.git
-cd Londoolink-AI/backend
-```
-
-### 2. Set Up the Environment
-
-Install dependencies using uv (recommended) or pip:
-
-```bash
-# Using uv (recommended - faster)
-uv sync
-
-# Or using traditional pip
-python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-pip install -r requirements.txt
-```
-
-### 3. Configure Environment Variables
-
-Create a `.env` file in the project root. You can copy the template from `.env.example`.
-
-```bash
-cp .env.example .env
-```
-
-Now, open the `.env` file and fill in the required values.
-
-### 4. Run the Application
-
-```bash
-# Using uv (recommended)
-uv run uvicorn app.main:app --reload
-
-# Or using traditional method
-uvicorn app.main:app --reload
-```
-
-The API will be available at `http://127.0.0.1:8000`.
-
-### 5. Run Tests
-
-Verify your installation with the available test suite:
-
-```bash
-# Run security tests (recommended - core functionality)
-uv run pytest tests/test_security_minimal.py -v
-
-# Run all available tests
-uv run pytest tests/ -v
-
-# Available test modules:
-# - test_security_minimal.py (JWT, encryption, password hashing)
-# - test_agents.py (AI agent functionality)
-# - test_api.py (FastAPI endpoints)
-# - test_rag.py (RAG pipeline)
-```
-
-## API Documentation
-
-API documentation is automatically generated by FastAPI. Once the application is running, you can access it at:
-
-* **Swagger UI:** `http://127.0.0.1:8000/docs`
-* **ReDoc:** `http://127.0.0.1:8000/redoc`
-
-## Environment Variables
-
-To run this application, you need to set the following environment variables in a `.env` file:
-
-```dotenv
-# The secret key used to sign JWTs. Generate a strong random string.
-# (e.g., using `openssl rand -hex 32` in your terminal)
-SECRET_KEY="your_super_secret_jwt_key"
-
-# The secret key for symmetrically encrypting and decrypting credentials. MUST BE 32 bytes.
-# Generate with: python -c "import os; print(os.urandom(32).hex())"
-ENCRYPTION_KEY="your_32_byte_encryption_key"
-
-# Database connection string
-DATABASE_URL="postgresql+psycopg2://user:password@localhost/londoolink_db"
-
-# Groq API Key (primary LLM provider)
-GROQ_API_KEY="gsk_..."
-
-# OpenAI API Key (fallback LLM provider)
-OPENAI_API_KEY="sk-..."
-
-# The algorithm used for JWTs
-JWT_ALGORITHM="HS256"
-
-# Token expiration time in minutes
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Built with ❤️ using FastAPI, Next.js, and LangGraph

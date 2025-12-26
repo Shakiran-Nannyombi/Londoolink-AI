@@ -63,6 +63,7 @@ interface RegisterRequest {
   email: string
   password: string
   full_name?: string
+  phone_number?: string
 }
 
 interface BackendBriefing {
@@ -192,6 +193,131 @@ class ApiClient {
 
   async ingestGeneric(genericData: any): Promise<ApiResponse> {
     return this.post('/ingest/generic', genericData)
+  }
+
+  // Profile methods
+  async getProfile(): Promise<ApiResponse> {
+    return this.get('/profile/me')
+  }
+
+  async updateProfile(profileData: any): Promise<ApiResponse> {
+    return this.post('/profile/me', profileData)
+  }
+
+  async deleteProfile(): Promise<ApiResponse> {
+    const response = await fetch(`${API_BASE_URL}${API_VERSION}/profile/me`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders()
+    })
+    return await response.json()
+  }
+
+  // Settings methods
+  async getSettings(): Promise<ApiResponse> {
+    return this.get('/settings')
+  }
+
+  async updateSettings(settingsData: any): Promise<ApiResponse> {
+    return this.post('/settings', settingsData)
+  }
+
+  // Consent methods
+  async getConsents(): Promise<ApiResponse> {
+    return this.get('/consent')
+  }
+
+  async grantConsent(consentData: any): Promise<ApiResponse> {
+    return this.post('/consent', consentData)
+  }
+
+  async revokeConsent(serviceType: string): Promise<ApiResponse> {
+    const response = await fetch(`${API_BASE_URL}${API_VERSION}/consent/${serviceType}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders()
+    })
+    return await response.json()
+  }
+
+  // Integration methods
+  async getIntegrationsStatus(): Promise<ApiResponse> {
+    return this.get('/integrations/status')
+  }
+
+  async connectEmail(provider: 'gmail' | 'outlook', authCode?: string): Promise<ApiResponse> {
+    return this.post('/integrations/email/connect', {
+      provider,
+      authorization_code: authCode
+    })
+  }
+
+  async disconnectEmail(): Promise<ApiResponse> {
+    return this.post('/integrations/email/disconnect', {})
+  }
+
+  async connectWhatsApp(phoneNumber: string, verificationCode?: string): Promise<ApiResponse> {
+    return this.post('/integrations/whatsapp/connect', {
+      phone_number: phoneNumber,
+      verification_code: verificationCode
+    })
+  }
+
+  async disconnectWhatsApp(): Promise<ApiResponse> {
+    return this.post('/integrations/whatsapp/disconnect', {})
+  }
+
+  async connectSMS(provider: 'twilio' | 'messagebird', apiKey: string, apiSecret?: string, phoneNumber?: string): Promise<ApiResponse> {
+    return this.post('/integrations/sms/connect', {
+      provider,
+      api_key: apiKey,
+      api_secret: apiSecret,
+      phone_number: phoneNumber
+    })
+  }
+
+  async disconnectSMS(): Promise<ApiResponse> {
+    return this.post('/integrations/sms/disconnect', {})
+  }
+
+  // 2FA methods
+  async get2FAStatus(): Promise<ApiResponse> {
+    return this.get('/2fa/status')
+  }
+
+  async uploadProfilePicture(file: File): Promise<any> {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const token = localStorage.getItem("londoolink_token")
+    const response = await fetch(`${API_BASE_URL}${API_VERSION}/profile/picture`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      },
+      body: formData
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || error.message || 'Failed to upload image')
+    }
+
+    return response.json()
+  }
+
+  async enable2FA(password: string): Promise<ApiResponse> {
+    return this.post('/2fa/enable', { password })
+  }
+
+  async verify2FASetup(code: string): Promise<ApiResponse> {
+    return this.post('/2fa/verify', { code })
+  }
+
+  async disable2FA(password: string, code: string): Promise<ApiResponse> {
+    return this.post('/2fa/disable', { password, code })
+  }
+
+  async verify2FALogin(code: string): Promise<ApiResponse> {
+    return this.post('/2fa/verify-login', { code })
   }
 }
 
