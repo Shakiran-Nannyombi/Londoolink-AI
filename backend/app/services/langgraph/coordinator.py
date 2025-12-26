@@ -124,8 +124,7 @@ class LangGraphCoordinator:
             
             User message: {message}
             
-            Provide helpful, actionable advice about email management, organization, or analysis.
-            Be conversational and helpful."""
+            Keep your response brief and friendly (2-3 sentences max). Be casual and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
             return clean_ai_response(response.content)
@@ -143,8 +142,7 @@ class LangGraphCoordinator:
             
             User message: {message}
             
-            Provide helpful advice about calendar management, scheduling, time blocking, or meeting optimization.
-            Be conversational and helpful."""
+            Keep your response brief and friendly (2-3 sentences max). Be casual and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
             return clean_ai_response(response.content)
@@ -162,8 +160,7 @@ class LangGraphCoordinator:
             
             User message: {message}
             
-            Provide helpful advice about task prioritization, productivity, and workflow optimization.
-            Be conversational and helpful."""
+            Keep your response brief and friendly (2-3 sentences max). Be casual and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
             return clean_ai_response(response.content)
@@ -181,8 +178,7 @@ class LangGraphCoordinator:
             
             User message: {message}
             
-            Provide helpful advice about social media management, messaging optimization, or digital communication.
-            Be conversational and helpful."""
+            Keep your response brief and friendly (2-3 sentences max). Be casual and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
             return clean_ai_response(response.content)
@@ -200,7 +196,7 @@ class LangGraphCoordinator:
             
             User message: {message}
             
-            Provide helpful, accurate information and assistance. Be conversational and professional."""
+            Keep your response brief and friendly (2-3 sentences max). Be casual and helpful."""
             
             response = self.llm.invoke([HumanMessage(content=prompt)])
             return clean_ai_response(response.content)

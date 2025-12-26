@@ -12,14 +12,19 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle"
 import { apiClient } from "@/lib/api"
 import { transformUserData, transformError, type AppError } from "@/lib/transformers"
 import { Check } from "lucide-react"
+import { useAuthStore } from "@/store/authStore"
+import { ConsentForm } from "@/components/consent/ConsentForm"
 
 function LoginPageContent() {
     const router = useRouter()
+    const { login } = useAuthStore()
     const [isLoading, setIsLoading] = useState(false)
+    const [step, setStep] = useState(1) // 1: Login/Register basic, 2: Consent (only for Signup)
     const [fullName, setFullName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
     const [isLogin, setIsLogin] = useState(true)
     const [error, setError] = useState<AppError | null>(null)
     const [theme, setTheme] = useState<string>("light")
@@ -31,13 +36,6 @@ function LoginPageContent() {
             document.documentElement.classList.toggle("dark", savedTheme === "dark")
         }
     }, [])
-
-    useEffect(() => {
-        const token = localStorage.getItem("londoolink_token")
-        if (token) {
-            router.push("/")
-        }
-    }, [router])
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -56,6 +54,10 @@ function LoginPageContent() {
                 setError({ type: 'validation', message: 'Passwords do not match' })
                 return
             }
+            if (step === 1) {
+                setStep(2)
+                return
+            }
         }
 
         setIsLoading(true)
@@ -67,17 +69,28 @@ function LoginPageContent() {
             if (isLogin) {
                 response = await apiClient.login({ email, password })
             } else {
-                response = await apiClient.register({ email, password, full_name: fullName })
+                // This branch shouldn't be hit anymore because step state handles it, 
+                // but kept for safety if we ever skip step 2
+                response = await apiClient.register({
+                    email,
+                    password,
+                    full_name: fullName,
+                    phone_number: phoneNumber || undefined
+                })
                 if (response.message?.includes('successfully') || response.message?.includes('created')) {
                     response = await apiClient.login({ email, password })
                 }
             }
 
             if (response.access_token) {
+                // Set token manually so getProfile is authenticated
                 if (typeof window !== 'undefined') {
                     localStorage.setItem("londoolink_token", response.access_token)
-                    localStorage.setItem("londoolink_email", email)
                 }
+
+                // Get user info to store in state
+                const userProfile = await apiClient.getProfile() as any
+                login(response.access_token, userProfile)
                 router.push("/")
             } else {
                 throw new Error(response.message || response.detail || 'Authentication failed')
@@ -85,6 +98,58 @@ function LoginPageContent() {
         } catch (err: any) {
             console.error('Authentication failed:', err)
             setError(transformError(err))
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleRegistrationComplete = async (consents: Record<string, boolean>) => {
+        setIsLoading(true)
+        setError(null)
+
+        try {
+            // 1. Register
+            const regResponse = await apiClient.register({
+                email,
+                password,
+                full_name: fullName,
+                phone_number: phoneNumber || undefined
+            })
+
+            // 2. Login to get token
+            const loginResponse = await apiClient.login({ email, password })
+
+            if (loginResponse.access_token) {
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem("londoolink_token", loginResponse.access_token)
+                }
+
+                // 3. Grant consents
+                const serviceMapping: Record<string, string> = {
+                    dataProcessing: 'data_processing',
+                    emailAccess: 'email',
+                    whatsappAccess: 'whatsapp',
+                    smsAccess: 'sms'
+                }
+
+                for (const [key, value] of Object.entries(consents)) {
+                    await apiClient.grantConsent({
+                        service_type: serviceMapping[key] || key,
+                        consent_given: value
+                    })
+                }
+
+                // 4. Get profile and redirect
+                const userProfile = await apiClient.getProfile() as any
+                login(loginResponse.access_token, userProfile)
+                router.push("/")
+            } else {
+                throw new Error('Registration successful but login failed')
+            }
+        } catch (err: any) {
+            console.error('Registration failed:', err)
+            setError(transformError(err))
+            setStep(1) // Move back to step 1 on error
         } finally {
             setIsLoading(false)
         }
@@ -112,13 +177,14 @@ function LoginPageContent() {
             }
 
             if (data.access_token) {
-                const payload = JSON.parse(atob(data.access_token.split('.')[1]))
-                const userEmail = payload.sub
-
+                // Set token manually so getProfile is authenticated
                 if (typeof window !== 'undefined') {
                     localStorage.setItem("londoolink_token", data.access_token)
-                    localStorage.setItem("londoolink_email", userEmail)
                 }
+
+                // Get user info to store in state
+                const userProfile = await apiClient.getProfile() as any
+                login(data.access_token, userProfile)
                 router.push("/")
             } else {
                 throw new Error('No access token received')
@@ -248,11 +314,12 @@ function LoginPageContent() {
                                 <button
                                     onClick={() => {
                                         setIsLogin(true)
+                                        setStep(1)
                                         setError(null)
                                     }}
                                     className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${isLogin
-                                            ? 'bg-background text-foreground shadow-sm'
-                                            : 'text-muted-foreground hover:text-foreground'
+                                        ? 'bg-background text-foreground shadow-sm'
+                                        : 'text-muted-foreground hover:text-foreground'
                                         }`}
                                 >
                                     Sign In
@@ -260,11 +327,12 @@ function LoginPageContent() {
                                 <button
                                     onClick={() => {
                                         setIsLogin(false)
+                                        setStep(1)
                                         setError(null)
                                     }}
                                     className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${!isLogin
-                                            ? 'bg-background text-foreground shadow-sm'
-                                            : 'text-muted-foreground hover:text-foreground'
+                                        ? 'bg-background text-foreground shadow-sm'
+                                        : 'text-muted-foreground hover:text-foreground'
                                         }`}
                                 >
                                     Sign Up
@@ -272,98 +340,152 @@ function LoginPageContent() {
                             </div>
 
                             {/* Form */}
-                            <form onSubmit={handleAuth} className="space-y-4">
-                                <AnimatePresence mode="wait">
-                                    {!isLogin && (
-                                        <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
+                            {/* Form Content */}
+                            <AnimatePresence mode="wait">
+                                {isLogin || step === 1 ? (
+                                    <motion.div
+                                        key="auth-form"
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <form onSubmit={handleAuth} className="space-y-4">
+                                            <AnimatePresence mode="wait">
+                                                {!isLogin && (
+                                                    <motion.div
+                                                        key="full-name-field"
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        <Input
+                                                            type="text"
+                                                            placeholder="Full Name"
+                                                            value={fullName}
+                                                            onChange={(e) => setFullName(e.target.value)}
+                                                            required={!isLogin}
+                                                            className="bg-muted/50 border-border h-11 mb-4"
+                                                        />
+                                                    </motion.div>
+                                                )}
+                                                {!isLogin && (
+                                                    <motion.div
+                                                        key="phone-number-field"
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        transition={{ duration: 0.2, delay: 0.05 }}
+                                                    >
+                                                        <Input
+                                                            type="tel"
+                                                            placeholder="Phone Number (Optional)"
+                                                            value={phoneNumber}
+                                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                                            className="bg-muted/50 border-border h-11 mb-4"
+                                                        />
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+
                                             <Input
-                                                type="text"
-                                                placeholder="Full Name"
-                                                value={fullName}
-                                                onChange={(e) => setFullName(e.target.value)}
-                                                required={!isLogin}
+                                                type="email"
+                                                placeholder="Email address"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                required
                                                 className="bg-muted/50 border-border h-11"
                                             />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
 
-                                <Input
-                                    type="email"
-                                    placeholder="Email address"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="bg-muted/50 border-border h-11"
-                                />
-
-                                <Input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    className="bg-muted/50 border-border h-11"
-                                />
-
-                                <AnimatePresence mode="wait">
-                                    {!isLogin && (
-                                        <motion.div
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
                                             <Input
                                                 type="password"
-                                                placeholder="Confirm Password"
-                                                value={confirmPassword}
-                                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                                required={!isLogin}
+                                                placeholder="Password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                required
                                                 className="bg-muted/50 border-border h-11"
                                             />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
 
-                                <Button
-                                    type="submit"
-                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 h-11 font-semibold"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    ) : (
-                                        <span>{isLogin ? "Sign In" : "Create Account"}</span>
-                                    )}
-                                </Button>
-                            </form>
+                                            <AnimatePresence mode="wait">
+                                                {!isLogin && (
+                                                    <motion.div
+                                                        key="confirm-password-field"
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        <Input
+                                                            type="password"
+                                                            placeholder="Confirm Password"
+                                                            value={confirmPassword}
+                                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                                            required={!isLogin}
+                                                            className="bg-muted/50 border-border h-11 mb-4"
+                                                        />
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
 
-                            {/* Divider */}
-                            <div className="relative my-6">
-                                <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-border"></div>
-                                </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                                </div>
-                            </div>
+                                            <Button
+                                                type="submit"
+                                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 h-11 font-semibold"
+                                                disabled={isLoading}
+                                            >
+                                                {isLoading ? (
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                ) : (
+                                                    <span>{isLogin ? "Sign In" : "Next Step"}</span>
+                                                )}
+                                            </Button>
+                                        </form>
 
-                            {/* Google Login */}
-                            <div className="flex justify-center">
-                                <GoogleLogin
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={handleGoogleError}
-                                    useOneTap
-                                    theme={theme === 'dark' ? 'filled_black' : 'outline'}
-                                    size="large"
-                                />
-                            </div>
+                                        {/* Divider */}
+                                        <div className="relative my-6">
+                                            <div className="absolute inset-0 flex items-center">
+                                                <div className="w-full border-t border-border"></div>
+                                            </div>
+                                            <div className="relative flex justify-center text-xs uppercase">
+                                                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Google Login */}
+                                        <div className="flex justify-center">
+                                            <GoogleLogin
+                                                onSuccess={handleGoogleSuccess}
+                                                onError={handleGoogleError}
+                                                useOneTap
+                                                theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                                                size="large"
+                                            />
+                                        </div>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="consent-form"
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <div className="mb-6">
+                                            <Button
+                                                variant="ghost"
+                                                onClick={() => setStep(1)}
+                                                className="p-0 h-auto text-muted-foreground hover:text-primary mb-2"
+                                            >
+                                                &larr; Back to account details
+                                            </Button>
+                                        </div>
+                                        <ConsentForm
+                                            onSubmit={handleRegistrationComplete}
+                                            isLoading={isLoading}
+                                        />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
 
                             {/* Error Message */}
                             {error && (
