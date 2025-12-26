@@ -1,6 +1,7 @@
 "use client"
 
 import { ScrollReveal } from '@/components/public/ScrollReveal'
+import { TutorialDemo } from '@/components/public/TutorialDemo'
 import { Search, Brain, Database, FileText } from 'lucide-react'
 
 export default function HowItWorksPage() {
@@ -13,11 +14,19 @@ export default function HowItWorksPage() {
                 </p>
             </ScrollReveal>
 
+            {/* Tutorial Video Section */}
+            <ScrollReveal delay={0.1} className="w-full aspect-video rounded-3xl overflow-hidden border border-border/50 shadow-2xl relative group bg-card/50 backdrop-blur-sm flex items-center justify-center p-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5" />
+
+                <TutorialDemo />
+
+            </ScrollReveal>
+
             <div className="space-y-24 relative">
                 {/* Connecting Line */}
                 <div className="absolute left-8 top-12 bottom-12 w-0.5 bg-gradient-to-b from-primary/50 to-primary/5 hidden md:block" />
 
-                <ScrollReveal delay={0.1} direction="left">
+                <ScrollReveal delay={0.2} direction="left">
                     <Step
                         number="01"
                         title="Data Ingestion"
@@ -26,7 +35,7 @@ export default function HowItWorksPage() {
                     />
                 </ScrollReveal>
 
-                <ScrollReveal delay={0.2} direction="left">
+                <ScrollReveal delay={0.3} direction="left">
                     <Step
                         number="02"
                         title="LangGraph Orchestration"
@@ -35,7 +44,7 @@ export default function HowItWorksPage() {
                     />
                 </ScrollReveal>
 
-                <ScrollReveal delay={0.3} direction="left">
+                <ScrollReveal delay={0.4} direction="left">
                     <Step
                         number="03"
                         title="RAG Contextual Memory"
@@ -44,7 +53,7 @@ export default function HowItWorksPage() {
                     />
                 </ScrollReveal>
 
-                <ScrollReveal delay={0.4} direction="left">
+                <ScrollReveal delay={0.5} direction="left">
                     <Step
                         number="04"
                         title="Daily Briefing Generation"

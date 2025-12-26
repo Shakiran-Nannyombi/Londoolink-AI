@@ -92,7 +92,7 @@ function LoginPageContent() {
                 // Get user info to store in state
                 const userProfile = await apiClient.getProfile() as any
                 login(response.access_token, userProfile)
-                router.push("/")
+                router.push("/dashboard")
             } else {
                 throw new Error(response.message || response.detail || 'Authentication failed')
             }
@@ -143,7 +143,7 @@ function LoginPageContent() {
                 // 4. Get profile and redirect
                 const userProfile = await apiClient.getProfile() as any
                 login(loginResponse.access_token, userProfile)
-                router.push("/")
+                router.push("/dashboard")
             } else {
                 throw new Error('Registration successful but login failed')
             }
@@ -186,7 +186,7 @@ function LoginPageContent() {
                 // Get user info to store in state
                 const userProfile = await apiClient.getProfile() as any
                 login(data.access_token, userProfile)
-                router.push("/")
+                router.push("/dashboard")
             } else {
                 throw new Error('No access token received')
             }
@@ -463,6 +463,7 @@ function LoginPageContent() {
                                                 onSuccess={handleGoogleSuccess}
                                                 onError={handleGoogleError}
                                                 useOneTap
+                                                use_fedcm_for_prompt={false}
                                                 theme={theme === 'dark' ? 'filled_black' : 'outline'}
                                                 size="large"
                                             />
