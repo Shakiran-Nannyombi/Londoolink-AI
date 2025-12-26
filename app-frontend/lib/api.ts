@@ -6,7 +6,7 @@ const API_VERSION = "/api/v1"
 // Utility function to decode HTML entities and clean up text
 function decodeHtmlEntities(text: string): string {
   if (!text) return text
-  
+
   const entities: { [key: string]: string } = {
     '&quot;': '"',
     '&#39;': "'",
@@ -15,22 +15,22 @@ function decodeHtmlEntities(text: string): string {
     '&gt;': '>',
     '&nbsp;': ' '
   }
-  
+
   let decoded = text
   Object.entries(entities).forEach(([entity, char]) => {
     decoded = decoded.replace(new RegExp(entity, 'g'), char)
   })
-  
+
   return decoded
 }
 
 // Utility function to format text for display
 function formatTextForDisplay(text: string): string {
   if (!text) return text
-  
+
   // First decode HTML entities
   let formatted = decodeHtmlEntities(text)
-  
+
   // Clean up markdown formatting for better readability
   formatted = formatted
     .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
@@ -39,7 +39,7 @@ function formatTextForDisplay(text: string): string {
     .replace(/^\s*[-*+]\s/gm, '• ') // Convert list markers to bullets
     .replace(/^\s*\d+\.\s/gm, '• ') // Convert numbered lists to bullets
     .trim()
-  
+
   return formatted
 }
 
@@ -62,6 +62,7 @@ interface LoginRequest {
 interface RegisterRequest {
   email: string
   password: string
+  full_name?: string
 }
 
 interface BackendBriefing {
@@ -163,7 +164,7 @@ class ApiClient {
     // For general chat, use a different endpoint or agent type
     const endpoint = agentType === 'general' ? '/agent/chat' : '/agent/chat'
     const response = await this.post(endpoint, { agent_type: agentType, message })
-    
+
     // Format the response message if it exists
     if (response.message) {
       response.message = formatTextForDisplay(response.message)
@@ -171,7 +172,7 @@ class ApiClient {
     if (response.analysis) {
       response.analysis = formatTextForDisplay(response.analysis)
     }
-    
+
     return response
   }
 

@@ -1,9 +1,8 @@
-
 "use client"
 
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -12,18 +11,20 @@ import { AnimatedBackground } from "@/components/auth/AnimatedBackground"
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
 import { apiClient } from "@/lib/api"
 import { transformUserData, transformError, type AppError } from "@/lib/transformers"
+import { Check } from "lucide-react"
 
 function LoginPageContent() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    const [fullName, setFullName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
     const [isLogin, setIsLogin] = useState(true)
     const [error, setError] = useState<AppError | null>(null)
     const [theme, setTheme] = useState<string>("light")
 
     useEffect(() => {
-        // Basic theme initialization for login page
         if (typeof window !== 'undefined') {
             const savedTheme = localStorage.getItem("londoolink_theme") || "light"
             setTheme(savedTheme)
@@ -32,7 +33,6 @@ function LoginPageContent() {
     }, [])
 
     useEffect(() => {
-        // Check if already authenticated
         const token = localStorage.getItem("londoolink_token")
         if (token) {
             router.push("/")
@@ -47,17 +47,27 @@ function LoginPageContent() {
             return
         }
 
+        if (!isLogin) {
+            if (!fullName) {
+                setError({ type: 'validation', message: 'Please enter your full name' })
+                return
+            }
+            if (password !== confirmPassword) {
+                setError({ type: 'validation', message: 'Passwords do not match' })
+                return
+            }
+        }
+
         setIsLoading(true)
         setError(null)
 
         try {
-            console.log(`Attempting ${isLogin ? 'login' : 'registration'} for:`, email)
             let response
 
             if (isLogin) {
                 response = await apiClient.login({ email, password })
             } else {
-                response = await apiClient.register({ email, password })
+                response = await apiClient.register({ email, password, full_name: fullName })
                 if (response.message?.includes('successfully') || response.message?.includes('created')) {
                     response = await apiClient.login({ email, password })
                 }
@@ -85,7 +95,6 @@ function LoginPageContent() {
         setError(null)
 
         try {
-            // Send the ID token to our backend
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/auth/google-login`, {
                 method: 'POST',
                 headers: {
@@ -103,7 +112,6 @@ function LoginPageContent() {
             }
 
             if (data.access_token) {
-                // Decode the JWT to get the email (simple base64 decode of payload)
                 const payload = JSON.parse(atob(data.access_token.split('.')[1]))
                 const userEmail = payload.sub
 
@@ -133,10 +141,18 @@ function LoginPageContent() {
         })
     }
 
+    const features = [
+        "Never miss important emails or events",
+        "AI-powered insights and summaries",
+        "Secure and private by design",
+        "Seamless calendar integration"
+    ]
+
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-primary/10 relative overflow-hidden">
+        <div className="min-h-screen flex relative overflow-hidden bg-background">
             <AnimatedBackground />
 
+            {/* Theme Toggle */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -149,134 +165,221 @@ function LoginPageContent() {
                 }} />
             </motion.div>
 
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="w-full max-w-md relative z-10"
-            >
-                <Card className="p-10 bg-card/80 backdrop-blur-xl border-border shadow-2xl">
-                    <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-center mb-10"
-                    >
-                        <div className="relative w-20 h-20 mx-auto mb-6">
-                            <div className="absolute inset-0 bg-primary/20 rounded-2xl rotate-6 backdrop-blur-sm" />
-                            <div className="absolute inset-0 bg-secondary/20 rounded-2xl -rotate-6 backdrop-blur-sm" />
-                            <div className="relative w-full h-full bg-background/50 rounded-2xl flex items-center justify-center border border-primary/20 shadow-inner">
-                                <img
-                                    src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
-                                    alt="Londoolink Logo"
-                                    className="w-16 h-16 object-contain"
+            {/* Two Column Layout */}
+            <div className="flex flex-col lg:flex-row w-full">
+                {/* Left Column - Brand */}
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="hidden lg:flex lg:w-2/5 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-12 flex-col justify-center relative"
+                >
+                    <div className="relative z-10 max-w-md">
+                        {/* Logo */}
+                        <div className="mb-8">
+                            <div className="relative w-20 h-20 mb-6">
+                                <div className="absolute inset-0 bg-primary/20 rounded-2xl rotate-6 backdrop-blur-sm" />
+                                <div className="absolute inset-0 bg-secondary/20 rounded-2xl -rotate-6 backdrop-blur-sm" />
+                                <div className="relative w-full h-full bg-background/50 rounded-2xl flex items-center justify-center border border-primary/20 shadow-inner">
+                                    <img
+                                        src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                                        alt="Londoolink Logo"
+                                        className="w-16 h-16 object-contain"
+                                    />
+                                </div>
+                            </div>
+                            <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent mb-4">
+                                Londoolink AI
+                            </h1>
+                            <p className="text-xl text-muted-foreground mb-8">
+                                Your Intelligent Digital Twin
+                            </p>
+                        </div>
+
+                        {/* Features */}
+                        <div className="space-y-4">
+                            {features.map((feature, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.3 + index * 0.1 }}
+                                    className="flex items-center gap-3"
+                                >
+                                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-4 h-4 text-primary" />
+                                    </div>
+                                    <span className="text-foreground/80">{feature}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Right Column - Auth Form */}
+                <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="flex-1 flex items-center justify-center p-6 lg:p-12"
+                >
+                    <div className="w-full max-w-md">
+                        {/* Mobile Logo */}
+                        <div className="lg:hidden text-center mb-8">
+                            <div className="relative w-16 h-16 mx-auto mb-4">
+                                <div className="absolute inset-0 bg-primary/20 rounded-2xl rotate-6" />
+                                <div className="absolute inset-0 bg-secondary/20 rounded-2xl -rotate-6" />
+                                <div className="relative w-full h-full bg-background/50 rounded-2xl flex items-center justify-center border border-primary/20">
+                                    <img
+                                        src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                                        alt="Londoolink Logo"
+                                        className="w-12 h-12 object-contain"
+                                    />
+                                </div>
+                            </div>
+                            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent">
+                                Londoolink AI
+                            </h1>
+                        </div>
+
+                        <Card className="p-8 bg-card/80 backdrop-blur-xl border-border shadow-2xl">
+                            {/* Toggle Tabs */}
+                            <div className="flex gap-2 mb-8 p-1 bg-muted/50 rounded-lg">
+                                <button
+                                    onClick={() => {
+                                        setIsLogin(true)
+                                        setError(null)
+                                    }}
+                                    className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${isLogin
+                                            ? 'bg-background text-foreground shadow-sm'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                        }`}
+                                >
+                                    Sign In
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsLogin(false)
+                                        setError(null)
+                                    }}
+                                    className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${!isLogin
+                                            ? 'bg-background text-foreground shadow-sm'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                        }`}
+                                >
+                                    Sign Up
+                                </button>
+                            </div>
+
+                            {/* Form */}
+                            <form onSubmit={handleAuth} className="space-y-4">
+                                <AnimatePresence mode="wait">
+                                    {!isLogin && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <Input
+                                                type="text"
+                                                placeholder="Full Name"
+                                                value={fullName}
+                                                onChange={(e) => setFullName(e.target.value)}
+                                                required={!isLogin}
+                                                className="bg-muted/50 border-border h-11"
+                                            />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
+                                <Input
+                                    type="email"
+                                    placeholder="Email address"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="bg-muted/50 border-border h-11"
+                                />
+
+                                <Input
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="bg-muted/50 border-border h-11"
+                                />
+
+                                <AnimatePresence mode="wait">
+                                    {!isLogin && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <Input
+                                                type="password"
+                                                placeholder="Confirm Password"
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                required={!isLogin}
+                                                className="bg-muted/50 border-border h-11"
+                                            />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 h-11 font-semibold"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <span>{isLogin ? "Sign In" : "Create Account"}</span>
+                                    )}
+                                </Button>
+                            </form>
+
+                            {/* Divider */}
+                            <div className="relative my-6">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-border"></div>
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                                </div>
+                            </div>
+
+                            {/* Google Login */}
+                            <div className="flex justify-center">
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={handleGoogleError}
+                                    useOneTap
+                                    theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                                    size="large"
                                 />
                             </div>
-                        </div>
-                        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent mb-3">
-                            Londoolink AI
-                        </h1>
-                        <p className="text-muted-foreground text-lg">Your Intelligent Digital Twin</p>
-                    </motion.div>
 
-                    <motion.form
-                        onSubmit={handleAuth}
-                        className="space-y-5"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                    >
-                        <div>
-                            <Input
-                                type="email"
-                                placeholder="Email address"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="bg-muted/50 border-border h-12 text-base"
-                            />
-                        </div>
-                        <div>
-                            <Input
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="bg-muted/50 border-border h-12 text-base"
-                            />
-                        </div>
-
-                        <Button
-                            type="submit"
-                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 h-12 text-base font-semibold group"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            ) : (
-                                <span className="flex items-center gap-2">
-                                    {isLogin ? "Sign In" : "Create Account"}
-                                    <motion.span
-                                        animate={{ x: [0, 5, 0] }}
-                                        transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
-                                    >
-                                        →
-                                    </motion.span>
-                                </span>
+                            {/* Error Message */}
+                            {error && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className={`mt-4 p-3 rounded-lg text-sm text-center ${error.type === 'validation' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-destructive/10 text-destructive'
+                                        }`}
+                                >
+                                    {error.message}
+                                </motion.div>
                             )}
-                        </Button>
-                    </motion.form>
-
-                    {/* Divider */}
-                    <div className="relative my-6">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-border"></div>
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                        </div>
+                        </Card>
                     </div>
-
-                    {/* Google Login Button */}
-                    <div className="flex justify-center">
-                        <GoogleLogin
-                            onSuccess={handleGoogleSuccess}
-                            onError={handleGoogleError}
-                            useOneTap
-                            theme={theme === 'dark' ? 'filled_black' : 'outline'}
-                            size="large"
-                        />
-                    </div>
-
-                    {error && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`mt-6 p-4 rounded-lg text-sm text-center ${error.type === 'validation' ? 'bg-yellow-500/10 text-yellow-500' : 'bg-destructive/10 text-destructive'
-                                }`}
-                        >
-                            {error.message}
-                        </motion.div>
-                    )}
-
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="mt-8 text-center"
-                    >
-                        <button
-                            onClick={() => {
-                                setIsLogin(!isLogin)
-                                setError(null)
-                            }}
-                            className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                        >
-                            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
-                        </button>
-                    </motion.div>
-                </Card>
-            </motion.div>
+                </motion.div>
+            </div>
         </div>
     )
 }
