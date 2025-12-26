@@ -90,6 +90,14 @@ export function Navbar() {
                     <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
                     <Link href="/how-it-works" className="text-sm font-medium hover:text-primary transition-colors">How It Works</Link>
                     <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">About</Link>
+                    <a
+                        href="https://shakiran-nannyombi.github.io/Londoolink-AI/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium hover:text-primary transition-colors"
+                    >
+                        Docs
+                    </a>
 
                     <button
                         onClick={toggleTheme}
@@ -138,24 +146,37 @@ export function Navbar() {
                                     { href: "/", label: "Home" },
                                     { href: "/how-it-works", label: "How It Works" },
                                     { href: "/about", label: "About" },
+                                    { href: "https://shakiran-nannyombi.github.io/Londoolink-AI/", label: "Docs", isExternal: true },
                                 ].map((link, i) => (
                                     <motion.div
                                         key={link.href}
                                         custom={i}
                                         variants={linkVariants}
                                     >
-                                        <Link
-                                            href={link.href}
-                                            onClick={closeMobileMenu}
-                                            className="text-3xl font-bold tracking-tight hover:text-primary transition-colors"
-                                        >
-                                            {link.label}
-                                        </Link>
+                                        {link.isExternal ? (
+                                            <a
+                                                href={link.href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={closeMobileMenu}
+                                                className="text-3xl font-bold tracking-tight hover:text-primary transition-colors"
+                                            >
+                                                {link.label}
+                                            </a>
+                                        ) : (
+                                            <Link
+                                                href={link.href}
+                                                onClick={closeMobileMenu}
+                                                className="text-3xl font-bold tracking-tight hover:text-primary transition-colors"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        )}
                                     </motion.div>
                                 ))}
 
                                 <motion.div
-                                    custom={3}
+                                    custom={4}
                                     variants={linkVariants}
                                 >
                                     <Link href="/login" onClick={closeMobileMenu}>
