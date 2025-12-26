@@ -9,6 +9,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    full_name: Optional[str] = None
     password: str
 
 
@@ -19,6 +20,7 @@ class UserLogin(BaseModel):
 
 class User(UserBase):
     id: int
+    full_name: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
