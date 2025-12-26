@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import { Button } from "@/components/ui/button"
@@ -218,12 +219,17 @@ function LoginPageContent() {
         <div className="min-h-screen flex relative overflow-hidden bg-background">
             <AnimatedBackground />
 
-            {/* Theme Toggle */}
+            {/* Top Navigation */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute top-6 right-6 z-50"
+                className="absolute top-6 right-6 z-50 flex items-center gap-4"
             >
+                <Link href="/">
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                        Return to Home
+                    </Button>
+                </Link>
                 <ThemeToggle theme={theme} setTheme={(t) => {
                     setTheme(t)
                     localStorage.setItem("londoolink_theme", t)

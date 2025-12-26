@@ -34,7 +34,7 @@ export function Sidebar() {
     const notificationsCount = notifications.length
 
     const navItems = [
-        { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+        { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: User, label: 'Profile', path: '/profile' },
         { icon: Settings, label: 'Settings', path: '/settings' },
     ]
