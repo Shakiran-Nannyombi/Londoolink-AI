@@ -1,5 +1,26 @@
 {
   "app": {
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(dashboard)/dashboard/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(dashboard)/notifications/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(dashboard)/profile/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(dashboard)/settings/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(public)/about/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(public)/how-it-works/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/Projects/Londoolink-AI/app-frontend/app/(public)/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
     "[project]/Projects/Londoolink-AI/app-frontend/app/_not-found/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
@@ -7,9 +28,6 @@
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
     "[project]/Projects/Londoolink-AI/app-frontend/app/login/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
-    ],
-    "[project]/Projects/Londoolink-AI/app-frontend/app/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ]
   },
