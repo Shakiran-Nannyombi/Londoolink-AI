@@ -18,3 +18,4 @@ sentence-transformers
 google-auth
 requests
 google-auth-oauthlib
+google-api-python-client
