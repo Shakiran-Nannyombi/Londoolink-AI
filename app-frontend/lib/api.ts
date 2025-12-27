@@ -1,6 +1,9 @@
 // API Client for Londoolink AI Backend Connection
 declare const process: { env: { NEXT_PUBLIC_API_BASE_URL?: string } }
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+if (typeof window !== 'undefined') {
+  console.log('🔌 API Base URL:', API_BASE_URL)
+}
 const API_VERSION = "/api/v1"
 
 // Utility function to decode HTML entities and clean up text
