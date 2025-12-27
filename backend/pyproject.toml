@@ -46,6 +46,7 @@ dependencies = [
     "requests",
     "pyotp",
     "qrcode",
+    "psutil",
 ]
 
 [project.optional-dependencies]
