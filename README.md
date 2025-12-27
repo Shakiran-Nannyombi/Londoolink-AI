@@ -2,7 +2,7 @@
 
 A comprehensive AI-powered personal assistant that manages your emails, calendar, and communications with advanced LangGraph multi-agent architecture.
 
-## 🌟 Features
+## Features
 
 ### Core Functionality
 - **Multi-Agent AI System**: Specialized agents for email, calendar, social media, and general assistance
@@ -28,7 +28,7 @@ A comprehensive AI-powered personal assistant that manages your emails, calendar
 - **Theme Support**: Light/Dark mode with system preference detection
 - **Internationalization**: Multi-language and timezone support
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.11+
@@ -68,7 +68,7 @@ npm run dev
 
 Visit `http://localhost:3000` to access the application.
 
-## 📱 Usage
+## Usage
 
 ### Registration
 1. Navigate to `/login`
@@ -90,7 +90,7 @@ Visit `http://localhost:3000` to access the application.
 3. Follow authentication flow
 4. Service will sync automatically
 
-## 🏗️ Architecture
+## Architecture
 
 ### Backend
 - **Framework**: FastAPI with async/await
@@ -113,7 +113,7 @@ Visit `http://localhost:3000` to access the application.
 - **General Agent**: Handles queries and assistance
 - **Coordinator**: Routes requests to appropriate agents
 
-## 🔐 Security Features
+## Security Features
 
 - **Password Hashing**: Bcrypt with salt
 - **JWT Tokens**: Secure access and refresh tokens
@@ -122,7 +122,7 @@ Visit `http://localhost:3000` to access the application.
 - **Encrypted Storage**: Sensitive data encryption at rest
 - **GDPR Compliance**: User consent tracking and data management
 
-## 📊 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/v1/auth/register` - User registration
@@ -151,7 +151,7 @@ Visit `http://localhost:3000` to access the application.
 - `POST /api/v1/agent/chat` - Chat with specific agent
 - `GET /api/v1/agent/briefing/daily` - Get daily briefing
 
-## 🛠️ Development
+## Development
 
 ### Project Structure
 ```
@@ -190,15 +190,15 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
 ```
 
-## 📝 License
+## License
 
 MIT License - see LICENSE file for details
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📧 Support
+## Support
 
 For issues and questions, please open an issue on GitHub.
 
