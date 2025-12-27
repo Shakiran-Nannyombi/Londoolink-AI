@@ -19,3 +19,12 @@ google-auth
 requests
 google-auth-oauthlib
 google-api-python-client
+pyotp
+qrcode
+pillow
+pyjwt
+pwdlib[argon2]
+python-dotenv
+httpx
+python-dateutil
+email-validator

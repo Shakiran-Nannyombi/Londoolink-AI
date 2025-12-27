@@ -1,6 +1,18 @@
 import asyncio
 from unittest.mock import Mock, patch
 
+# Patch external services BEFORE any other imports to catch all modules
+# using 'from ... import ...'
+mock_groq_patcher = patch("langchain_groq.ChatGroq")
+mock_ollama_patcher = patch("langchain_ollama.OllamaEmbeddings")
+mock_create_agent_patcher = patch("langchain.agents.create_agent")
+mock_chromadb_patcher = patch("app.services.rag.vector_store.chromadb")
+
+mock_groq_patcher.start()
+mock_ollama_patcher.start()
+mock_create_agent_patcher.start()
+mock_chromadb_patcher.start()
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -199,26 +211,44 @@ def mock_settings():
 
 @pytest.fixture(autouse=True)
 def mock_global_instances():
-    # Mock global instances to prevent initialization during tests
+    # Mock global instances across ALL modules that use them
+    # This ensures that even if a module imported the instance before the patch,
+    # the mock is still used.
     with (
         patch("app.services.rag.vector_store.vector_store") as mock_vs,
+        patch("app.services.rag.pipeline.vector_store", mock_vs),
         patch("app.services.rag.embeddings.embedding_manager") as mock_em,
+        patch("app.services.rag.pipeline.embedding_manager", mock_em),
         patch("app.services.rag.pipeline.rag_pipeline") as mock_rp,
+        patch("app.services.tools.rag_pipeline", mock_rp),
+        patch("app.api.endpoints.agent.rag_pipeline", mock_rp),
+        patch("app.api.endpoints.ingest.rag_pipeline", mock_rp),
         patch("app.services.coordinator.ai_coordinator") as mock_coord,
     ):
-
-        # Configure mocks
-        mock_vs.add_documents.return_value = ["doc1", "doc2"]
+        # Configure VectorStore mock
+        mock_vs.add_documents.return_value = ["doc1"]
         mock_vs.query_documents.return_value = []
-        mock_vs.get_stats.return_value = {"total_documents": 0}
+        mock_vs.get_stats.return_value = {"total_documents": 0, "collection_name": "test"}
+        mock_vs.get_all_documents.return_value = []
+        mock_vs.delete_documents.return_value = 0
+        
+        # Mock the collection inside the vector store just in case
+        mock_coll = Mock()
+        mock_vs.collection = mock_coll
+        mock_coll.count.return_value = 0
 
-        mock_em.embed_query.return_value = [0.1, 0.2, 0.3, 0.4, 0.5]
-        mock_em.embed_documents.return_value = [[0.1, 0.2, 0.3, 0.4, 0.5]]
+        # Configure EmbeddingManager mock
+        mock_em.embed_query.return_value = [0.1] * 5
+        mock_em.embed_documents.side_effect = lambda texts: [[0.1] * 5 for _ in texts]
 
+        # Configure RAGPipeline mock
         mock_rp.add_text.return_value = ["doc1"]
         mock_rp.query_texts.return_value = []
         mock_rp.get_collection_stats.return_value = {"total_documents": 0}
+        mock_rp.get_recent_documents.return_value = []
+        mock_rp.delete_documents.return_value = 0
 
+        # Configure Coordinator mock
         mock_coord.get_daily_briefing.return_value = {"summary": "Test briefing"}
         mock_coord.analyze_document.return_value = {"analysis": "Test analysis"}
 
@@ -230,13 +260,42 @@ def mock_global_instances():
         }
 
 
+@pytest.fixture(autouse=True)
+def configure_global_mocks():
+    # Configure the patches started at the top of the file
+    mock_agent = Mock()
+    mock_agent.invoke.return_value = {
+        "messages": [{"role": "assistant", "content": "Test assistant response"}],
+        "output": "Test assistant response",
+    }
+    
+    # We need to get the actual mock objects from the patchers
+    from langchain.agents import create_agent
+    from langchain_groq import ChatGroq
+    from langchain_ollama import OllamaEmbeddings
+    
+    # Configure create_agent mock
+    create_agent.return_value = mock_agent
+    
+    # Configure ChatGroq mock
+    mock_llm = Mock()
+    mock_llm.invoke.return_value = Mock(content="Test LLM response")
+    ChatGroq.return_value = mock_llm
+    
+    # Configure OllamaEmbeddings mock
+    mock_emb = Mock()
+    mock_emb.embed_query.return_value = [0.1, 0.2, 0.3, 0.4, 0.5]
+    mock_emb.embed_documents.side_effect = lambda texts: [[0.1, 0.2, 0.3, 0.4, 0.5] for _ in texts]
+    OllamaEmbeddings.return_value = mock_emb
+    
+    yield {
+        "agent": mock_agent,
+        "llm": mock_llm,
+        "embeddings": mock_emb,
+    }
+
+
 @pytest.fixture
-def mock_langchain_agent():
-    # Mock LangChain agent for testing
-    with patch("app.services.agents.email_agent.create_agent") as mock:
-        mock_agent = Mock()
-        mock_agent.invoke.return_value = {
-            "messages": [{"content": "Test agent response"}]
-        }
-        mock.return_value = mock_agent
-        yield mock_agent
+def mock_langchain_agent(configure_global_mocks):
+    # Backward compatibility for existing tests
+    return configure_global_mocks["agent"]
