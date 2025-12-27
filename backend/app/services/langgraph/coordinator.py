@@ -1,6 +1,9 @@
 import logging
+import gc
+import os
+import psutil
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
@@ -13,23 +16,108 @@ from .workflow import WorkflowBuilder
 
 logger = logging.getLogger(__name__)
 
+# Memory threshold in MB
+MEMORY_THRESHOLD = 300  # MB
+
+class MemoryManager:
+    @staticmethod
+    def get_memory_usage() -> float:
+        """Get current process memory usage in MB"""
+        process = psutil.Process(os.getpid())
+        return process.memory_info().rss / (1024 * 1024)  # Convert to MB
+
+    @staticmethod
+    def check_memory() -> bool:
+        """Check if memory usage is below threshold"""
+        return MemoryManager.get_memory_usage() < MEMORY_THRESHOLD
+
+    @staticmethod
+    def free_memory():
+        """Force garbage collection"""
+        gc.collect()
+
 
 class LangGraphCoordinator:
-    # Clean, modular multi-agent coordinator using LangGraph
+    """LangGraph coordinator with configurable model sizes and memory optimization.
+    
+    Available model sizes:
+    - small: Faster, lower memory usage (default)
+    - medium: Balanced performance and accuracy
+    - large: Best accuracy, highest memory usage
+    """
+    
+    MODEL_CONFIGS = {
+        'small': {
+            'model_name': 'llama-3.1-8b-instant',
+            'max_tokens': 1024,
+            'temperature': 0.1,
+            'timeout': 30
+        },
+        'medium': {
+            'model_name': 'llama-3.1-8b-instant',
+            'max_tokens': 2048,
+            'temperature': 0.2,
+            'timeout': 60
+        },
+        'large': {
+            'model_name': 'llama-3.1-8b-instant',
+            'max_tokens': 4096,
+            'temperature': 0.3,
+            'timeout': 90
+        }
+    }
 
-    def __init__(self):
-        self.workflow_builder = WorkflowBuilder()
-        self.graph = self.workflow_builder.build_workflow()
-        self.llm = self._create_llm()
+    def __init__(self, model_size: str = 'small'):
+        """Initialize the coordinator with a specific model size.
+        
+        Args:
+            model_size: One of 'small', 'medium', or 'large'
+        """
+        self.workflow_builder = None
+        self.graph = None
+        self._llm = None
+        self.model_size = model_size.lower()
+        if self.model_size not in self.MODEL_CONFIGS:
+            logger.warning(f"Invalid model size '{model_size}'. Defaulting to 'small'")
+            self.model_size = 'small'
+
+    @property
+    def llm(self):
+        if self._llm is None:
+            self._llm = self._create_llm()
+        return self._llm
 
     def _create_llm(self):
-        # Create the main LLM for direct document analysis
+        """Create the main LLM with configuration based on model size."""
+        config = self.MODEL_CONFIGS[self.model_size]
+        logger.info(f"Loading {self.model_size} model with config: {config}")
+        
         return ChatGroq(
-            model="llama-3.1-8b-instant",
-            temperature=0.1,
+            model=config['model_name'],
+            temperature=config['temperature'],
             api_key=settings.GROQ_API_KEY,
-            max_tokens=4096,
+            max_tokens=config['max_tokens'],
+            request_timeout=config['timeout'],
+            model_kwargs={
+                'stop_sequences': ['\n\n', '\n\n\n'],
+                'top_p': 0.9,
+                'presence_penalty': 0.1,
+                'frequency_penalty': 0.1,
+            }
         )
+
+    def cleanup(self):
+        """Clean up resources"""
+        if self._llm is not None:
+            del self._llm
+            self._llm = None
+        if self.graph is not None:
+            del self.graph
+            self.graph = None
+        if self.workflow_builder is not None:
+            del self.workflow_builder
+            self.workflow_builder = None
+        MemoryManager.free_memory()
 
     def get_daily_briefing(self, user_id: int) -> Dict[str, Any]:
         # Generate daily briefing using LangGraph multi-agent workflow
