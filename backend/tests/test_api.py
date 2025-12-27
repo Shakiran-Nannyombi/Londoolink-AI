@@ -68,7 +68,7 @@ class TestAgentEndpoints:
         assert data["status"] == "ok"
         assert data["service"] == "Londoolink AI Agent"
 
-    @patch("app.api.endpoints.agent.ai_coordinator")
+    @patch("app.api.endpoints.agent.langgraph_coordinator")
     def test_get_daily_briefing_success(self, mock_coordinator, client, auth_headers):
         # Test successful daily briefing retrieval
         mock_coordinator.get_daily_briefing.return_value = {
@@ -90,7 +90,7 @@ class TestAgentEndpoints:
         # Test daily briefing without authentication
         response = client.get("/api/v1/agent/briefing/daily")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_get_current_user_info(self, client, auth_headers, test_user):
         # Test getting current user information
@@ -145,7 +145,7 @@ class TestAgentEndpoints:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Query is required" in response.json()["detail"]
 
-    @patch("app.api.endpoints.agent.ai_coordinator")
+    @patch("app.api.endpoints.agent.langgraph_coordinator")
     def test_analyze_document_success(self, mock_coordinator, client, auth_headers):
         # Test successful document analysis
         mock_coordinator.analyze_document.return_value = {
@@ -244,6 +244,7 @@ class TestIngestEndpoints:
 
         instagram_data = {
             "content": "Hello from Instagram",
+            "sender": "John Doe",
             "username": "johndoe",
             "timestamp": "2025-10-21T16:00:00Z",
             "message_type": "text",
@@ -298,7 +299,7 @@ class TestIngestEndpoints:
         }
 
         response = client.post(
-            "/api/v1/ingest/message", json=generic_data, headers=auth_headers
+            "/api/v1/ingest/generic", json=generic_data, headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -310,7 +311,7 @@ class TestIngestEndpoints:
         # Test email ingestion without authentication
         response = client.post("/api/v1/ingest/email", json=sample_email_data)
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @patch("app.api.endpoints.ingest.rag_pipeline")
     def test_delete_documents_success(self, mock_rag, client, auth_headers):
@@ -319,8 +320,8 @@ class TestIngestEndpoints:
 
         filter_data = {"source": "test"}
 
-        response = client.post(
-            "/api/v1/ingest/delete", json=filter_data, headers=auth_headers
+        response = client.request(
+            "DELETE", "/api/v1/ingest/documents", json=filter_data, headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -355,7 +356,7 @@ class TestSecurityEndpoints:
         # Test security health check without authentication
         response = client.get("/api/v1/security/health")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
     def test_generate_security_keys(self, client, auth_headers):
         # Test security key generation

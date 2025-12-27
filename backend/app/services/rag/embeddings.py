@@ -64,6 +64,14 @@ class ChromaEmbeddingFunction:
         else:
             raise ValueError(f"Unsupported input type: {type(input)}")
 
+    def embed_query(self, input: str) -> List[float]:
+        # Required by some ChromaDB internal calls
+        return self.embedding_manager.embed_query(input)
+
+    def embed_documents(self, input: List[str]) -> List[List[float]]:
+        # Required by some ChromaDB internal calls
+        return self.embedding_manager.embed_documents(input)
+
 
 # Global embedding manager instance
 embedding_manager = EmbeddingManager()

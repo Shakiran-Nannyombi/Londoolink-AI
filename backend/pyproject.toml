@@ -5,54 +5,56 @@ description = "An intelligent agent that securely tracks and links your digital 
 requires-python = ">=3.12"
 dependencies = [
     # Core FastAPI and web framework
-    "fastapi>=0.104.0",
-    "uvicorn[standard]>=0.24.0",
-    "pydantic>=2.5.0",
-    "pydantic-settings>=2.1.0",
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "pydantic-settings",
     # Database and ORM
-    "sqlalchemy>=2.0.0",
-    "psycopg2-binary>=2.9.0", # PostgreSQL driver
-    "alembic>=1.13.0", # Database migrations
+    "sqlalchemy",
+    "psycopg2-binary", # PostgreSQL driver
+    "alembic", # Database migrations
     # Security and authentication
-    "passlib[bcrypt]>=1.7.4",
-    "python-jose[cryptography]>=3.3.0",
-    "cryptography>=41.0.0",
-    "python-multipart>=0.0.6", # For form data
+    "passlib[bcrypt]",
+    "python-jose[cryptography]",
+    "cryptography",
+    "python-multipart", # For form data
     # AI and ML
-    "langchain>=0.1.0",
-    "langchain-openai>=0.0.5",
-    "openai>=1.6.0",
-    "chromadb>=0.4.18",
-    "sentence-transformers>=2.2.2",
+    "langchain",
+    "langchain-openai",
+    "openai",
+    "chromadb",
+    "sentence-transformers",
     # Utilities
-    "python-dotenv>=1.0.0",
-    "httpx>=0.25.0", # For making HTTP requests
-    "python-dateutil>=2.8.2",
+    "python-dotenv",
+    "httpx", # For making HTTP requests
+    "python-dateutil",
     # Development and testing
-    "pytest>=7.4.0",
-    "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "isort>=5.12.0",
-    "email-validator>=2.3.0",
-    "langchain-groq>=1.0.0",
-    "langchain-ollama>=1.0.0",
-    "pyjwt>=2.10.1",
-    "pwdlib[argon2]>=0.2.1",
-    "langgraph>=1.0.1",
-    "pillow>=12.0.0",
-    "google-auth-oauthlib>=1.0.0",
-    "google-api-python-client>=2.100.0",
-    "google-auth>=2.23.0",
-    "requests>=2.31.0",
+    "pytest",
+    "pytest-asyncio",
+    "black",
+    "isort",
+    "email-validator",
+    "langchain-groq",
+    "langchain-ollama",
+    "pyjwt",
+    "pwdlib[argon2]",
+    "langgraph",
+    "pillow",
+    "google-auth-oauthlib",
+    "google-api-python-client",
+    "google-auth",
+    "requests",
+    "pyotp",
+    "qrcode",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.4.0",
-    "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "isort>=5.12.0",
-    "mypy>=1.7.0",
+    "pytest",
+    "pytest-asyncio",
+    "black",
+    "isort",
+    "mypy",
 ]
 
 [build-system]
@@ -72,9 +74,9 @@ line_length = 88
 
 [dependency-groups]
 dev = [
-    "httpx>=0.28.1",
-    "pytest>=8.4.2",
-    "pytest-asyncio>=1.2.0",
-    "pytest-cov>=7.0.0",
-    "pytest-mock>=3.15.1",
+    "httpx",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-mock",
 ]
