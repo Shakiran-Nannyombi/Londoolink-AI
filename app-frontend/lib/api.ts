@@ -91,40 +91,76 @@ class ApiClient {
   }
 
   async post<T = any>(endpoint: string, data: any): Promise<ApiResponse<T>> {
+    const controller = new AbortController()
+    const id = setTimeout(() => controller.abort(), 30000) // 30s timeout
+
     try {
+      if (typeof window !== 'undefined') {
+        console.log(`🚀 API POST ${endpoint} starting...`, data)
+      }
       const response = await fetch(`${API_BASE_URL}${API_VERSION}${endpoint}`, {
         method: 'POST',
         headers: this.getAuthHeaders(),
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        signal: controller.signal
       })
+
+      clearTimeout(id)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`)
       }
 
-      return await response.json()
-    } catch (error) {
-      console.error(`API POST ${endpoint} failed:`, error)
+      const result = await response.json()
+      if (typeof window !== 'undefined') {
+        console.log(`✅ API POST ${endpoint} success`)
+      }
+      return result
+    } catch (error: any) {
+      clearTimeout(id)
+      if (error.name === 'AbortError') {
+        console.error(`❌ API POST ${endpoint} TIMEOUT after 30s`)
+        throw new Error('Request timed out. The server might be busy or unreachable.')
+      }
+      console.error(`❌ API POST ${endpoint} failed:`, error)
       throw error
     }
   }
 
   async get<T = any>(endpoint: string): Promise<ApiResponse<T>> {
+    const controller = new AbortController()
+    const id = setTimeout(() => controller.abort(), 30000) // 30s timeout
+
     try {
+      if (typeof window !== 'undefined') {
+        console.log(`🚀 API GET ${endpoint} starting...`)
+      }
       const response = await fetch(`${API_BASE_URL}${API_VERSION}${endpoint}`, {
         method: 'GET',
-        headers: this.getAuthHeaders()
+        headers: this.getAuthHeaders(),
+        signal: controller.signal
       })
+
+      clearTimeout(id)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`)
       }
 
-      return await response.json()
-    } catch (error) {
-      console.error(`API GET ${endpoint} failed:`, error)
+      const result = await response.json()
+      if (typeof window !== 'undefined') {
+        console.log(`✅ API GET ${endpoint} success`)
+      }
+      return result
+    } catch (error: any) {
+      clearTimeout(id)
+      if (error.name === 'AbortError') {
+        console.error(`❌ API GET ${endpoint} TIMEOUT after 30s`)
+        throw new Error('Request timed out. The server might be busy or unreachable.')
+      }
+      console.error(`❌ API GET ${endpoint} failed:`, error)
       throw error
     }
   }

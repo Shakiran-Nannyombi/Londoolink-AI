@@ -15,12 +15,20 @@ app = FastAPI(
 # Get allowed origins from environment variable for production
 import os
 
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,https://londoolink-ai.vercel.app,http://londoolink-ai.vercel.app").split(",")
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173,https://londoolink-ai.vercel.app,http://londoolink-ai.vercel.app").split(",")
 
 # Add development origins if not in production
 if settings.ENVIRONMENT != "production":
     allowed_origins.extend(
-        ["http://localhost:3000", "http://127.0.0.1:3000", "https://localhost:3000"]
+        [
+            "http://localhost:3000", 
+            "http://127.0.0.1:3000", 
+            "https://localhost:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:5174",
+            "http://127.0.0.1:5174",
+        ]
     )
 
 app.add_middleware(
@@ -31,6 +39,33 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Request logging middleware for debugging
+from fastapi import Request
+import time
+import logging
+
+logger = logging.getLogger("app")
+logging.basicConfig(level=logging.INFO)
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    origin = request.headers.get("origin")
+    path = request.url.path
+    method = request.method
+    
+    logger.info(f"Incoming {method} {path} from origin: {origin}")
+    
+    try:
+        response = await call_next(request)
+        process_time = (time.time() - start_time) * 1000
+        logger.info(f"Completed {method} {path} - Status: {response.status_code} - {process_time:.2f}ms")
+        return response
+    except Exception as e:
+        process_time = (time.time() - start_time) * 1000
+        logger.error(f"Failed {method} {path} - Error: {str(e)} - {process_time:.2f}ms")
+        raise e
 
 from fastapi.staticfiles import StaticFiles
 
