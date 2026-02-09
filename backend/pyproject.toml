@@ -11,7 +11,7 @@ dependencies = [
     "pydantic-settings",
     # Database and ORM
     "sqlalchemy",
-    "psycopg2-binary", # PostgreSQL driver
+    # "psycopg2-binary", # PostgreSQL driver
     "alembic", # Database migrations
     # Security and authentication
     "passlib[bcrypt]",
@@ -23,7 +23,7 @@ dependencies = [
     "langchain-openai",
     "openai",
     "chromadb",
-    "sentence-transformers",
+    # "sentence-transformers",
     # Utilities
     "python-dotenv",
     "httpx", # For making HTTP requests
@@ -37,8 +37,10 @@ dependencies = [
     "langchain-groq",
     "langchain-ollama",
     "pyjwt",
-    "pwdlib[argon2]",
+    "pwdlib[argon2]>=0.3.0",
     "langgraph",
+    "langchain-google-genai",
+    "google-genai",
     "pillow",
     "google-auth-oauthlib",
     "google-api-python-client",

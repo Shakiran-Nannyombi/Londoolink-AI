@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from typing import Any, Dict
 
-from app.services.agents import CalendarAgent, EmailAgent, PriorityAgent, SocialAgent
+from app.services.agents import CalendarAgent, EmailAgent, PriorityAgent, SocialAgent, VideoIntelligenceAgent
 from app.services.tools import get_all_tools
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,7 @@ class AICoordinator:
         self.calendar_agent = CalendarAgent(self.tools)
         self.social_agent = SocialAgent(self.tools)
         self.priority_agent = PriorityAgent(self.tools)
+        self.video_agent = VideoIntelligenceAgent(self.tools)
         logger.info("AI Coordinator initialized with all agents")
 
     def get_daily_briefing(self, user_id: int) -> Dict[str, Any]:
@@ -126,6 +127,8 @@ class AICoordinator:
                 "chat",
             ]:
                 return self.social_agent.analyze_message(content, document_type)
+            elif document_type == "video":
+                return self.video_agent.analyze(content, context=f"Video analysis request for {document_type}")
             else:
                 return self.priority_agent.analyze_document(content, document_type)
 
