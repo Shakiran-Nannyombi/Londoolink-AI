@@ -148,8 +148,8 @@ export function ConsentForm({ onSubmit, isLoading = false }: ConsentFormProps) {
                     )
                 })}
 
-                <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg mt-6">
-                    <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 p-4 bg-purple-500/10 border border-purple-500/20 dark:bg-blue-500/10 dark:border-blue-500/20 rounded-lg mt-6">
+                    <Info className="w-5 h-5 text-purple-500 dark:text-blue-500 shrink-0 mt-0.5" />
                     <div className="text-sm text-foreground">
                         <p className="font-medium mb-1">Your privacy matters</p>
                         <p className="text-muted-foreground">

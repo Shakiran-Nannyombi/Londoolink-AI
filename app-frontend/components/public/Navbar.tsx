@@ -78,7 +78,7 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 z-50 relative" onClick={closeMobileMenu}>
                     <img
-                        src={theme === 'dark' ? "/logoDark.png" : "/logoLondo.png"}
+                        src="/logoLondo.png"
                         alt="Londoolink AI"
                         className="h-10 w-auto object-contain"
                     />
@@ -90,14 +90,6 @@ export function Navbar() {
                     <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
                     <Link href="/how-it-works" className="text-sm font-medium hover:text-primary transition-colors">How It Works</Link>
                     <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">About</Link>
-                    <a
-                        href="https://shakiran-nannyombi.github.io/Londoolink-AI/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-medium hover:text-primary transition-colors"
-                    >
-                        Docs
-                    </a>
 
                     <button
                         onClick={toggleTheme}
@@ -146,32 +138,19 @@ export function Navbar() {
                                     { href: "/", label: "Home" },
                                     { href: "/how-it-works", label: "How It Works" },
                                     { href: "/about", label: "About" },
-                                    { href: "https://shakiran-nannyombi.github.io/Londoolink-AI/", label: "Docs", isExternal: true },
                                 ].map((link, i) => (
                                     <motion.div
                                         key={link.href}
                                         custom={i}
                                         variants={linkVariants}
                                     >
-                                        {link.isExternal ? (
-                                            <a
-                                                href={link.href}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={closeMobileMenu}
-                                                className="text-3xl font-bold tracking-tight hover:text-primary transition-colors"
-                                            >
-                                                {link.label}
-                                            </a>
-                                        ) : (
-                                            <Link
-                                                href={link.href}
-                                                onClick={closeMobileMenu}
-                                                className="text-3xl font-bold tracking-tight hover:text-primary transition-colors"
-                                            >
-                                                {link.label}
-                                            </Link>
-                                        )}
+                                        <Link
+                                            href={link.href}
+                                            onClick={closeMobileMenu}
+                                            className="text-3xl font-bold tracking-tight hover:text-primary transition-colors"
+                                        >
+                                            {link.label}
+                                        </Link>
                                     </motion.div>
                                 ))}
 

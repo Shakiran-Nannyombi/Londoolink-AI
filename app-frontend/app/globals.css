@@ -5,26 +5,26 @@
 
 :root {
   /* Bright Focus light theme with vibrant blue, coral, and gold accents */
-  --background: #eff0fd;
+  --background: #f5f3ff;
   --foreground: #020510;
   --card: #ffffff;
   --card-foreground: #020510;
   --popover: #ffffff;
   --popover-foreground: #020510;
-  --primary: #2a39e0;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --secondary: #ed888c;
   --secondary-foreground: #ffffff;
-  --muted: #e5e7fb;
+  --muted: #ede9fe;
   --muted-foreground: #4a5568;
   --accent: #e5b24e;
   --accent-foreground: #020510;
   --destructive: #ed888c;
   --destructive-foreground: #ffffff;
-  --border: #d1d5f0;
-  --input: #d1d5f0;
-  --ring: #2a39e0;
-  --chart-1: #2a39e0;
+  --border: #ddd6fe;
+  --input: #ddd6fe;
+  --ring: #7c3aed;
+  --chart-1: #7c3aed;
   --chart-2: #ed888c;
   --chart-3: #e5b24e;
   --chart-4: #6366f1;
@@ -33,7 +33,7 @@
   --success: #10b981;
   --warning: #e5b24e;
   --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(42, 57, 224, 0.15);
+  --glass-border: rgba(124, 58, 237, 0.15);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -73,7 +73,7 @@
   --success: #10b981;
   --warning: #e5b24e;
   --glass-bg: rgba(26, 32, 44, 0.7);
-  --glass-border: rgba(79, 209, 197, 0.15);
+  --glass-border: rgba(79, 209, 197, 0.26);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -146,7 +146,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 16px rgba(42, 57, 224, 0.08);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.08);
   transition: all 0.3s ease;
 }
 

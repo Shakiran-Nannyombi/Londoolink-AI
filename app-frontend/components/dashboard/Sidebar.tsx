@@ -71,7 +71,7 @@ export function Sidebar() {
             <div className="p-6 flex items-center gap-3 overflow-hidden">
                 <div className="w-8 h-8 flex-shrink-0">
                     <img
-                        src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                        src="/logoLondo.png"
                         alt="Logo"
                         className="w-full h-full object-contain"
                     />

@@ -29,7 +29,7 @@ export default function DocumentationPage() {
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Globe className="w-5 h-5 text-blue-400" />
+            <Globe className="w-5 h-5 text-purple-400 dark:text-blue-400" />
             Part 1: Deployed Project (Live URL)
           </CardTitle>
         </CardHeader>
@@ -115,7 +115,7 @@ app.add_middleware(
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <GitBranch className="w-5 h-5 text-purple-400" />
+            <GitBranch className="w-5 h-5 text-purple-400 dark:text-blue-400" />
             Part 2: Public GitHub Repository
           </CardTitle>
         </CardHeader>
@@ -154,7 +154,7 @@ app.add_middleware(
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <GitBranch className="w-5 h-5 text-blue-400" />
+            <GitBranch className="w-5 h-5 text-purple-400 dark:text-blue-400" />
             Repository Structure & Best Practices
           </CardTitle>
         </CardHeader>
@@ -337,7 +337,7 @@ app.add_middleware(
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Database className="w-5 h-5 text-blue-400" />
+                  <Database className="w-5 h-5 text-purple-400 dark:text-blue-400" />
                   Key Features
                 </CardTitle>
               </CardHeader>
@@ -369,7 +369,7 @@ app.add_middleware(
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <ExternalLink className="w-5 h-5 text-purple-400" />
+                  <ExternalLink className="w-5 h-5 text-purple-400 dark:text-blue-400" />
                   Resources
                 </CardTitle>
               </CardHeader>
