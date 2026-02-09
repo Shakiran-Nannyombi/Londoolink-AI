@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class IntegrationStatusResponse(BaseModel):
-    service_type: Literal['email', 'whatsapp', 'sms']
+    service_type: Literal['email', 'sms']
     is_connected: bool
     service_provider: Optional[str] = None
     connected_at: Optional[datetime] = None
@@ -19,14 +19,10 @@ class EmailConnectRequest(BaseModel):
     authorization_code: Optional[str] = Field(None, description="OAuth authorization code")
 
 
-class WhatsAppConnectRequest(BaseModel):
-    phone_number: str = Field(..., description="WhatsApp phone number")
-    verification_code: Optional[str] = Field(None, description="Verification code")
-
 
 class SMSConnectRequest(BaseModel):
     provider: Literal['twilio', 'messagebird'] = Field(..., description="SMS provider")
-    api_key: str = Field(..., description="API key for SMS service")
+    api_key: Optional[str] = Field(None, description="API key for SMS service")
     api_secret: Optional[str] = Field(None, description="API secret if required")
     phone_number: Optional[str] = Field(None, description="Phone number to use")
 

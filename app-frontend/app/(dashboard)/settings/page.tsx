@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
-import { EmailIntegrationCard, WhatsAppIntegrationCard, SMSIntegrationCard } from '@/components/integrations/ServiceIntegrationCard'
+import { EmailIntegrationCard, SMSIntegrationCard } from '@/components/integrations/ServiceIntegrationCard'
 import { apiClient } from '@/lib/api'
 
 type Tab = 'general' | 'notifications' | 'privacy' | 'integrations' | 'security'
@@ -42,9 +42,8 @@ export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState<Tab>('general')
     const [integrationStatus, setIntegrationStatus] = useState<{
         email: boolean
-        whatsapp: boolean
         sms: boolean
-    }>({ email: false, whatsapp: false, sms: false })
+    }>({ email: false, sms: false })
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -354,40 +353,14 @@ export default function SettingsPage() {
                                             }}
                                         />
 
-                                        <WhatsAppIntegrationCard
-                                            isConnected={integrationStatus.whatsapp}
-                                            onConnect={async () => {
-                                                try {
-                                                    const phoneNumber = prompt('Enter your WhatsApp phone number:')
-                                                    if (phoneNumber) {
-                                                        await apiClient.connectWhatsApp(phoneNumber)
-                                                        setIntegrationStatus(prev => ({ ...prev, whatsapp: true }))
-                                                    }
-                                                } catch (error) {
-                                                    console.error('Failed to connect WhatsApp:', error)
-                                                    throw error
-                                                }
-                                            }}
-                                            onDisconnect={async () => {
-                                                try {
-                                                    await apiClient.disconnectWhatsApp()
-                                                    setIntegrationStatus(prev => ({ ...prev, whatsapp: false }))
-                                                } catch (error) {
-                                                    console.error('Failed to disconnect WhatsApp:', error)
-                                                    throw error
-                                                }
-                                            }}
-                                        />
 
                                         <SMSIntegrationCard
                                             isConnected={integrationStatus.sms}
                                             onConnect={async () => {
                                                 try {
-                                                    const apiKey = prompt('Enter your Twilio API Key:')
-                                                    if (apiKey) {
-                                                        await apiClient.connectSMS('twilio', apiKey)
-                                                        setIntegrationStatus(prev => ({ ...prev, sms: true }))
-                                                    }
+                                                    // Now using backend-managed secrets from .env
+                                                    await apiClient.connectSMS('twilio')
+                                                    setIntegrationStatus(prev => ({ ...prev, sms: true }))
                                                 } catch (error) {
                                                     console.error('Failed to connect SMS:', error)
                                                     throw error
