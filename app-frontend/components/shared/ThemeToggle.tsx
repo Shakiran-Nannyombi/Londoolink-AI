@@ -1,4 +1,6 @@
 
+"use client"
+
 import { motion, AnimatePresence } from "framer-motion"
 import { Sun, Moon } from "lucide-react"
 
