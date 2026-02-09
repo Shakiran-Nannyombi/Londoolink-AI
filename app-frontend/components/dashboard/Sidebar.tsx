@@ -12,7 +12,8 @@ import {
     ChevronLeft,
     ChevronRight,
     Moon,
-    Sun
+    Sun,
+    Shield
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -36,6 +37,7 @@ export function Sidebar() {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: User, label: 'Profile', path: '/profile' },
+        { icon: Shield, label: 'Security', path: '/security' },
         { icon: Settings, label: 'Settings', path: '/settings' },
     ]
 
@@ -69,7 +71,7 @@ export function Sidebar() {
 
             {/* Logo Section */}
             <div className="p-6 flex items-center gap-3 overflow-hidden">
-                <div className="w-8 h-8 flex-shrink-0">
+                <div className="w-8 h-8 shrink-0">
                     <img
                         src="/logoLondo.png"
                         alt="Logo"
@@ -80,7 +82,7 @@ export function Sidebar() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary whitespace-nowrap"
+                        className="font-bold text-lg bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary whitespace-nowrap"
                     >
                         Londoolink AI
                     </motion.div>
@@ -100,7 +102,7 @@ export function Sidebar() {
                         onClick={() => router.push(item.path)}
                         title={isCollapsed ? item.label : undefined}
                     >
-                        <item.icon className={cn("w-5 h-5 flex-shrink-0", isCollapsed ? "" : "mr-3")} />
+                        <item.icon className={cn("w-5 h-5 shrink-0", isCollapsed ? "" : "mr-3")} />
 
                         {!isCollapsed && (
                             <motion.span
@@ -125,7 +127,7 @@ export function Sidebar() {
                     onClick={() => router.push('/notifications')}
                 >
                     <div className="relative">
-                        <Bell className={cn("w-5 h-5 flex-shrink-0", isCollapsed ? "" : "mr-3")} />
+                        <Bell className={cn("w-5 h-5 shrink-0", isCollapsed ? "" : "mr-3")} />
                         {notificationsCount > 0 && (
                             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background" />
                         )}
@@ -156,9 +158,9 @@ export function Sidebar() {
                     title={isCollapsed ? "Toggle Theme" : undefined}
                 >
                     {theme === 'dark' ? (
-                        <Moon className={cn("w-5 h-5 flex-shrink-0", isCollapsed ? "" : "mr-3")} />
+                        <Moon className={cn("w-5 h-5 shrink-0", isCollapsed ? "" : "mr-3")} />
                     ) : (
-                        <Sun className={cn("w-5 h-5 flex-shrink-0", isCollapsed ? "" : "mr-3")} />
+                        <Sun className={cn("w-5 h-5 shrink-0", isCollapsed ? "" : "mr-3")} />
                     )}
 
                     {!isCollapsed && (
@@ -181,7 +183,7 @@ export function Sidebar() {
                     onClick={handleLogout}
                     title={isCollapsed ? "Logout" : undefined}
                 >
-                    <LogOut className={cn("w-5 h-5 flex-shrink-0", isCollapsed ? "" : "mr-3")} />
+                    <LogOut className={cn("w-5 h-5 shrink-0", isCollapsed ? "" : "mr-3")} />
 
                     {!isCollapsed && (
                         <motion.span

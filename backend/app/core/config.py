@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
 
     # AI Configuration
-    GROQ_API_KEY: str  # Primary AI provider
+    GROQ_API_KEY: Optional[str] = None  # Primary AI provider
     OPENAI_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
     CLAUDE_API_KEY: Optional[str] = None

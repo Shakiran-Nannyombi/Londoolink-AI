@@ -2,7 +2,7 @@ import logging
 from typing import Any, Dict, List
 
 from langchain.agents import create_agent
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
 
@@ -19,10 +19,10 @@ class EmailAgent:
     def _create_agent(self):
         # Create the email triage agent
         try:
-            llm = ChatGroq(
-                model="llama-3.1-8b-instant",
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-3.0-pro",
                 temperature=0.1,
-                api_key=settings.GROQ_API_KEY,
+                google_api_key=settings.GEMINI_API_KEY,
             )
 
             system_prompt = """You are an Email Triage Agent for Londoolink AI. Your role is to:

@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any, Dict, Optional
 
 from langchain_core.messages import HumanMessage
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
 from app.utils.text_formatter import clean_ai_response
@@ -48,22 +48,22 @@ class LangGraphCoordinator:
     
     MODEL_CONFIGS = {
         'small': {
-            'model_name': 'llama-3.1-8b-instant',
-            'max_tokens': 1024,
+            'model_name': 'gemini-3.0-flash',
+            'max_tokens': 4096,
             'temperature': 0.1,
-            'timeout': 30
-        },
-        'medium': {
-            'model_name': 'llama-3.1-8b-instant',
-            'max_tokens': 2048,
-            'temperature': 0.2,
             'timeout': 60
         },
-        'large': {
-            'model_name': 'llama-3.1-8b-instant',
-            'max_tokens': 4096,
-            'temperature': 0.3,
+        'medium': {
+            'model_name': 'gemini-3.0-pro',
+            'max_tokens': 16384,
+            'temperature': 0.2,
             'timeout': 90
+        },
+        'large': {
+            'model_name': 'gemini-3.0-pro',
+            'max_tokens': 32768,
+            'temperature': 0.3,
+            'timeout': 120
         }
     }
 
@@ -92,18 +92,12 @@ class LangGraphCoordinator:
         config = self.MODEL_CONFIGS[self.model_size]
         logger.info(f"Loading {self.model_size} model with config: {config}")
         
-        return ChatGroq(
+        return ChatGoogleGenerativeAI(
             model=config['model_name'],
             temperature=config['temperature'],
-            api_key=settings.GROQ_API_KEY,
-            max_tokens=config['max_tokens'],
+            google_api_key=settings.GEMINI_API_KEY,
+            max_output_tokens=config['max_tokens'],
             request_timeout=config['timeout'],
-            model_kwargs={
-                'stop_sequences': ['\n\n', '\n\n\n'],
-                'top_p': 0.9,
-                'presence_penalty': 0.1,
-                'frequency_penalty': 0.1,
-            }
         )
 
     def cleanup(self):
@@ -181,6 +175,12 @@ class LangGraphCoordinator:
                 agent_type = "priority"
 
             # Use LLM directly for document analysis
+            if document_type == 'video':
+               # Pass through to Gemini 3.0 Pro's video handling capabilities if implemented directly here,
+               # otherwise just use the text prompt which describes the video URL or Context.
+               # For now, we utilize the prompt.
+               agent_type = "video"
+               prompt = f"Analyze this video context:\n\n{content}"  
             messages = [HumanMessage(content=prompt)]
             response = self.llm.invoke(messages)
 
