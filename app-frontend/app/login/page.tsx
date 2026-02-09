@@ -143,7 +143,7 @@ export default function LoginPage() {
                                 <div className="absolute inset-0 bg-secondary/20 rounded-2xl -rotate-6 backdrop-blur-sm" />
                                 <div className="relative w-full h-full bg-background/50 rounded-2xl flex items-center justify-center border border-primary/20 shadow-inner">
                                     <img
-                                        src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                                        src="/logoLondo.png"
                                         alt="Londoolink Logo"
                                         className="w-16 h-16 object-contain"
                                     />
@@ -192,7 +192,7 @@ export default function LoginPage() {
                                 <div className="absolute inset-0 bg-secondary/20 rounded-2xl -rotate-6" />
                                 <div className="relative w-full h-full bg-background/50 rounded-2xl flex items-center justify-center border border-primary/20">
                                     <img
-                                        src={theme === "dark" ? "/logoDark.png" : "/logoLondo.png"}
+                                        src="/logoLondo.png"
                                         alt="Londoolink Logo"
                                         className="w-12 h-12 object-contain"
                                     />

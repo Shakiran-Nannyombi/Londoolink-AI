@@ -15,7 +15,7 @@ export default function HomePage() {
                 badge="System Online v1.0"
                 title1="Order emerging from"
                 title2="Chaos"
-                description="The central nervous system for your digital life. Londoolink AI is stateful infrastructure that tracks, prioritizes, and executes—so you don't have to."
+                description="The central nervous system for your digital life. Londoolink AI is stateful infrastructure that tracks, prioritizes, and executes so you don't have to."
             />
 
             {/* Core Philosophy */}

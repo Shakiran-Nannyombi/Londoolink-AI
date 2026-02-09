@@ -277,7 +277,7 @@ export default function SettingsPage() {
                                     <h2 className="text-xl font-semibold mb-6 text-foreground">Privacy & Data</h2>
 
                                     <div className="space-y-6">
-                                        <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                        <div className="p-4 rounded-lg bg-purple-500/10 dark:bg-blue-500/10 border border-purple-500/20 dark:border-blue-500/20">
                                             <p className="text-sm text-foreground mb-2">
                                                 <strong>Your data is encrypted and secure.</strong>
                                             </p>

@@ -4,11 +4,11 @@ import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { 
-  Code, 
-  Database, 
-  Shield, 
-  Zap, 
+import {
+  Code,
+  Database,
+  Shield,
+  Zap,
   GitBranch,
   Server,
   Brain,
@@ -24,16 +24,16 @@ export default function TechnicalDocumentation() {
       <Card className="bg-white/5 border-white/10">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Network className="w-5 h-5 text-blue-400" />
+            <Network className="w-5 h-5 text-purple-400 dark:text-blue-400" />
             System Architecture Overview
           </CardTitle>
         </CardHeader>
         <CardContent className="text-slate-300 space-y-4">
           <p>
-            Londoolink AI follows a modern microservices architecture with intelligent agent orchestration 
+            Londoolink AI follows a modern microservices architecture with intelligent agent orchestration
             at its core. The system processes data through a sophisticated pipeline designed for scalability and reliability.
           </p>
-          
+
           <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
             <h4 className="font-semibold text-white mb-3">End-to-End Data Flow</h4>
             <div className="flex items-center justify-between text-sm">
@@ -45,8 +45,8 @@ export default function TechnicalDocumentation() {
               </div>
               <div className="text-slate-500">→</div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-2">
-                  <Zap className="w-6 h-6 text-blue-400" />
+                <div className="w-12 h-12 bg-purple-500/20 dark:bg-blue-500/20 rounded-lg flex items-center justify-center mb-2">
+                  <Zap className="w-6 h-6 text-purple-400 dark:text-blue-400" />
                 </div>
                 <span>FastAPI Backend</span>
               </div>
@@ -86,24 +86,24 @@ export default function TechnicalDocumentation() {
         </CardHeader>
         <CardContent className="text-slate-300 space-y-4">
           <p>
-            The core intelligence of Londoolink AI is powered by a stateful LangGraph system that orchestrates 
+            The core intelligence of Londoolink AI is powered by a stateful LangGraph system that orchestrates
             multiple specialized agents to process and prioritize information intelligently.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <Server className="w-4 h-4 text-blue-400" />
+                <div className="w-8 h-8 bg-purple-500/20 dark:bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <Server className="w-4 h-4 text-purple-400 dark:text-blue-400" />
                 </div>
                 <h4 className="font-semibold text-white">Email Agent</h4>
               </div>
               <p className="text-sm text-slate-400">
-                Processes incoming emails, extracts key information, and determines priority levels 
+                Processes incoming emails, extracts key information, and determines priority levels
                 based on content analysis and sender importance.
               </p>
             </div>
-            
+
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
@@ -112,27 +112,27 @@ export default function TechnicalDocumentation() {
                 <h4 className="font-semibold text-white">Calendar Agent</h4>
               </div>
               <p className="text-sm text-slate-400">
-                Analyzes calendar events, identifies conflicts, and provides intelligent scheduling 
+                Analyzes calendar events, identifies conflicts, and provides intelligent scheduling
                 recommendations with context-aware insights.
               </p>
             </div>
-            
+
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                  <Server className="w-4 h-4 text-purple-400" />
+                <div className="w-8 h-8 bg-purple-500/20 dark:bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <Server className="w-4 h-4 text-purple-400 dark:text-blue-400" />
                 </div>
                 <h4 className="font-semibold text-white">Priority Agent</h4>
               </div>
               <p className="text-sm text-slate-400">
-                Synthesizes information from all agents to create prioritized daily briefings 
+                Synthesizes information from all agents to create prioritized daily briefings
                 with actionable insights and recommendations.
               </p>
             </div>
           </div>
 
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-            <h5 className="font-semibold text-blue-400 mb-2">Daily Briefing Workflow</h5>
+          <div className="bg-purple-500/10 dark:bg-blue-500/10 border border-purple-500/20 dark:border-blue-500/20 rounded-lg p-4">
+            <h5 className="font-semibold text-purple-400 dark:text-blue-400 mb-2">Daily Briefing Workflow</h5>
             <ol className="text-sm text-slate-300 space-y-1 list-decimal list-inside">
               <li>Agents collect and process data from various sources</li>
               <li>Information is passed through the stateful graph for analysis</li>
@@ -165,7 +165,7 @@ export default function TechnicalDocumentation() {
               <tbody className="space-y-2">
                 <tr className="border-b border-slate-800">
                   <td className="py-3">
-                    <Badge variant="secondary" className="bg-purple-500/20 text-purple-400">
+                    <Badge variant="secondary" className="bg-purple-500/20 dark:bg-blue-500/20 text-purple-400 dark:text-blue-400">
                       LangGraph
                     </Badge>
                   </td>
@@ -174,7 +174,7 @@ export default function TechnicalDocumentation() {
                 </tr>
                 <tr className="border-b border-slate-800">
                   <td className="py-3">
-                    <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
+                    <Badge variant="secondary" className="bg-purple-500/20 dark:bg-blue-500/20 text-purple-400 dark:text-blue-400">
                       ChromaDB
                     </Badge>
                   </td>
@@ -223,7 +223,7 @@ export default function TechnicalDocumentation() {
           </CardTitle>
         </CardHeader>
         <CardContent className="text-slate-300 space-y-6">
-          
+
           {/* Authentication Endpoints */}
           <div>
             <h4 className="font-semibold text-white mb-3">Authentication</h4>
@@ -231,13 +231,13 @@ export default function TechnicalDocumentation() {
               <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
                 <div className="flex items-center gap-2 mb-2">
                   <Badge className="bg-green-500/20 text-green-400">POST</Badge>
-                  <code className="text-blue-400">/auth/register</code>
+                  <code className="text-purple-400 dark:text-blue-400">/auth/register</code>
                 </div>
                 <p className="text-sm text-slate-400 mb-3">Register a new user account</p>
                 <div className="space-y-2">
                   <p className="text-xs text-slate-500">Request:</p>
                   <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`curl -X POST "https://your-api.com/auth/register" \\
+                    {`curl -X POST "https://your-api.com/auth/register" \\
   -H "Content-Type: application/json" \\
   -d '{
     "email": "user@example.com",
@@ -247,7 +247,7 @@ export default function TechnicalDocumentation() {
                   </pre>
                   <p className="text-xs text-slate-500">Response:</p>
                   <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`{
+                    {`{
   "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
   "token_type": "bearer",
   "user": {
@@ -263,14 +263,14 @@ export default function TechnicalDocumentation() {
 
               <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge className="bg-blue-500/20 text-blue-400">POST</Badge>
-                  <code className="text-blue-400">/auth/login</code>
+                  <Badge className="bg-purple-500/20 dark:bg-blue-500/20 text-purple-400 dark:text-blue-400">POST</Badge>
+                  <code className="text-purple-400 dark:text-blue-400">/auth/login</code>
                 </div>
                 <p className="text-sm text-slate-400 mb-3">Authenticate user and get access token</p>
                 <div className="space-y-2">
                   <p className="text-xs text-slate-500">Request:</p>
                   <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`curl -X POST "https://your-api.com/auth/login" \\
+                    {`curl -X POST "https://your-api.com/auth/login" \\
   -H "Content-Type: application/x-www-form-urlencoded" \\
   -d "username=user@example.com&password=secure_password"`}
                   </pre>
@@ -285,18 +285,18 @@ export default function TechnicalDocumentation() {
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
               <div className="flex items-center gap-2 mb-2">
                 <Badge className="bg-purple-500/20 text-purple-400">GET</Badge>
-                <code className="text-blue-400">/briefing/daily</code>
+                <code className="text-purple-400 dark:text-blue-400">/briefing/daily</code>
               </div>
               <p className="text-sm text-slate-400 mb-3">Get personalized daily briefing with AI-generated insights</p>
               <div className="space-y-2">
                 <p className="text-xs text-slate-500">Request:</p>
                 <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`curl -X GET "https://your-api.com/briefing/daily" \\
+                  {`curl -X GET "https://your-api.com/briefing/daily" \\
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."`}
                 </pre>
                 <p className="text-xs text-slate-500">Response:</p>
                 <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`{
+                  {`{
   "briefing": [
     {
       "id": "brief_001",
@@ -326,13 +326,13 @@ export default function TechnicalDocumentation() {
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
               <div className="flex items-center gap-2 mb-2">
                 <Badge className="bg-yellow-500/20 text-yellow-400">POST</Badge>
-                <code className="text-blue-400">/rag/search</code>
+                <code className="text-purple-400 dark:text-blue-400">/rag/search</code>
               </div>
               <p className="text-sm text-slate-400 mb-3">Search through your knowledge base using RAG</p>
               <div className="space-y-2">
                 <p className="text-xs text-slate-500">Request:</p>
                 <pre className="bg-black/30 rounded p-2 text-xs overflow-x-auto">
-{`curl -X POST "https://your-api.com/rag/search" \\
+                  {`curl -X POST "https://your-api.com/rag/search" \\
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..." \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -363,16 +363,16 @@ export default function TechnicalDocumentation() {
               </h4>
               <div className="space-y-3">
                 <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                  <h5 className="font-medium text-blue-400 mb-1">PostgreSQL</h5>
+                  <h5 className="font-medium text-purple-400 dark:text-blue-400 mb-1">PostgreSQL</h5>
                   <p className="text-sm text-slate-400">
-                    Handles relational data including user accounts, authentication tokens, 
+                    Handles relational data including user accounts, authentication tokens,
                     and structured application data with ACID compliance.
                   </p>
                 </div>
                 <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
                   <h5 className="font-medium text-purple-400 mb-1">ChromaDB</h5>
                   <p className="text-sm text-slate-400">
-                    Stores vector embeddings for semantic search, enabling intelligent 
+                    Stores vector embeddings for semantic search, enabling intelligent
                     content retrieval and RAG-based question answering.
                   </p>
                 </div>
@@ -399,7 +399,7 @@ export default function TechnicalDocumentation() {
                   <div>
                     <p className="font-medium text-green-400 text-sm">Credential Encryption</p>
                     <p className="text-xs text-slate-400">
-                      Third-party credentials are encrypted at rest using AES-256. 
+                      Third-party credentials are encrypted at rest using AES-256.
                       Encryption keys are managed securely as environment variables.
                     </p>
                   </div>
