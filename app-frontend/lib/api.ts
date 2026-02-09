@@ -293,18 +293,8 @@ class ApiClient {
     return this.post('/integrations/email/disconnect', {})
   }
 
-  async connectWhatsApp(phoneNumber: string, verificationCode?: string): Promise<ApiResponse> {
-    return this.post('/integrations/whatsapp/connect', {
-      phone_number: phoneNumber,
-      verification_code: verificationCode
-    })
-  }
 
-  async disconnectWhatsApp(): Promise<ApiResponse> {
-    return this.post('/integrations/whatsapp/disconnect', {})
-  }
-
-  async connectSMS(provider: 'twilio' | 'messagebird', apiKey: string, apiSecret?: string, phoneNumber?: string): Promise<ApiResponse> {
+  async connectSMS(provider: 'twilio' | 'messagebird', apiKey?: string, apiSecret?: string, phoneNumber?: string): Promise<ApiResponse> {
     return this.post('/integrations/sms/connect', {
       provider,
       api_key: apiKey,

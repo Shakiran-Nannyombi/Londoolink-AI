@@ -40,3 +40,20 @@ INFO:app:Completed GET /api/v1/agent/briefing/daily - Status: 401 - 1.44ms
 INFO:     127.0.0.1:33198 - "GET /api/v1/agent/briefing/daily HTTP/1.1" 401 Unauthorized
 INFO:app:Completed GET /api/v1/agent/briefing/daily - Status: 401 - 1.12ms
 INFO:     127.0.0.1:33212 - "GET /api/v1/agent/briefing/daily HTTP/1.1" 401 Unauthorized
+INFO:app:Incoming OPTIONS /api/v1/agent/briefing/daily from origin: http://localhost:3000
+INFO:app:Completed OPTIONS /api/v1/agent/briefing/daily - Status: 200 - 5.02ms
+INFO:     127.0.0.1:44876 - "OPTIONS /api/v1/agent/briefing/daily HTTP/1.1" 200 OK
+INFO:app:Incoming GET /api/v1/agent/briefing/daily from origin: http://localhost:3000
+INFO:app:Completed GET /api/v1/agent/briefing/daily - Status: 401 - 13.71ms
+INFO:     127.0.0.1:44876 - "GET /api/v1/agent/briefing/daily HTTP/1.1" 401 Unauthorized
+INFO:app:Incoming OPTIONS /api/v1/agent/briefing/daily from origin: http://localhost:3000
+INFO:app:Completed OPTIONS /api/v1/agent/briefing/daily - Status: 200 - 0.55ms
+INFO:     127.0.0.1:52440 - "OPTIONS /api/v1/agent/briefing/daily HTTP/1.1" 200 OK
+INFO:app:Incoming GET /api/v1/agent/briefing/daily from origin: http://localhost:3000
+INFO:app:Completed GET /api/v1/agent/briefing/daily - Status: 401 - 2.46ms
+INFO:     127.0.0.1:52440 - "GET /api/v1/agent/briefing/daily HTTP/1.1" 401 Unauthorized
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [394680]
+INFO:     Stopping reloader process [394678]
