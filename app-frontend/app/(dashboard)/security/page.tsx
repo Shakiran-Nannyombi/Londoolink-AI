@@ -84,7 +84,7 @@ The video shows a user navigating the Londoolink AI dashboard, specifically stru
                 <Button
                     onClick={runSecurityScan}
                     disabled={isScanning}
-                    className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all"
+                    className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all"
                 >
                     {isScanning ? (
                         <>
@@ -202,16 +202,16 @@ The video shows a user navigating the Londoolink AI dashboard, specifically stru
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <input
                                     type="text"
-                                    placeholder="Paste video URL (e.g., Loom, YouTube, Drive link)..."
+                                    placeholder="Paste video URL..."
                                     className="flex-1 bg-background/50 border border-input rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                                     value={videoUrl}
                                     onChange={(e) => setVideoUrl(e.target.value)}
                                 />
-                                <Button onClick={handleAnalyzeVideo} disabled={analyzingVideo || !videoUrl}>
-                                    {analyzingVideo ? "Analyzing..." : "Analyze Context"}
+                                <Button onClick={handleAnalyzeVideo} disabled={analyzingVideo || !videoUrl} className="w-full sm:w-auto">
+                                    {analyzingVideo ? "Analyzing..." : "Analyze"}
                                 </Button>
                             </div>
 

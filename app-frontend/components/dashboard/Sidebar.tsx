@@ -21,7 +21,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useNotificationStore } from '@/store/notificationStore'
 
-export function Sidebar() {
+export function Sidebar({ className }: { className?: string }) {
     const router = useRouter()
     const pathname = usePathname()
     const [isCollapsed, setIsCollapsed] = useState(false)
@@ -55,7 +55,8 @@ export function Sidebar() {
         <motion.div
             className={cn(
                 "relative h-screen bg-background border-r border-border flex flex-col z-50 transition-all duration-300",
-                isCollapsed ? "w-20" : "w-64"
+                isCollapsed ? "w-20" : "w-64",
+                className
             )}
             initial={false}
         >

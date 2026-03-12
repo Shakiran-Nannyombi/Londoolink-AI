@@ -84,26 +84,26 @@ export default function ProfilePage() {
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">Profile</h1>
                     <p className="text-muted-foreground">Manage your personal information</p>
                 </div>
 
                 {!isEditing ? (
-                    <Button onClick={() => setIsEditing(true)}>
+                    <Button onClick={() => setIsEditing(true)} className="w-full sm:w-auto">
                         <Edit2 className="w-4 h-4 mr-2" />
                         Edit Profile
                     </Button>
                 ) : (
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={handleCancel}>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                        <Button variant="outline" onClick={handleCancel} className="flex-1 sm:flex-none">
                             <X className="w-4 h-4 mr-2" />
                             Cancel
                         </Button>
-                        <Button onClick={handleSave} disabled={isLoading}>
+                        <Button onClick={handleSave} disabled={isLoading} className="flex-1 sm:flex-none">
                             <Save className="w-4 h-4 mr-2" />
-                            {isLoading ? 'Saving...' : 'Save Changes'}
+                            {isLoading ? 'Saving...' : 'Save'}
                         </Button>
                     </div>
                 )}
@@ -115,7 +115,7 @@ export default function ProfilePage() {
                     <Card className="p-6">
                         <div className="flex flex-col items-center">
                             <div className="relative mb-4 group">
-                                <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-4xl font-bold text-white relative">
+                                <div className="w-32 h-32 rounded-full overflow-hidden bg-linear-to-br from-primary to-secondary flex items-center justify-center text-4xl font-bold text-white relative">
                                     {user?.profile_picture_url ? (
                                         <img
                                             src={`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}${user.profile_picture_url}`}
@@ -269,18 +269,6 @@ export default function ProfilePage() {
                                 <Button variant="outline" size="sm">Connect</Button>
                             </div>
 
-                            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                                        <Phone className="w-5 h-5 text-green-500" />
-                                    </div>
-                                    <div>
-                                        <p className="font-medium text-foreground">WhatsApp</p>
-                                        <p className="text-xs text-muted-foreground">Not connected</p>
-                                    </div>
-                                </div>
-                                <Button variant="outline" size="sm">Connect</Button>
-                            </div>
 
                             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                                 <div className="flex items-center gap-3">

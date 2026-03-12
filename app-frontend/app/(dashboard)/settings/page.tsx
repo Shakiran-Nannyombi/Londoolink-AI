@@ -115,23 +115,23 @@ export default function SettingsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Sidebar - Tabs */}
+                {/* Tabs - Sidebar on Desktop, Horizontal Scroll on Mobile */}
                 <div className="lg:col-span-1">
-                    <Card className="p-2">
-                        <nav className="space-y-1">
+                    <Card className="p-1 lg:p-2 bg-background/50 backdrop-blur-sm border-border/50 sticky top-20 z-20">
+                        <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide">
                             {tabs.map((tab) => {
                                 const Icon = tab.icon
                                 return (
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${activeTab === tab.id
-                                            ? 'bg-primary text-primary-foreground'
+                                        className={`shrink-0 lg:w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 lg:py-3 rounded-lg text-left transition-all whitespace-nowrap ${activeTab === tab.id
+                                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[0.98]'
                                             : 'hover:bg-muted text-muted-foreground'
                                             }`}
                                     >
-                                        <Icon className="w-5 h-5" />
-                                        <span className="font-medium">{tab.name}</span>
+                                        <Icon className="w-4 h-4 lg:w-5 lg:h-5" />
+                                        <span className="font-medium text-sm lg:text-base">{tab.name}</span>
                                     </button>
                                 )
                             })}
@@ -191,19 +191,19 @@ export default function SettingsPage() {
                                                 <Languages className="w-4 h-4" />
                                                 Language
                                             </label>
-                                            <div className="grid grid-cols-2 gap-3">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 {languages.map((lang) => (
                                                     <button
                                                         key={lang.code}
                                                         onClick={() => updateLanguage(lang.code)}
-                                                        className={`p-3 rounded-lg border-2 transition-all text-left ${language === lang.code
+                                                        className={`p-3 rounded-lg border-2 transition-all text-left flex items-center justify-between ${language === lang.code
                                                             ? 'border-primary bg-primary/5'
                                                             : 'border-border hover:border-primary/50'
                                                             }`}
                                                     >
                                                         <p className="font-medium">{lang.name}</p>
                                                         {language === lang.code && (
-                                                            <Check className="w-4 h-4 text-primary mt-1" />
+                                                            <Check className="w-4 h-4 text-primary" />
                                                         )}
                                                     </button>
                                                 ))}
