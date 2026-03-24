@@ -78,7 +78,7 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 z-50 relative" onClick={closeMobileMenu}>
                     <img
-                        src="/logoLondo.png"
+                        src={theme === 'dark' ? '/logoDark.png' : '/logoLondo.png'}
                         alt="Londoolink AI"
                         className="h-10 w-auto object-contain"
                     />

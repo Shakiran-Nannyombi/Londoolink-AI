@@ -54,7 +54,7 @@ export function MobileNav() {
     return (
         <div className="lg:hidden sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <img src="/logoLondo.png" alt="Logo" className="w-8 h-8 object-contain" />
+                <img src={theme === 'dark' ? '/logoDark.png' : '/logoLondo.png'} alt="Logo" className="w-8 h-8 object-contain" />
                 <span className="font-bold text-lg bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">Londoolink AI</span>
             </div>
 
@@ -84,7 +84,7 @@ export function MobileNav() {
                         >
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-2">
-                                    <img src="/logoLondo.png" alt="Logo" className="w-8 h-8 object-contain" />
+                                    <img src={theme === 'dark' ? '/logoDark.png' : '/logoLondo.png'} alt="Logo" className="w-8 h-8 object-contain" />
                                     <span className="font-bold">Londoolink</span>
                                 </div>
                                 <Button variant="ghost" size="icon" onClick={toggleMenu}>
