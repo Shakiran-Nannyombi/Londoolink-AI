@@ -18,7 +18,7 @@ export function Footer() {
                     <div className="flex items-center gap-2">
                         {mounted && (
                             <img
-                                src="/logoLondo.png"
+                                src={theme === 'dark' ? '/logoDark.png' : '/logoLondo.png'}
                                 alt="Londoolink AI"
                                 className="h-8 w-auto object-contain"
                             />
