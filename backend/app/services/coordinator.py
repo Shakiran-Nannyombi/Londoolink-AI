@@ -4,6 +4,7 @@ from typing import Any, Dict
 
 from app.services.agents import CalendarAgent, EmailAgent, PriorityAgent, SocialAgent, VideoIntelligenceAgent
 from app.services.tools import get_all_tools
+from app.services.google_tools import get_google_tools_for_user
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,13 @@ class AICoordinator:
     def get_daily_briefing(self, user_id: int) -> Dict[str, Any]:
         # Generate a comprehensive daily briefing using all agents
         try:
+            # Build user-scoped tools with real Google API access
+            tools = get_all_tools() + get_google_tools_for_user(user_id)
+            email_agent = EmailAgent(tools)
+            calendar_agent = CalendarAgent(tools)
+            social_agent = SocialAgent(tools)
+            priority_agent = PriorityAgent(tools)
+
             briefing_data = {
                 "user_id": user_id,
                 "generated_at": datetime.utcnow().isoformat(),
@@ -33,10 +41,8 @@ class AICoordinator:
                 "summary": "",
             }
 
-            # Get insights from each agent
             try:
-                email_result = self.email_agent.get_daily_insights()
-                briefing_data["email_insights"] = email_result
+                briefing_data["email_insights"] = email_agent.get_daily_insights()
             except Exception as e:
                 logger.error(f"Email insights failed: {e}")
                 briefing_data["email_insights"] = {
@@ -46,8 +52,7 @@ class AICoordinator:
                 }
 
             try:
-                calendar_result = self.calendar_agent.get_daily_insights()
-                briefing_data["calendar_insights"] = calendar_result
+                briefing_data["calendar_insights"] = calendar_agent.get_daily_insights()
             except Exception as e:
                 logger.error(f"Calendar insights failed: {e}")
                 briefing_data["calendar_insights"] = {
@@ -57,8 +62,7 @@ class AICoordinator:
                 }
 
             try:
-                social_result = self.social_agent.get_daily_insights()
-                briefing_data["social_insights"] = social_result
+                briefing_data["social_insights"] = social_agent.get_daily_insights()
             except Exception as e:
                 logger.error(f"Social insights failed: {e}")
                 briefing_data["social_insights"] = {
@@ -67,23 +71,14 @@ class AICoordinator:
                     "agent_type": "social",
                 }
 
-            # Create master briefing
             try:
-                priority_result = self.priority_agent.create_briefing(
-                    email_analysis=briefing_data["email_insights"].get(
-                        "analysis", "Not available"
-                    ),
-                    calendar_analysis=briefing_data["calendar_insights"].get(
-                        "analysis", "Not available"
-                    ),
-                    social_analysis=briefing_data["social_insights"].get(
-                        "analysis", "Not available"
-                    ),
+                priority_result = priority_agent.create_briefing(
+                    email_analysis=briefing_data["email_insights"].get("analysis", "Not available"),
+                    calendar_analysis=briefing_data["calendar_insights"].get("analysis", "Not available"),
+                    social_analysis=briefing_data["social_insights"].get("analysis", "Not available"),
                 )
                 briefing_data["priority_recommendations"] = priority_result
-                briefing_data["summary"] = priority_result.get(
-                    "analysis", "Daily briefing generated successfully"
-                )
+                briefing_data["summary"] = priority_result.get("analysis", "Daily briefing generated successfully")
             except Exception as e:
                 logger.error(f"Priority briefing failed: {e}")
                 briefing_data["priority_recommendations"] = {
@@ -91,9 +86,7 @@ class AICoordinator:
                     "status": "error",
                     "agent_type": "priority",
                 }
-                briefing_data["summary"] = (
-                    "Daily briefing completed with limited analysis due to technical issues."
-                )
+                briefing_data["summary"] = "Daily briefing completed with limited analysis due to technical issues."
 
             logger.info(f"Daily briefing generated for user {user_id}")
             return briefing_data
@@ -118,14 +111,7 @@ class AICoordinator:
                 return self.calendar_agent.analyze(
                     f"Analyze this calendar event for importance and scheduling considerations:\n\n{content}"
                 )
-            elif document_type in [
-                "instagram",
-                "whatsapp",
-                "telegram",
-                "social",
-                "message",
-                "chat",
-            ]:
+            elif document_type in ["instagram", "whatsapp", "telegram", "social", "message", "chat"]:
                 return self.social_agent.analyze_message(content, document_type)
             elif document_type == "video":
                 return self.video_agent.analyze(content, context=f"Video analysis request for {document_type}")
