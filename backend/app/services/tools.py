@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime, timedelta
 from typing import List
 
@@ -100,6 +101,36 @@ def get_document_stats(_: str = "") -> str:
         return f"Error getting document stats: {str(e)}"
 
 
+@tool
+def crawl_webpage(url: str) -> str:
+    """Crawl a webpage and return its content as clean markdown. Useful for researching
+    URLs mentioned in emails, gathering context about companies or topics, or pulling
+    content from external sources for AI analysis."""
+    try:
+        from firecrawl import FirecrawlApp
+
+        api_key = os.getenv("FIRECRAWL_API_KEY")
+        if not api_key:
+            return "Firecrawl API key not configured. Set FIRECRAWL_API_KEY in environment."
+
+        app = FirecrawlApp(api_key=api_key)
+        result = app.scrape_url(url, formats=["markdown"])
+
+        if not result or not result.markdown:
+            return f"No content extracted from {url}"
+
+        # Trim to avoid overwhelming the LLM context
+        content = result.markdown[:3000]
+        if len(result.markdown) > 3000:
+            content += "\n\n[Content truncated...]"
+
+        return f"Content from {url}:\n\n{content}"
+
+    except Exception as e:
+        logger.error(f"Firecrawl tool error for {url}: {e}")
+        return f"Error crawling {url}: {str(e)}"
+
+
 def get_all_tools() -> List:
     # Get all available tools for agents
-    return [semantic_search, get_recent_documents, get_document_stats]
+    return [semantic_search, get_recent_documents, get_document_stats, crawl_webpage]

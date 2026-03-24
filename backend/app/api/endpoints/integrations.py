@@ -81,7 +81,11 @@ async def connect_email(
                     "redirect_uris": [settings.GOOGLE_REDIRECT_URI]
                 }
             },
-            scopes=['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/userinfo.email']
+            scopes=[
+                'https://www.googleapis.com/auth/gmail.readonly',
+                'https://www.googleapis.com/auth/calendar.readonly',
+                'https://www.googleapis.com/auth/userinfo.email',
+            ]
         )
         
         flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
