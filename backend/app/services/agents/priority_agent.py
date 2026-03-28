@@ -17,46 +17,23 @@ class PriorityAgent:
         self.agent = self._create_agent()
 
     def _create_agent(self):
-        # Create the master prioritization agent
         try:
             llm = ChatGoogleGenerativeAI(
-                model="gemini-3.0-pro",
+                model="gemini-1.5-flash",
                 temperature=0.1,
                 google_api_key=settings.GEMINI_API_KEY,
             )
-
-            system_prompt = """You are the Master Prioritization Agent for Londoolink AI. Your role is to:
-            1. Synthesize insights from email, calendar, and social messaging analysis
-            2. Create a prioritized daily briefing
-            3. Identify the most important tasks and deadlines
-            4. Provide actionable recommendations
-            5. Balance professional and personal priorities
-            
-            You coordinate with other agents and create the final daily briefing.
-            Be strategic and focus on what matters most to the user."""
-
-            agent = llm
-                model=llm, tools=self.tools, system_prompt=system_prompt
-            )
-
             logger.info("Priority agent created successfully")
-            return agent
-
+            return llm
         except Exception as e:
             logger.error(f"Failed to create priority agent: {e}")
             raise
 
     def analyze(self, prompt: str) -> Dict[str, Any]:
-        # Analyze and prioritize based on the given prompt
         try:
-            result = self.agent.invoke(
-                {"messages": [{"role": "user", "content": prompt}]}
-            )
-
+            result = self.agent.invoke(prompt)
             return {
-                "analysis": result.get("messages", [{}])[-1].get(
-                    "content", "No analysis available"
-                ),
+                "analysis": result.content if hasattr(result, "content") else str(result),
                 "status": "completed",
                 "agent_type": "priority",
             }

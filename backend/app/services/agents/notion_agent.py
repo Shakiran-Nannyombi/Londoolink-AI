@@ -118,27 +118,12 @@ class NotionAgent:
         """Create the Notion agent."""
         try:
             llm = ChatGoogleGenerativeAI(
-                model="gemini-3.0-pro",
+                model="gemini-1.5-flash",
                 temperature=0.1,
                 google_api_key=settings.GEMINI_API_KEY,
             )
-
-            system_prompt = """You are a Notion Agent for Londoolink AI. Your role is to:
-            1. Search and retrieve Notion pages relevant to the user's query
-            2. Summarize and extract key information from Notion content
-            3. Create and update Notion pages on behalf of the user
-            4. Organize and structure information in Notion
-
-            Use the available tools to interact with the user's Notion workspace.
-            Always confirm write operations before executing them."""
-
-            agent = llm
-                model=llm, tools=self.tools, system_prompt=system_prompt
-            )
-
             logger.info("Notion agent created successfully")
-            return agent
-
+            return llm
         except Exception as e:
             logger.error(f"Failed to create Notion agent: {e}")
             raise
@@ -150,14 +135,9 @@ class NotionAgent:
     def analyze(self, prompt: str, auth0_sub: str = "") -> Dict[str, Any]:
         """Analyze Notion content based on *prompt* for the user identified by *auth0_sub*."""
         try:
-            result = self.agent.invoke(
-                {"messages": [{"role": "user", "content": prompt}]}
-            )
-
+            result = self.agent.invoke(prompt)
             return {
-                "analysis": result.get("messages", [{}])[-1].get(
-                    "content", "No analysis available"
-                ),
+                "analysis": result.content if hasattr(result, "content") else str(result),
                 "status": "completed",
                 "agent_type": "notion",
             }

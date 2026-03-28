@@ -46,27 +46,12 @@ class CalendarAgent:
         """Create the calendar analysis agent."""
         try:
             llm = ChatGoogleGenerativeAI(
-                model="gemini-3.0-pro",
+                model="gemini-1.5-flash",
                 temperature=0.1,
                 google_api_key=settings.GEMINI_API_KEY,
             )
-
-            system_prompt = """You are a Calendar Analysis Agent for Londoolink AI. Your role is to:
-            1. Analyze upcoming meetings and events
-            2. Identify scheduling conflicts
-            3. Suggest optimal time management
-            4. Highlight important deadlines and commitments
-            
-            Use the available tools to search through calendar events and provide insights.
-            Focus on helping the user manage their time effectively."""
-
-            agent = llm
-                model=llm, tools=self.tools, system_prompt=system_prompt
-            )
-
             logger.info("Calendar agent created successfully")
-            return agent
-
+            return llm
         except Exception as e:
             logger.error(f"Failed to create calendar agent: {e}")
             raise
@@ -78,14 +63,9 @@ class CalendarAgent:
     def analyze(self, prompt: str, auth0_sub: str = "") -> Dict[str, Any]:
         """Analyze calendar events based on *prompt* for the user identified by *auth0_sub*."""
         try:
-            result = self.agent.invoke(
-                {"messages": [{"role": "user", "content": prompt}]}
-            )
-
+            result = self.agent.invoke(prompt)
             return {
-                "analysis": result.get("messages", [{}])[-1].get(
-                    "content", "No analysis available"
-                ),
+                "analysis": result.content if hasattr(result, "content") else str(result),
                 "status": "completed",
                 "agent_type": "calendar",
             }

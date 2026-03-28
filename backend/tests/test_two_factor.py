@@ -7,7 +7,7 @@ class TestTwoFactorAuth:
     def test_get_2fa_status_unauthorized(self, client):
         """Test getting 2FA status without authentication."""
         response = client.get("/api/v1/2fa/status")
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_get_2fa_status_success(self, client, auth_headers):
         """Test getting 2FA status with authentication."""

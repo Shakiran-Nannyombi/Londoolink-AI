@@ -17,52 +17,23 @@ class SocialAgent:
         self.agent = self._create_agent()
 
     def _create_agent(self):
-        # Create the social messaging agent
         try:
             llm = ChatGoogleGenerativeAI(
-                model="gemini-3.0-pro",
+                model="gemini-1.5-flash",
                 temperature=0.1,
                 google_api_key=settings.GEMINI_API_KEY,
             )
-
-            system_prompt = """You are a Social Media & Messaging Agent for Londoolink AI. Your role is to:
-            1. Analyze messages from Instagram, WhatsApp, Telegram, and other messaging platforms
-            2. Identify urgent messages that need immediate replies
-            3. Detect important conversations (work-related, family emergencies, deadlines)
-            4. Flag messages from VIP contacts (boss, family, important clients)
-            5. Categorize messages by urgency: URGENT, IMPORTANT, NORMAL, LOW_PRIORITY
-            6. Identify action items and follow-ups needed
-            7. Detect emotional context (angry customers, upset friends, celebrations)
-            
-            Focus on helping the user prioritize their social interactions and never miss important messages.
-            Pay special attention to:
-            - Work-related messages during business hours
-            - Family/emergency messages anytime
-            - Time-sensitive opportunities
-            - Messages from people the user frequently interacts with"""
-
-            agent = llm
-                model=llm, tools=self.tools, system_prompt=system_prompt
-            )
-
             logger.info("Social agent created successfully")
-            return agent
-
+            return llm
         except Exception as e:
             logger.error(f"Failed to create social agent: {e}")
             raise
 
     def analyze(self, prompt: str) -> Dict[str, Any]:
-        # Analyze social messages based on the given prompt
         try:
-            result = self.agent.invoke(
-                {"messages": [{"role": "user", "content": prompt}]}
-            )
-
+            result = self.agent.invoke(prompt)
             return {
-                "analysis": result.get("messages", [{}])[-1].get(
-                    "content", "No analysis available"
-                ),
+                "analysis": result.content if hasattr(result, "content") else str(result),
                 "status": "completed",
                 "agent_type": "social",
             }

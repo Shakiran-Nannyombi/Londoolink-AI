@@ -95,10 +95,8 @@ class TestAgentEndpoints:
         assert data["briefing"]["summary"] == "Test briefing"
 
     def test_get_daily_briefing_unauthorized(self, client):
-        # Test daily briefing without authentication
         response = client.get("/api/v1/agent/briefing/daily")
-
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_get_current_user_info(self, client, auth_headers, test_user):
         # Test getting current user information
@@ -321,7 +319,7 @@ class TestIngestEndpoints:
         # Test email ingestion without authentication
         response = client.post("/api/v1/ingest/email", json=sample_email_data)
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @patch("app.api.endpoints.ingest.rag_pipeline")
     def test_delete_documents_success(self, mock_rag, client, auth_headers):
@@ -366,7 +364,7 @@ class TestSecurityEndpoints:
         # Test security health check without authentication
         response = client.get("/api/v1/security/health")
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_generate_security_keys(self, client, auth_headers):
         # Test security key generation

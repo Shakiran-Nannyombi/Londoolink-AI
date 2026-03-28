@@ -293,4 +293,4 @@ def configure_global_mocks():
 @pytest.fixture
 def mock_langchain_agent(configure_global_mocks):
     # Backward compatibility for existing tests
-    return configure_global_mocks["agent"]
+    return configure_global_mocks["llm"]
