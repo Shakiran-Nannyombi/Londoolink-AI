@@ -186,7 +186,7 @@ async def analyze_document(
             f"Analyzing document for user {current_user.id}, type: {document_type}"
         )
 
-        analysis = langgraph_coordinator.analyze_document(content, document_type)
+        analysis = get_langgraph_coordinator().analyze_document(content, document_type)
 
         return {
             "user_id": current_user.id,
@@ -220,17 +220,18 @@ async def chat_with_agent(
         logger.info(f"Chat request for user {current_user.id}, agent: {agent_type}, message: {message[:50]}...")
 
         # Route to appropriate agent based on type
+        coordinator = get_langgraph_coordinator()
         if agent_type == "email":
-            response = langgraph_coordinator.chat_with_email_agent(current_user.id, message)
+            response = coordinator.chat_with_email_agent(current_user.id, message)
         elif agent_type == "calendar":
-            response = langgraph_coordinator.chat_with_calendar_agent(current_user.id, message)
+            response = coordinator.chat_with_calendar_agent(current_user.id, message)
         elif agent_type == "priority":
-            response = langgraph_coordinator.chat_with_priority_agent(current_user.id, message)
+            response = coordinator.chat_with_priority_agent(current_user.id, message)
         elif agent_type == "social":
-            response = langgraph_coordinator.chat_with_social_agent(current_user.id, message)
+            response = coordinator.chat_with_social_agent(current_user.id, message)
         else:
             # Default to general chat
-            response = langgraph_coordinator.general_chat(current_user.id, message)
+            response = coordinator.general_chat(current_user.id, message)
 
         return {
             "user_id": current_user.id,

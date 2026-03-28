@@ -43,6 +43,8 @@ class AgentNodes:
         elif current_step == "calendar_done":
             state["current_step"] = "social"
         elif current_step == "social_done":
+            state["current_step"] = "notion"
+        elif current_step == "notion_done":
             state["current_step"] = "priority"
         elif current_step == "priority_done":
             state["current_step"] = "end"
@@ -162,6 +164,44 @@ class AgentNodes:
 
         return state
 
+    def notion_agent_node(self, state: AgentState) -> AgentState:
+        # Notion analysis agent node
+        logger.info("Running notion agent analysis")
+
+        try:
+            notion_prompt = """You are a Notion Agent for Londoolink AI.
+            Analyze Notion pages and databases for:
+            1. Recent updates and changes to important pages
+            2. Action items and tasks recorded in Notion
+            3. Key project notes and documentation
+            4. Meeting notes and follow-ups
+            5. Knowledge base entries relevant to today's priorities
+
+            Use available tools to search Notion content and provide insights.
+            Focus on actionable items and relevant knowledge."""
+
+            messages = [HumanMessage(content=notion_prompt)]
+            response = self.llm.invoke(messages)
+
+            state["notion_analysis"] = {
+                "analysis": clean_ai_response(response.content),
+                "status": "completed",
+                "agent_type": "notion",
+                "timestamp": datetime.utcnow().isoformat(),
+            }
+            state["current_step"] = "notion_done"
+
+        except Exception as e:
+            logger.error(f"Notion agent failed: {e}")
+            state["notion_analysis"] = {
+                "analysis": f"Notion analysis failed: {str(e)}",
+                "status": "error",
+                "agent_type": "notion",
+            }
+            state["current_step"] = "notion_done"
+
+        return state
+
     def priority_agent_node(self, state: AgentState) -> AgentState:
         # Priority synthesis and briefing agent node
         logger.info("Running priority agent synthesis")
@@ -177,6 +217,9 @@ class AgentNodes:
             social_analysis = state.get("social_analysis", {}).get(
                 "analysis", "No social analysis"
             )
+            notion_analysis = state.get("notion_analysis", {}).get(
+                "analysis", "No notion analysis"
+            )
 
             priority_prompt = f"""You are the Master Prioritization Agent for Londoolink AI.
             
@@ -190,6 +233,9 @@ class AgentNodes:
             
             SOCIAL ANALYSIS:
             {social_analysis}
+            
+            NOTION ANALYSIS:
+            {notion_analysis}
             
             Create a prioritized daily briefing that includes:
             1. TOP PRIORITIES: Most urgent items requiring immediate attention

@@ -20,7 +20,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
-import { EmailIntegrationCard, SMSIntegrationCard } from '@/components/integrations/ServiceIntegrationCard'
+import { PermissionDashboard } from '@/components/integrations/PermissionDashboard'
+import { StepUpModal } from '@/components/integrations/StepUpModal'
 import { apiClient } from '@/lib/api'
 
 type Tab = 'general' | 'notifications' | 'privacy' | 'integrations' | 'security'
@@ -40,40 +41,17 @@ export default function SettingsPage() {
     } = useSettingsStore()
 
     const [activeTab, setActiveTab] = useState<Tab>('general')
-    const [integrationStatus, setIntegrationStatus] = useState<{
-        email: boolean
-        sms: boolean
-    }>({ email: false, sms: false })
+
+    // StepUpModal state — rendered at page level, wired up when backend returns step_up_required
+    const [stepUpOpen, setStepUpOpen] = useState(false)
+    const [stepUpChallengeId, setStepUpChallengeId] = useState('')
+    const [stepUpRequiresTotp, setStepUpRequiresTotp] = useState(false)
 
     useEffect(() => {
         if (!isAuthenticated) {
             router.push('/login')
         }
     }, [isAuthenticated, router])
-
-    // Fetch integration status
-    useEffect(() => {
-        const fetchIntegrationStatus = async () => {
-            try {
-                const response = await apiClient.getIntegrationsStatus()
-                if (response && Array.isArray(response)) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const statusMap: any = {}
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    response.forEach((item: any) => {
-                        statusMap[item.service_type] = item.is_connected
-                    })
-                    setIntegrationStatus(statusMap)
-                }
-            } catch (error) {
-                console.error('Failed to fetch integration status:', error)
-            }
-        }
-
-        if (isAuthenticated) {
-            fetchIntegrationStatus()
-        }
-    }, [isAuthenticated])
 
     const tabs = [
         { id: 'general' as Tab, name: 'General', icon: SettingsIcon },
@@ -305,78 +283,7 @@ export default function SettingsPage() {
                             {activeTab === 'integrations' && (
                                 <Card className="p-6">
                                     <h2 className="text-xl font-semibold mb-6 text-foreground">Connected Services</h2>
-
-                                    <div className="space-y-4">
-                                        <p className="text-sm text-muted-foreground mb-4">
-                                            Connect your accounts to enable Londoolink AI to analyze and prioritize your communications.
-                                        </p>
-
-                                        <EmailIntegrationCard
-                                            isConnected={integrationStatus.email}
-                                            onConnect={async () => {
-                                                try {
-                                                    const response = await apiClient.connectEmail('gmail')
-
-                                                    if (response.oauth_url) {
-                                                        // Open OAuth popup
-                                                        const width = 600
-                                                        const height = 700
-                                                        const left = window.screen.width / 2 - width / 2
-                                                        const top = window.screen.height / 2 - height / 2
-
-                                                        window.open(
-                                                            response.oauth_url,
-                                                            'Gmail OAuth',
-                                                            `width=${width},height=${height},left=${left},top=${top}`
-                                                        )
-
-                                                        // Prompt user to refresh after auth
-                                                        // In a full implementation, we would use window.postMessage 
-                                                        // or polling to detect completion
-                                                        alert("Please complete authentication in the popup window. Afterwards, refresh this page to see the updated status.")
-                                                    } else {
-                                                        setIntegrationStatus(prev => ({ ...prev, email: true }))
-                                                    }
-                                                } catch (error) {
-                                                    console.error('Failed to connect email:', error)
-                                                    throw error
-                                                }
-                                            }}
-                                            onDisconnect={async () => {
-                                                try {
-                                                    await apiClient.disconnectEmail()
-                                                    setIntegrationStatus(prev => ({ ...prev, email: false }))
-                                                } catch (error) {
-                                                    console.error('Failed to disconnect email:', error)
-                                                    throw error
-                                                }
-                                            }}
-                                        />
-
-
-                                        <SMSIntegrationCard
-                                            isConnected={integrationStatus.sms}
-                                            onConnect={async () => {
-                                                try {
-                                                    // Now using backend-managed secrets from .env
-                                                    await apiClient.connectSMS('twilio')
-                                                    setIntegrationStatus(prev => ({ ...prev, sms: true }))
-                                                } catch (error) {
-                                                    console.error('Failed to connect SMS:', error)
-                                                    throw error
-                                                }
-                                            }}
-                                            onDisconnect={async () => {
-                                                try {
-                                                    await apiClient.disconnectSMS()
-                                                    setIntegrationStatus(prev => ({ ...prev, sms: false }))
-                                                } catch (error) {
-                                                    console.error('Failed to disconnect SMS:', error)
-                                                    throw error
-                                                }
-                                            }}
-                                        />
-                                    </div>
+                                    <PermissionDashboard />
                                 </Card>
                             )}
 
@@ -405,6 +312,18 @@ export default function SettingsPage() {
                     </AnimatePresence>
                 </div>
             </div>
+
+            {/* StepUpModal — rendered at page level, triggered when backend returns step_up_required */}
+            <StepUpModal
+                open={stepUpOpen}
+                onOpenChange={setStepUpOpen}
+                challengeId={stepUpChallengeId}
+                requiresTotp={stepUpRequiresTotp}
+                onSuccess={(_token) => {
+                    // TODO: forward step_up_token to the pending agent action
+                    setStepUpOpen(false)
+                }}
+            />
         </div>
     )
 }

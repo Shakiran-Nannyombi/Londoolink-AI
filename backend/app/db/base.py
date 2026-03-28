@@ -12,3 +12,5 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create Base class for models
 Base = declarative_base()
+
+from app.models.audit_log import AuditLog  # noqa: F401

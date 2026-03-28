@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import agent, auth, ingest, security, profile, settings, consent, integrations, two_factor
+from app.api.endpoints import agent, audit, auth, health, ingest, security, profile, settings, consent, integrations, two_factor, step_up
 
 api_router = APIRouter()
 
@@ -14,3 +14,6 @@ api_router.include_router(settings.router, prefix="/settings", tags=["settings"]
 api_router.include_router(consent.router, prefix="/consent", tags=["consent"])
 api_router.include_router(integrations.router, prefix="/integrations", tags=["integrations"])
 api_router.include_router(two_factor.router, prefix="/2fa", tags=["two-factor-auth"])
+api_router.include_router(step_up.router, prefix="/step-up", tags=["step-up-auth"])
+api_router.include_router(audit.router, prefix="/audit", tags=["audit"])
+api_router.include_router(health.router, prefix="/health", tags=["health"])

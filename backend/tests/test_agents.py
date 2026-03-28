@@ -377,8 +377,8 @@ class TestTools:
 
         assert isinstance(tools, list)
         assert (
-            len(tools) == 3
-        )  # semantic_search, get_recent_documents, get_document_stats
+            len(tools) == 4
+        )  # semantic_search, get_recent_documents, get_document_stats, crawl_webpage
 
     @patch("app.services.tools.rag_pipeline")
     def test_semantic_search_tool(self, mock_rag):

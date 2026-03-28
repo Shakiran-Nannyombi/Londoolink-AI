@@ -14,6 +14,22 @@ interface ServiceCardProps {
     isConnected: boolean
     onConnect: () => Promise<void>
     onDisconnect: () => Promise<void>
+    grantedScopes?: string[]
+    vaultBacked?: boolean
+    lastTokenUsed?: string | null
+}
+
+function formatRelativeTime(dateStr: string): string {
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return dateStr
+    const diffMs = Date.now() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60_000)
+    if (diffMins < 1) return 'just now'
+    if (diffMins < 60) return `${diffMins}m ago`
+    const diffHours = Math.floor(diffMins / 60)
+    if (diffHours < 24) return `${diffHours}h ago`
+    const diffDays = Math.floor(diffHours / 24)
+    return `${diffDays}d ago`
 }
 
 export function ServiceIntegrationCard({
@@ -23,7 +39,10 @@ export function ServiceIntegrationCard({
     color,
     isConnected,
     onConnect,
-    onDisconnect
+    onDisconnect,
+    grantedScopes,
+    vaultBacked,
+    lastTokenUsed,
 }: ServiceCardProps) {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -52,8 +71,8 @@ export function ServiceIntegrationCard({
             transition={{ duration: 0.3 }}
         >
             <Card className={`p-6 border-2 transition-all ${isConnected
-                    ? `border-${color}-500/50 bg-${color}-500/5`
-                    : 'border-border hover:border-primary/50'
+                ? `border-${color}-500/50 bg-${color}-500/5`
+                : 'border-border hover:border-primary/50'
                 }`}>
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -69,8 +88,25 @@ export function ServiceIntegrationCard({
                                         Connected
                                     </span>
                                 )}
+                                {vaultBacked && (
+                                    <span className="text-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
+                                        Vault
+                                    </span>
+                                )}
                             </h3>
                             <p className="text-sm text-muted-foreground">{description}</p>
+                            {isConnected && grantedScopes && grantedScopes.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                    {grantedScopes.map((scope) => (
+                                        <span
+                                            key={scope}
+                                            className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md"
+                                        >
+                                            {scope}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -101,7 +137,9 @@ export function ServiceIntegrationCard({
                 {isConnected && (
                     <div className="mt-4 pt-4 border-t border-border">
                         <p className="text-xs text-muted-foreground">
-                            Last synced: Just now
+                            {lastTokenUsed
+                                ? `Last used: ${formatRelativeTime(lastTokenUsed)}`
+                                : 'Last synced: Just now'}
                         </p>
                     </div>
                 )}
