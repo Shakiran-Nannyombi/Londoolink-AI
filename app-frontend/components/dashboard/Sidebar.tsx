@@ -135,7 +135,7 @@ export function Sidebar({ className }: { className?: string }) {
 
                 {/* Integrations Item */}
                 <Button
-                    variant={pathname === '/settings' && typeof window !== 'undefined' && window.location.search.includes('tab=integrations') ? "secondary" : "ghost"}
+                    variant={pathname === '/settings' ? "secondary" : "ghost"}
                     className={cn(
                         "w-full justify-start h-12 relative group",
                         isCollapsed ? "justify-center px-0" : "px-4"

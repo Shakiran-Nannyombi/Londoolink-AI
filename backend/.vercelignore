@@ -22,8 +22,13 @@ coverage.xml
 .hypothesis
 .DS_Store
 chroma_db/
+chroma_db_backup/
 tests/
 docker-compose.yml
 Dockerfile
 .env
+.env.development
+londoolink.db
+londoolink.db-shm
+londoolink.db-wal
 README.md

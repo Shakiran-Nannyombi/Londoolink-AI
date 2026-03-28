@@ -3,8 +3,15 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Use .env.development if it exists (local dev), otherwise .env (production)
-_env_file = ".env.development" if os.path.exists(".env.development") else ".env"
+# Use environment-based config selection
+# Priority: ENVIRONMENT env var > .env.development (if exists) > .env
+_environment = os.getenv("ENVIRONMENT", "")
+if _environment == "production":
+    _env_file = ".env"
+elif os.path.exists(".env.development"):
+    _env_file = ".env.development"
+else:
+    _env_file = ".env"
 
 
 class Settings(BaseSettings):

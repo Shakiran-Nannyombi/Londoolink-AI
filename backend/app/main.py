@@ -85,5 +85,34 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def root():
     return {"message": "Londoolink AI Backend is running!", "version": "0.1.0"}
 
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint that verifies database connectivity."""
+    from app.db.base import SessionLocal
+    from sqlalchemy import text
+    
+    try:
+        # Test database connection
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "environment": settings.ENVIRONMENT,
+            "version": "0.1.0"
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(e),
+            "environment": settings.ENVIRONMENT,
+            "version": "0.1.0"
+        }
+
 # Vercel handler
 handler = app

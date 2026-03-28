@@ -136,6 +136,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.development
 .envrc
 .venv
 env/
@@ -209,6 +210,11 @@ __marimo__/
 # Londoolink AI
 context.txt
 devpost.txt
+londoolink.db
+londoolink.db-shm
+londoolink.db-wal
+chroma_db/
+chroma_db_backup/
 
 # londoolink-ai---security-dashboard/*
 

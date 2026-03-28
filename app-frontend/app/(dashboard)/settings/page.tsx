@@ -18,6 +18,10 @@ import {
     Trash2,
     FileText,
     Loader2,
+    Monitor,
+    Smartphone,
+    Tablet,
+    MapPin,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -292,7 +296,7 @@ export default function SettingsPage() {
                                         <p className="text-sm text-muted-foreground mb-4">
                                             Manage devices where you're currently logged in
                                         </p>
-                                        <Button variant="outline">View Sessions</Button>
+                                        <SessionsManager />
                                     </div>
                                 </Card>
                             )}
@@ -674,5 +678,116 @@ function TwoFactorAuth() {
                 </div>
             )}
         </div>
+    )
+}
+
+
+// Sessions Manager Component
+function SessionsManager() {
+    const [showSessions, setShowSessions] = useState(false)
+    const { user } = useAuthStore()
+
+    // Mock session data - in production, this would come from the backend
+    const currentSession = {
+        id: 'current',
+        device: getBrowserInfo(),
+        location: 'Current Location',
+        lastActive: 'Now',
+        isCurrent: true
+    }
+
+    function getBrowserInfo() {
+        if (typeof window === 'undefined') return 'Unknown Browser'
+
+        const ua = navigator.userAgent
+        if (ua.includes('Chrome')) return 'Chrome'
+        if (ua.includes('Firefox')) return 'Firefox'
+        if (ua.includes('Safari')) return 'Safari'
+        if (ua.includes('Edge')) return 'Edge'
+        return 'Unknown Browser'
+    }
+
+    function getDeviceIcon() {
+        if (typeof window === 'undefined') return Monitor
+
+        const ua = navigator.userAgent
+        if (ua.includes('Mobile')) return Smartphone
+        if (ua.includes('Tablet')) return Tablet
+        return Monitor
+    }
+
+    const DeviceIcon = getDeviceIcon()
+
+    return (
+        <>
+            <Button variant="outline" onClick={() => setShowSessions(true)}>
+                View Sessions
+            </Button>
+
+            {showSessions && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-background rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
+                    >
+                        <div className="p-6 border-b border-border">
+                            <h3 className="text-xl font-semibold">Active Sessions</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Devices where you're currently logged in
+                            </p>
+                        </div>
+
+                        <div className="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
+                            <div className="p-4 rounded-lg border border-border bg-muted/50">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 rounded-lg bg-primary/10">
+                                            <DeviceIcon className="w-5 h-5 text-primary" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <p className="font-medium">{currentSession.device}</p>
+                                                <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
+                                                    Current
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                                <div className="flex items-center gap-1">
+                                                    <MapPin className="w-3 h-3" />
+                                                    <span>{currentSession.location}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    <span>Active {currentSession.lastActive}</span>
+                                                </div>
+                                            </div>
+                                            {user?.email && (
+                                                <p className="text-xs text-muted-foreground mt-1">
+                                                    Logged in as {user.email}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/20">
+                                <p className="text-sm text-muted-foreground">
+                                    <strong className="text-foreground">Note:</strong> Session management is currently limited to your current device.
+                                    Multi-device session tracking will be available in a future update.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="p-6 border-t border-border flex justify-end">
+                            <Button onClick={() => setShowSessions(false)}>
+                                Close
+                            </Button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </>
     )
 }
