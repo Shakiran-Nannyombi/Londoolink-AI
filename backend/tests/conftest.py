@@ -5,12 +5,10 @@ from unittest.mock import Mock, patch
 # using 'from ... import ...'
 mock_groq_patcher = patch("langchain_groq.ChatGroq")
 mock_ollama_patcher = patch("langchain_ollama.OllamaEmbeddings")
-mock_create_agent_patcher = patch("langchain.agents.create_agent")
 mock_chromadb_patcher = patch("app.services.rag.vector_store.chromadb")
 
 mock_groq_patcher.start()
 mock_ollama_patcher.start()
-mock_create_agent_patcher.start()
 mock_chromadb_patcher.start()
 
 import pytest
@@ -274,26 +272,19 @@ def configure_global_mocks():
     }
     
     # We need to get the actual mock objects from the patchers
-    from langchain.agents import create_agent
     from langchain_groq import ChatGroq
     from langchain_ollama import OllamaEmbeddings
-    
-    # Configure create_agent mock
-    create_agent.return_value = mock_agent
-    
-    # Configure ChatGroq mock
+
     mock_llm = Mock()
     mock_llm.invoke.return_value = Mock(content="Test LLM response")
     ChatGroq.return_value = mock_llm
-    
-    # Configure OllamaEmbeddings mock
+
     mock_emb = Mock()
     mock_emb.embed_query.return_value = [0.1, 0.2, 0.3, 0.4, 0.5]
     mock_emb.embed_documents.side_effect = lambda texts: [[0.1, 0.2, 0.3, 0.4, 0.5] for _ in texts]
     OllamaEmbeddings.return_value = mock_emb
-    
+
     yield {
-        "agent": mock_agent,
         "llm": mock_llm,
         "embeddings": mock_emb,
     }

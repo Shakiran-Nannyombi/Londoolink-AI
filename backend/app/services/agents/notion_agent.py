@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, List, Optional
 
-from langchain.agents import create_agent
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
@@ -132,7 +132,7 @@ class NotionAgent:
             Use the available tools to interact with the user's Notion workspace.
             Always confirm write operations before executing them."""
 
-            agent = create_agent(
+            agent = llm
                 model=llm, tools=self.tools, system_prompt=system_prompt
             )
 

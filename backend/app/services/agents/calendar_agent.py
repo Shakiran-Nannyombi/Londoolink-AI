@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, List, Optional
 
-from langchain.agents import create_agent
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
@@ -60,7 +60,7 @@ class CalendarAgent:
             Use the available tools to search through calendar events and provide insights.
             Focus on helping the user manage their time effectively."""
 
-            agent = create_agent(
+            agent = llm
                 model=llm, tools=self.tools, system_prompt=system_prompt
             )
 

@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, List
 
-from langchain.agents import create_agent
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
@@ -35,7 +35,7 @@ class PriorityAgent:
             You coordinate with other agents and create the final daily briefing.
             Be strategic and focus on what matters most to the user."""
 
-            agent = create_agent(
+            agent = llm
                 model=llm, tools=self.tools, system_prompt=system_prompt
             )
 

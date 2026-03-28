@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, List, Optional
 
-from langchain.agents import create_agent
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
@@ -60,7 +60,7 @@ class EmailAgent:
             Use the available tools to search through the user's emails and provide insights.
             Be concise but thorough in your analysis."""
 
-            agent = create_agent(
+            agent = llm
                 model=llm, tools=self.tools, system_prompt=system_prompt
             )
 

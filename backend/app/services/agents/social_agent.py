@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict, List
 
-from langchain.agents import create_agent
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.core.config import settings
@@ -41,7 +41,7 @@ class SocialAgent:
             - Time-sensitive opportunities
             - Messages from people the user frequently interacts with"""
 
-            agent = create_agent(
+            agent = llm
                 model=llm, tools=self.tools, system_prompt=system_prompt
             )
 

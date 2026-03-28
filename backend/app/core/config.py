@@ -41,10 +41,9 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: Optional[str] = None
     GOOGLE_REDIRECT_URI: Optional[str] = None
 
-    # Twilio Configuration
-    TWILIO_ACCOUNT_SID: Optional[str] = None
-    TWILIO_AUTH_TOKEN: Optional[str] = None
-    TWILIO_PHONE_NUMBER: Optional[str] = None
+    # Africa's Talking SMS
+    AT_USERNAME: Optional[str] = None
+    AT_API_KEY: Optional[str] = None
 
     # Auth0 Token Vault
     AUTH0_DOMAIN: Optional[str] = None          # e.g. your-tenant.auth0.com
