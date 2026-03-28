@@ -2,18 +2,21 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Mail, Phone, Calendar, MapPin, Globe, Camera, Edit2, Save, X } from 'lucide-react'
+import { User, Mail, Phone, Calendar, MapPin, Globe, Camera, Edit2, Save, X, Link2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
+import { useNotificationStore } from '@/store/notificationStore'
 import { apiClient } from '@/lib/api'
 
 export default function ProfilePage() {
     const router = useRouter()
     const { user, isAuthenticated, updateUser } = useAuthStore()
     const { theme, timezone, language } = useSettingsStore()
+    const { addNotification } = useNotificationStore()
 
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -33,10 +36,10 @@ export default function ProfilePage() {
         try {
             const response = await apiClient.uploadProfilePicture(file)
             updateUser({ profile_picture_url: response.url })
-            alert('Profile picture updated!')
+            addNotification('Profile picture updated!', 'success')
         } catch (error) {
             console.error('Failed to upload picture:', error)
-            alert('Failed to update profile picture.')
+            addNotification('Failed to update profile picture.', 'warning')
         } finally {
             setIsLoading(false)
         }
@@ -57,12 +60,10 @@ export default function ProfilePage() {
             // Update local state
             updateUser(formData)
             setIsEditing(false)
-
-            // Show success notification
-            alert('Profile updated successfully!')
+            addNotification('Profile updated successfully!', 'success')
         } catch (error) {
             console.error('Failed to update profile:', error)
-            alert('Failed to update profile. Please try again.')
+            addNotification('Failed to update profile. Please try again.', 'warning')
         } finally {
             setIsLoading(false)
         }
@@ -284,6 +285,27 @@ export default function ProfilePage() {
                             </div>
                         </div>
                     </Card>
+
+                    {/* Auth0 Account */}
+                    {user?.auth0_sub && (
+                        <Card className="p-6">
+                            <h3 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
+                                <Link2 className="w-5 h-5" />
+                                Auth0 Account
+                            </h3>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                    <div>
+                                        <p className="text-sm font-medium text-foreground">Auth0 Subject</p>
+                                        <p className="text-xs text-muted-foreground font-mono mt-0.5 break-all">{user.auth0_sub}</p>
+                                    </div>
+                                    {user.auth0_sub.startsWith('google-oauth2|') && (
+                                        <Badge variant="secondary" className="shrink-0 ml-3">Linked via Google</Badge>
+                                    )}
+                                </div>
+                            </div>
+                        </Card>
+                    )}
 
                     {/* Danger Zone */}
                     <Card className="p-6 border-destructive/50">

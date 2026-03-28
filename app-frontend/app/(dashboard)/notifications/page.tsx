@@ -1,23 +1,45 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, Check, Trash2, Info, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Bell, Check, Trash2, Info, AlertTriangle, CheckCircle, ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { useNotificationStore } from '@/store/notificationStore'
 import { GlassCard } from '@/components/shared/GlassCard'
 import { formatDistanceToNow } from 'date-fns'
+import { apiClient } from '@/lib/api'
 
 export default function NotificationsPage() {
     const { notifications, removeNotification, clearNotifications } = useNotificationStore()
+    const [vaultStatus, setVaultStatus] = useState<'loading' | 'ok' | 'degraded'>('loading')
 
-    // We don't have timestamps in the simple store yet, so we will just map what we have.
-    // For a real app, we'd add timestamps to the store. 
-    // Assuming the store might be updated later, for now we list them.
+    useEffect(() => {
+        apiClient.getVaultHealth().then((res) => {
+            const status = res?.status ?? res?.data?.status ?? 'ok'
+            setVaultStatus(status === 'ok' ? 'ok' : 'degraded')
+        }).catch(() => setVaultStatus('degraded'))
+    }, [])
 
     return (
         <div className="space-y-6">
+            {/* Vault Health Card */}
+            <Card className="p-4 flex items-center gap-4">
+                {vaultStatus === 'loading' ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                ) : vaultStatus === 'ok' ? (
+                    <ShieldCheck className="w-5 h-5 text-green-500" />
+                ) : (
+                    <ShieldAlert className="w-5 h-5 text-destructive" />
+                )}
+                <div>
+                    <p className="text-sm font-medium text-foreground">Token Vault</p>
+                    <p className={`text-xs ${vaultStatus === 'ok' ? 'text-green-600 dark:text-green-400' : vaultStatus === 'degraded' ? 'text-destructive' : 'text-muted-foreground'}`}>
+                        {vaultStatus === 'loading' ? 'Checking vault health…' : vaultStatus === 'ok' ? 'Operational' : 'Degraded — check integrations'}
+                    </p>
+                </div>
+            </Card>
+
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">Notifications</h1>

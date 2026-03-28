@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -13,18 +13,22 @@ import {
     ChevronRight,
     Moon,
     Sun,
-    Shield
+    Shield,
+    Link2
 } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
 import { useNotificationStore } from '@/store/notificationStore'
+import { apiClient } from '@/lib/api'
 
 export function Sidebar({ className }: { className?: string }) {
     const router = useRouter()
     const pathname = usePathname()
     const [isCollapsed, setIsCollapsed] = useState(false)
+    const [integrationsMissing, setIntegrationsMissing] = useState(false)
 
     // Global stores
     const { user, logout } = useAuthStore()
@@ -33,6 +37,18 @@ export function Sidebar({ className }: { className?: string }) {
 
     // Derived state
     const notificationsCount = notifications.length
+
+    useEffect(() => {
+        apiClient.getIntegrationsStatus().then((response) => {
+            const list: Array<{ service_type: string; is_connected: boolean }> = Array.isArray(response)
+                ? response
+                : (response.data ?? [])
+            const missing = ['google', 'notion'].some(
+                (svc) => !list.find((s) => s.service_type === svc)?.is_connected
+            )
+            setIntegrationsMissing(missing)
+        }).catch(() => { /* non-critical */ })
+    }, [])
 
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -116,6 +132,29 @@ export function Sidebar({ className }: { className?: string }) {
                         )}
                     </Button>
                 ))}
+
+                {/* Integrations Item */}
+                <Button
+                    variant={pathname === '/settings' && typeof window !== 'undefined' && window.location.search.includes('tab=integrations') ? "secondary" : "ghost"}
+                    className={cn(
+                        "w-full justify-start h-12 relative group",
+                        isCollapsed ? "justify-center px-0" : "px-4"
+                    )}
+                    title="Integrations"
+                    onClick={() => router.push('/settings?tab=integrations')}
+                >
+                    <div className="relative">
+                        <Link2 className={cn("w-5 h-5 shrink-0", isCollapsed ? "" : "mr-3")} />
+                        {integrationsMissing && (
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-orange-500 rounded-full border-2 border-background" />
+                        )}
+                    </div>
+                    {!isCollapsed && (
+                        <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="truncate">
+                            Integrations
+                        </motion.span>
+                    )}
+                </Button>
 
                 {/* Notifications Item */}
                 <Button

@@ -282,6 +282,14 @@ class ApiClient {
     return this.get('/integrations/status')
   }
 
+  async getVaultHealth(): Promise<ApiResponse> {
+    return this.get('/health/token-vault')
+  }
+
+  async getAuditLog(limit = 20): Promise<ApiResponse> {
+    return this.get(`/audit?limit=${limit}`)
+  }
+
   async connectEmail(provider: 'gmail' | 'outlook', authCode?: string): Promise<ApiResponse> {
     return this.post('/integrations/email/connect', {
       provider,

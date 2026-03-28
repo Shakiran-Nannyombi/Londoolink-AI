@@ -16,13 +16,21 @@ import {
   BarChart3,
   BookOpen,
   Send,
+  Link2,
 } from "lucide-react"
+import Link from "next/link"
+import { useAuthStore } from "@/store/authStore"
 import { GlassCard } from "@/components/shared/GlassCard"
 import { PriorityBadge } from "@/components/shared/PriorityBadge"
 import { TypeIcon } from "@/components/shared/TypeIcon"
 import { DetailModal } from "@/components/dashboard/DetailModal"
 import { ChatbotWidget } from "@/components/chat/ChatbotWidget"
 import { useNotificationStore } from "@/store/notificationStore"
+
+interface IntegrationStatus {
+  service_type: string
+  is_connected: boolean
+}
 
 // Animation variants
 const containerVariants = {
@@ -52,16 +60,13 @@ const itemVariants = {
 export default function DashboardPage() {
   const router = useRouter()
   const { addNotification } = useNotificationStore()
+  const { user: authUser } = useAuthStore()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [briefing, setBriefing] = useState<BriefingItem[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [user, setUser] = useState<User | null>(null)
-
-  // Note: theme is now managed by Sidebar/Layout, but we might need it for some local logic?
-  // Actually local theme state in page.tsx was mostly for passing to Sidebar. We can remove it if not used elsewhere.
-  // Checking usage: used in Sidebar prop (removed), checked for initialization (moved to Sidebar/Layout).
-  // We can safely remove theme state here.
+  const [integrationStatuses, setIntegrationStatuses] = useState<Record<string, boolean>>({})
 
   const [activeFilter, setActiveFilter] = useState<"all" | "high" | "medium" | "low" | "completed" | "snoozed">("all")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -106,8 +111,23 @@ export default function DashboardPage() {
       setUser({ email: userEmail, token })
       setIsAuthenticated(true)
       loadBriefing()
+      loadIntegrationStatuses()
     }
   }, [router])
+
+  const loadIntegrationStatuses = async () => {
+    try {
+      const response = await apiClient.getIntegrationsStatus()
+      const list: IntegrationStatus[] = Array.isArray(response) ? response : (response.data ?? [])
+      const map: Record<string, boolean> = {}
+      for (const item of list) {
+        map[item.service_type] = item.is_connected
+      }
+      setIntegrationStatuses(map)
+    } catch {
+      // silently fail — non-critical
+    }
+  }
 
   // Removed Theme initialization useEffect - handled by Sidebar/Layout
 
@@ -254,7 +274,7 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-muted-foreground text-sm flex items-center gap-2">
-            Good afternoon, {user?.email?.split('@')[0]}
+            Good afternoon, {authUser?.full_name || authUser?.email?.split('@')[0] || user?.email?.split('@')[0]}
             <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           </p>
         </div>
@@ -327,7 +347,46 @@ export default function DashboardPage() {
         </GlassCard>
       </motion.div>
 
-      {/* Main Content Area */}
+      {/* Connected Services Status Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="flex flex-wrap items-center gap-3 mb-8 p-4 rounded-xl bg-muted/40 border border-border/50"
+      >
+        <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
+          <Link2 className="w-4 h-4" />
+          Connected Services
+        </span>
+        {(['google', 'notion'] as const).map((svc) => {
+          const connected = integrationStatuses[svc] ?? false
+          return (
+            <span
+              key={svc}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${connected
+                  ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                  : 'bg-muted text-muted-foreground'
+                }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-green-500' : 'bg-muted-foreground/50'}`} />
+              {svc.charAt(0).toUpperCase() + svc.slice(1)}
+              {connected ? ' Connected' : ' Disconnected'}
+            </span>
+          )
+        })}
+        {(!integrationStatuses['google'] || !integrationStatuses['notion']) && (
+          <Link
+            href="/settings?tab=integrations"
+            className="ml-auto text-xs text-primary hover:underline"
+          >
+            {!integrationStatuses['google'] && !integrationStatuses['notion']
+              ? 'Connect Google & Notion →'
+              : !integrationStatuses['google']
+                ? 'Connect Google →'
+                : 'Connect Notion →'}
+          </Link>
+        )}
+      </motion.div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Briefing & Feed */}
         <div className="lg:col-span-2 space-y-6">

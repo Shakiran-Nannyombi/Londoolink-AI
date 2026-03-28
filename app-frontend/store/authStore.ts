@@ -9,6 +9,7 @@ interface User {
     profile_picture_url?: string
     timezone: string
     language_preference: string
+    auth0_sub?: string
 }
 
 interface AuthState {
