@@ -3,8 +3,11 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
+import base64
 import json
 import urllib.parse
+
+import httpx
 
 from app.db.session import get_db
 from app.models.user import User
@@ -127,21 +130,19 @@ async def google_connect(
     current_user: User = Depends(get_current_user),
 ):
     """Return the Auth0-delegated Google OAuth authorization URL."""
-    domain = settings.AUTH0_DOMAIN or "YOUR_AUTH0_DOMAIN"
-    client_id = settings.AUTH0_CLIENT_ID or "YOUR_CLIENT_ID"
-    frontend_url = settings.FRONTEND_URL or "http://localhost:3000"
-
-    # Build the callback URL that Auth0 will redirect to after consent
-    redirect_uri = f"{frontend_url}/api/v1/integrations/google/callback"
+    domain = settings.AUTH0_DOMAIN
+    client_id = settings.AUTH0_CLIENT_ID
+    redirect_uri = f"{settings.FRONTEND_URL}/api/v1/integrations/google/callback"
 
     params = {
         "response_type": "code",
         "client_id": client_id,
         "redirect_uri": redirect_uri,
-        "scope": "openid profile email https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly",
+        "scope": "openid profile email",
         "connection": "google-oauth2",
         "access_type": "offline",
         "prompt": "consent",
+        "state": _get_auth0_sub(current_user),
     }
     auth_url = f"https://{domain}/authorize?{urllib.parse.urlencode(params)}"
     return OAuthConnectResponse(auth_url=auth_url)
@@ -154,9 +155,8 @@ async def google_callback(
     state: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
-    """Handle Google OAuth callback: store token in vault, upsert ConnectedService."""
-    frontend_url = settings.FRONTEND_URL or "http://localhost:3000"
-    base_redirect = f"{frontend_url}/settings?tab=integrations"
+    """Handle Google OAuth callback: exchange code, store token in vault, upsert ConnectedService."""
+    base_redirect = f"{settings.FRONTEND_URL}/settings?tab=integrations"
 
     if error or not code:
         return RedirectResponse(
@@ -164,28 +164,38 @@ async def google_callback(
             status_code=302,
         )
 
-    # TODO: Exchange `code` for tokens via Auth0 Token Vault SDK
-    # token_response = await auth0_exchange_code(code, redirect_uri=...)
-    # For now we build a placeholder token_data structure
-    token_data = {
-        "access_token": f"google_access_token_placeholder_{code[:8]}",
-        "refresh_token": f"google_refresh_token_placeholder",
-        "scopes": [
-            "https://www.googleapis.com/auth/gmail.readonly",
-            "https://www.googleapis.com/auth/calendar.readonly",
-        ],
-    }
-
-    # We need the user from state (in production, encode user_id in state param)
-    # For now, attempt to find user via state or skip vault store gracefully
     auth0_sub = state or ""
+    redirect_uri = f"{settings.FRONTEND_URL}/api/v1/integrations/google/callback"
 
     try:
+        # Exchange code for tokens via Auth0
+        async with httpx.AsyncClient(timeout=15.0) as http:
+            resp = await http.post(
+                f"https://{settings.AUTH0_DOMAIN}/oauth/token",
+                json={
+                    "grant_type": "authorization_code",
+                    "client_id": settings.AUTH0_CLIENT_ID,
+                    "client_secret": settings.AUTH0_CLIENT_SECRET,
+                    "code": code,
+                    "redirect_uri": redirect_uri,
+                },
+            )
+        if resp.status_code != 200:
+            return RedirectResponse(url=f"{base_redirect}&status=error&service=google", status_code=302)
+
+        token_response = resp.json()
+        token_data = {
+            "access_token": token_response.get("access_token", ""),
+            "refresh_token": token_response.get("refresh_token", ""),
+            "scopes": [
+                "https://www.googleapis.com/auth/gmail.readonly",
+                "https://www.googleapis.com/auth/calendar.readonly",
+            ],
+        }
+
         vault_client = get_token_vault_client()
         if auth0_sub:
             await vault_client.store_token(auth0_sub, "google", token_data)
-
-            # Upsert ConnectedService — find user by auth0_sub
             user = db.query(User).filter(User.auth0_sub == auth0_sub).first()
             if user:
                 _upsert_connected_service(
@@ -196,16 +206,9 @@ async def google_callback(
                     granted_scopes=token_data["scopes"],
                 )
     except Exception:
-        # Non-fatal in dev mode; redirect with error status
-        return RedirectResponse(
-            url=f"{base_redirect}&status=error&service=google",
-            status_code=302,
-        )
+        return RedirectResponse(url=f"{base_redirect}&status=error&service=google", status_code=302)
 
-    return RedirectResponse(
-        url=f"{base_redirect}&status=connected&service=google",
-        status_code=302,
-    )
+    return RedirectResponse(url=f"{base_redirect}&status=connected&service=google", status_code=302)
 
 
 @router.post("/google/disconnect", response_model=OAuthDisconnectResponse)
@@ -247,14 +250,12 @@ async def notion_connect(
     current_user: User = Depends(get_current_user),
 ):
     """Return the Notion OAuth authorization URL."""
-    notion_client_id = settings.NOTION_CLIENT_ID or "YOUR_NOTION_CLIENT_ID"
-    redirect_uri = settings.NOTION_REDIRECT_URI or "http://localhost:8000/api/v1/integrations/notion/callback"
-
     params = {
-        "client_id": notion_client_id,
+        "client_id": settings.NOTION_CLIENT_ID,
         "response_type": "code",
         "owner": "user",
-        "redirect_uri": redirect_uri,
+        "redirect_uri": settings.NOTION_REDIRECT_URI,
+        "state": _get_auth0_sub(current_user),
     }
     auth_url = f"https://api.notion.com/v1/oauth/authorize?{urllib.parse.urlencode(params)}"
     return OAuthConnectResponse(auth_url=auth_url)
@@ -267,9 +268,8 @@ async def notion_callback(
     state: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
-    """Handle Notion OAuth callback: store token in vault, upsert ConnectedService."""
-    frontend_url = settings.FRONTEND_URL or "http://localhost:3000"
-    base_redirect = f"{frontend_url}/settings?tab=integrations"
+    """Handle Notion OAuth callback: exchange code, store token in vault, upsert ConnectedService."""
+    base_redirect = f"{settings.FRONTEND_URL}/settings?tab=integrations"
 
     if error or not code:
         return RedirectResponse(
@@ -277,20 +277,41 @@ async def notion_callback(
             status_code=302,
         )
 
-    # TODO: Exchange `code` for Notion access token
-    # POST https://api.notion.com/v1/oauth/token with Basic auth (client_id:client_secret)
-    token_data = {
-        "access_token": f"notion_access_token_placeholder_{code[:8]}",
-        "scopes": ["read_content", "update_content"],
-    }
-
     auth0_sub = state or ""
 
     try:
+        # Exchange code for Notion access token
+        credentials = base64.b64encode(
+            f"{settings.NOTION_CLIENT_ID}:{settings.NOTION_CLIENT_SECRET}".encode()
+        ).decode()
+
+        async with httpx.AsyncClient(timeout=15.0) as http:
+            resp = await http.post(
+                "https://api.notion.com/v1/oauth/token",
+                headers={
+                    "Authorization": f"Basic {credentials}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "grant_type": "authorization_code",
+                    "code": code,
+                    "redirect_uri": settings.NOTION_REDIRECT_URI,
+                },
+            )
+
+        if resp.status_code != 200:
+            return RedirectResponse(url=f"{base_redirect}&status=error&service=notion", status_code=302)
+
+        token_response = resp.json()
+        token_data = {
+            "access_token": token_response.get("access_token", ""),
+            "scopes": ["read_content", "update_content"],
+            "workspace_id": token_response.get("workspace_id", ""),
+        }
+
         vault_client = get_token_vault_client()
         if auth0_sub:
             await vault_client.store_token(auth0_sub, "notion", token_data)
-
             user = db.query(User).filter(User.auth0_sub == auth0_sub).first()
             if user:
                 _upsert_connected_service(
@@ -301,15 +322,9 @@ async def notion_callback(
                     granted_scopes=token_data["scopes"],
                 )
     except Exception:
-        return RedirectResponse(
-            url=f"{base_redirect}&status=error&service=notion",
-            status_code=302,
-        )
+        return RedirectResponse(url=f"{base_redirect}&status=error&service=notion", status_code=302)
 
-    return RedirectResponse(
-        url=f"{base_redirect}&status=connected&service=notion",
-        status_code=302,
-    )
+    return RedirectResponse(url=f"{base_redirect}&status=connected&service=notion", status_code=302)
 
 
 @router.post("/notion/disconnect", response_model=OAuthDisconnectResponse)
@@ -401,44 +416,35 @@ async def connect_sms(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Connect SMS service (Twilio or MessageBird)."""
-    api_key = request.api_key
-    api_secret = request.api_secret
-    phone_number = request.phone_number
-
-    if request.provider == "twilio":
-        if not api_key:
-            api_key = settings.TWILIO_ACCOUNT_SID
-        if not api_secret:
-            api_secret = settings.TWILIO_AUTH_TOKEN
-        if not phone_number:
-            phone_number = settings.TWILIO_PHONE_NUMBER
+    """Connect SMS service via Africa's Talking."""
+    username = settings.AT_USERNAME or request.api_key
+    api_key = settings.AT_API_KEY or request.api_secret
 
     existing = db.query(ConnectedService).filter(
         ConnectedService.user_id == current_user.id,
         ConnectedService.service_type == "sms",
     ).first()
 
-    credentials_data = {"api_key": api_key, "api_secret": api_secret}
+    credentials_data = {"username": username, "api_key": api_key}
 
     if existing:
         existing.is_active = True
-        existing.service_identifier = phone_number
+        existing.service_identifier = request.phone_number or username
         existing.encrypted_credentials = json.dumps(credentials_data)
         db.commit()
-        return {"message": f"{request.provider} reconnected successfully", "status": "connected"}
+        return {"message": "SMS reconnected successfully", "status": "connected"}
 
     new_service = ConnectedService(
         user_id=current_user.id,
         service_type="sms",
-        service_identifier=phone_number,
+        service_identifier=request.phone_number or username,
         encrypted_credentials=json.dumps(credentials_data),
         is_active=True,
     )
     db.add(new_service)
     db.commit()
 
-    return {"message": f"{request.provider} connected successfully", "status": "connected"}
+    return {"message": "SMS connected successfully", "status": "connected"}
 
 
 @router.post("/sms/disconnect", response_model=IntegrationDisconnectResponse)
