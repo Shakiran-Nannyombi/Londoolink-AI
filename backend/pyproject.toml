@@ -11,8 +11,8 @@ dependencies = [
     "pydantic-settings",
     # Database and ORM
     "sqlalchemy",
-    # "psycopg2-binary", # PostgreSQL driver
-    "alembic", # Database migrations
+    "psycopg2-binary",
+    "alembic",
     # Security and authentication
     "passlib[bcrypt]",
     "python-jose[cryptography]",
@@ -49,6 +49,7 @@ dependencies = [
     "pyotp",
     "qrcode",
     "psutil",
+    "africastalking",
 ]
 
 [project.optional-dependencies]
