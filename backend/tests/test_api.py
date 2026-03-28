@@ -68,9 +68,10 @@ class TestAgentEndpoints:
         assert data["status"] == "ok"
         assert data["service"] == "Londoolink AI Agent"
 
-    @patch("app.api.endpoints.agent.langgraph_coordinator")
-    def test_get_daily_briefing_success(self, mock_coordinator, client, auth_headers):
+    @patch("app.api.endpoints.agent.get_langgraph_coordinator")
+    def test_get_daily_briefing_success(self, mock_get_coordinator, client, auth_headers):
         # Test successful daily briefing retrieval
+        mock_coordinator = Mock()
         mock_coordinator.get_daily_briefing.return_value = {
             "user_id": 1,
             "summary": "Test briefing",
@@ -78,6 +79,13 @@ class TestAgentEndpoints:
             "calendar_insights": {"analysis": "Calendar analysis"},
             "social_insights": {"analysis": "Social analysis"},
         }
+        mock_coordinator.MODEL_CONFIGS = {
+            "small": {"max_tokens": 1024, "temperature": 0.7},
+            "medium": {"max_tokens": 2048, "temperature": 0.7},
+            "large": {"max_tokens": 4096, "temperature": 0.7},
+        }
+        mock_coordinator.model_size = "small"
+        mock_get_coordinator.return_value = mock_coordinator
 
         response = client.get("/api/v1/agent/briefing/daily", headers=auth_headers)
 
@@ -145,14 +153,16 @@ class TestAgentEndpoints:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Query is required" in response.json()["detail"]
 
-    @patch("app.api.endpoints.agent.langgraph_coordinator")
-    def test_analyze_document_success(self, mock_coordinator, client, auth_headers):
+    @patch("app.api.endpoints.agent.get_langgraph_coordinator")
+    def test_analyze_document_success(self, mock_get_coordinator, client, auth_headers):
         # Test successful document analysis
+        mock_coordinator = Mock()
         mock_coordinator.analyze_document.return_value = {
             "analysis": "Document analysis result",
             "status": "completed",
             "agent_type": "email",
         }
+        mock_get_coordinator.return_value = mock_coordinator
 
         document_data = {"content": "Test document content", "type": "email"}
 

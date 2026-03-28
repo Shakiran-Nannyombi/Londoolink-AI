@@ -15,6 +15,8 @@ class WorkflowRouting:
             return "calendar"
         elif current_step == "social":
             return "social"
+        elif current_step == "notion":
+            return "notion"
         elif current_step == "priority":
             return "priority"
         else:

@@ -28,6 +28,9 @@ class User(Base):
     # Encrypted credentials storage
     encrypted_google_token = Column(Text, nullable=True)
 
+    # Auth0 integration
+    auth0_sub = Column(String(255), nullable=True, unique=True, index=True)
+
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

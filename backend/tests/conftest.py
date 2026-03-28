@@ -194,18 +194,22 @@ def sample_social_message():
 @pytest.fixture(autouse=True)
 def mock_settings():
     # Mock settings for testing - must be applied before any imports
-    with patch("app.core.config.settings") as mock:
-        mock.SECRET_KEY = "test-secret-key-32-characters-long"
-        mock.JWT_ALGORITHM = "HS256"
-        mock.ACCESS_TOKEN_EXPIRE_MINUTES = 30
-        mock.ENCRYPTION_KEY = (
-            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-        )
-        mock.GROQ_API_KEY = "test-groq-key"
-        mock.OLLAMA_BASE_URL = "http://localhost:11434"
-        mock.CHROMA_DB_PATH = "./test_chroma_db"
-        mock.DATABASE_URL = SQLALCHEMY_DATABASE_URL
-        mock.ENVIRONMENT = "testing"
+    # Patch both the config module and any modules that imported settings directly
+    with (
+        patch("app.core.config.settings") as mock,
+        patch("app.security.encryption.settings") as enc_mock,
+    ):
+        _hex_key = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        for m in (mock, enc_mock):
+            m.SECRET_KEY = "test-secret-key-32-characters-long"
+            m.JWT_ALGORITHM = "HS256"
+            m.ACCESS_TOKEN_EXPIRE_MINUTES = 30
+            m.ENCRYPTION_KEY = _hex_key
+            m.GROQ_API_KEY = "test-groq-key"
+            m.OLLAMA_BASE_URL = "http://localhost:11434"
+            m.CHROMA_DB_PATH = "./test_chroma_db"
+            m.DATABASE_URL = SQLALCHEMY_DATABASE_URL
+            m.ENVIRONMENT = "testing"
         yield mock
 
 

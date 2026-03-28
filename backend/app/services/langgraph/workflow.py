@@ -24,6 +24,7 @@ class WorkflowBuilder:
         workflow.add_node("email_agent", self.agent_nodes.email_agent_node)
         workflow.add_node("calendar_agent", self.agent_nodes.calendar_agent_node)
         workflow.add_node("social_agent", self.agent_nodes.social_agent_node)
+        workflow.add_node("notion_agent", self.agent_nodes.notion_agent_node)
         workflow.add_node("priority_agent", self.agent_nodes.priority_agent_node)
         workflow.add_node("coordinator", self.agent_nodes.coordinator_node)
 
@@ -42,13 +43,14 @@ class WorkflowBuilder:
                 "email": "email_agent",
                 "calendar": "calendar_agent",
                 "social": "social_agent",
+                "notion": "notion_agent",
                 "priority": "priority_agent",
                 "end": END,
             },
         )
 
         # All agents can use tools or go to priority agent
-        for agent in ["email_agent", "calendar_agent", "social_agent"]:
+        for agent in ["email_agent", "calendar_agent", "social_agent", "notion_agent"]:
             workflow.add_conditional_edges(
                 agent,
                 self.routing.should_use_tools,

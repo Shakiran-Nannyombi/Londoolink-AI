@@ -4,14 +4,27 @@ from datetime import datetime
 
 
 class IntegrationStatusResponse(BaseModel):
-    service_type: Literal['email', 'sms']
+    service_type: str
     is_connected: bool
     service_provider: Optional[str] = None
     connected_at: Optional[datetime] = None
     last_synced: Optional[datetime] = None
-    
+    vault_backed: Optional[bool] = None
+    granted_scopes: Optional[str] = None
+    last_token_used: Optional[datetime] = None
+    auth0_sub: Optional[str] = None
+
     class Config:
         from_attributes = True
+
+
+class OAuthConnectResponse(BaseModel):
+    auth_url: str
+
+
+class OAuthDisconnectResponse(BaseModel):
+    message: str
+    service_type: str
 
 
 class EmailConnectRequest(BaseModel):

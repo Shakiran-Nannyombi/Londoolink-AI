@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.api import api_router
-from app.core.config import settings
+from app.core.config import settings, validate_auth0_config
+
+# Validate Auth0 config at startup (raises RuntimeError if vars are missing in non-dev)
+validate_auth0_config()
 
 app = FastAPI(
     title="Londoolink AI Backend",

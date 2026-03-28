@@ -25,6 +25,7 @@ from app.core.config import settings
 from app.models.user import User
 from app.models.consent import UserConsent
 from app.models.connected_service import ConnectedService
+from app.models.audit_log import AuditLog
 
 target_metadata = Base.metadata
 
