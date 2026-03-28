@@ -1,9 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
-from typing import List
-import shutil
-import uuid
-import os
 
 from app.db.session import get_db
 from app.models.user import User
@@ -57,9 +53,7 @@ async def upload_profile_picture(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """
-    Upload profile picture.
-    """
+    """Upload profile picture — stored as base64 data URL in the database."""
     allowed_types = ["image/jpeg", "image/png", "image/webp"]
     if file.content_type not in allowed_types:
         raise HTTPException(
@@ -67,41 +61,30 @@ async def upload_profile_picture(
             detail="Invalid file type. Only JPEG, PNG, and WebP are allowed."
         )
 
-    # Create upload directory if not exists
-    upload_dir = "static/uploads/profile_pictures"
-    os.makedirs(upload_dir, exist_ok=True)
-    
-    # Generate unique filename
-    extension = file.filename.split(".")[-1] if "." in file.filename else "jpg"
-    filename = f"{uuid.uuid4()}.{extension}"
-    file_path = os.path.join(upload_dir, filename)
-    
-    # Save file
-    try:
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-    except Exception as e:
+    # Read file and encode as base64 data URL (stored in DB, no filesystem needed)
+    import base64
+    contents = await file.read()
+    if len(contents) > 2 * 1024 * 1024:  # 2MB limit
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to save file: {str(e)}"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File too large. Maximum size is 2MB."
         )
-        
-    # Update profile URL
-    # Assuming static is served at /static
-    url = f"/static/uploads/profile_pictures/{filename}"
-    current_user.profile_picture_url = url
+
+    b64 = base64.b64encode(contents).decode("utf-8")
+    data_url = f"data:{file.content_type};base64,{b64}"
+
+    current_user.profile_picture_url = data_url
     try:
         db.commit()
         db.refresh(current_user)
     except Exception as e:
         db.rollback()
-        # Even if DB update fails, file was saved. That's a minor cleanup issue.
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update profile picture URL: {str(e)}"
+            detail=f"Failed to save profile picture: {str(e)}"
         )
-    
-    return {"url": url}
+
+    return {"url": data_url}
 
 
 @router.delete("/me")

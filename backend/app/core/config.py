@@ -1,11 +1,15 @@
+import os
 from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Use .env.development if it exists (local dev), otherwise .env (production)
+_env_file = ".env.development" if os.path.exists(".env.development") else ".env"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_env_file,
         case_sensitive=True,
         extra="ignore",
     )

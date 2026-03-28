@@ -27,6 +27,16 @@ export default function ProfilePage() {
     })
 
     const fileInputRef = React.useRef<HTMLInputElement>(null)
+    const [integrationStatuses, setIntegrationStatuses] = React.useState<Record<string, boolean>>({})
+
+    React.useEffect(() => {
+        apiClient.getIntegrationsStatus().then((res) => {
+            const list: Array<{ service_type: string; is_connected: boolean }> = Array.isArray(res) ? res : (res.data ?? [])
+            const map: Record<string, boolean> = {}
+            for (const item of list) map[item.service_type] = item.is_connected
+            setIntegrationStatuses(map)
+        }).catch(() => { })
+    }, [])
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -119,7 +129,9 @@ export default function ProfilePage() {
                                 <div className="w-32 h-32 rounded-full overflow-hidden bg-linear-to-br from-primary to-secondary flex items-center justify-center text-4xl font-bold text-white relative">
                                     {user?.profile_picture_url ? (
                                         <img
-                                            src={`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}${user.profile_picture_url}`}
+                                            src={user.profile_picture_url.startsWith('data:')
+                                                ? user.profile_picture_url
+                                                : `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}${user.profile_picture_url}`}
                                             alt="Profile"
                                             className="w-full h-full object-cover"
                                         />
@@ -254,35 +266,40 @@ export default function ProfilePage() {
 
                     {/* Connected Services */}
                     <Card className="p-6">
-                        <h3 className="text-lg font-semibold mb-4 text-foreground">Connected Services</h3>
-
+                        <h3 className="text-lg font-semibold mb-1 text-foreground">Connected Services</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                            Manage your integrations in <button className="text-primary underline" onClick={() => router.push('/settings?tab=integrations')}>Settings → Integrations</button>
+                        </p>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
-                                        <Mail className="w-5 h-5 text-red-500" />
+                            {[
+                                { key: 'google', label: 'Google (Gmail + Calendar)', icon: <Mail className="w-5 h-5 text-red-500" />, bg: 'bg-red-500/10' },
+                                { key: 'notion', label: 'Notion', icon: <Globe className="w-5 h-5 text-purple-500" />, bg: 'bg-purple-500/10' },
+                                { key: 'sms', label: 'SMS (Africa\'s Talking)', icon: <Phone className="w-5 h-5 text-blue-500" />, bg: 'bg-blue-500/10' },
+                            ].map(({ key, label, icon, bg }) => {
+                                const connected = integrationStatuses[key] ?? false
+                                return (
+                                    <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-full ${bg} flex items-center justify-center`}>
+                                                {icon}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-foreground">{label}</p>
+                                                <p className={`text-xs ${connected ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
+                                                    {connected ? 'Connected' : 'Not connected'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => router.push('/settings?tab=integrations')}
+                                        >
+                                            {connected ? 'Manage' : 'Connect'}
+                                        </Button>
                                     </div>
-                                    <div>
-                                        <p className="font-medium text-foreground">Email</p>
-                                        <p className="text-xs text-muted-foreground">Not connected</p>
-                                    </div>
-                                </div>
-                                <Button variant="outline" size="sm">Connect</Button>
-                            </div>
-
-
-                            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-purple-500/10 dark:bg-blue-500/10 flex items-center justify-center">
-                                        <Phone className="w-5 h-5 text-purple-500 dark:text-blue-500" />
-                                    </div>
-                                    <div>
-                                        <p className="font-medium text-foreground">SMS</p>
-                                        <p className="text-xs text-muted-foreground">Not connected</p>
-                                    </div>
-                                </div>
-                                <Button variant="outline" size="sm">Connect</Button>
-                            </div>
+                                )
+                            })}
                         </div>
                     </Card>
 

@@ -25,11 +25,17 @@ class VectorStore:
     def _initialize(self):
         # Initialize ChromaDB client and collection
         try:
-            # Initialize ChromaDB client
-            self.client = chromadb.PersistentClient(
-                path=settings.CHROMA_DB_PATH,
-                settings=ChromaSettings(anonymized_telemetry=False, allow_reset=True),
-            )
+            # Use in-memory client on production (ephemeral filesystem)
+            # Use persistent client only in development
+            if settings.ENVIRONMENT == "development":
+                self.client = chromadb.PersistentClient(
+                    path=settings.CHROMA_DB_PATH,
+                    settings=ChromaSettings(anonymized_telemetry=False, allow_reset=True),
+                )
+            else:
+                self.client = chromadb.EphemeralClient(
+                    settings=ChromaSettings(anonymized_telemetry=False, allow_reset=True),
+                )
 
             # Create embedding function
             embedding_function = ChromaEmbeddingFunction(embedding_manager)

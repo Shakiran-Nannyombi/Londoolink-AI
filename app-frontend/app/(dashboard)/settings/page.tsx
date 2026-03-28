@@ -13,13 +13,18 @@ import {
     Sun,
     Languages,
     Clock,
-    Check
+    Check,
+    Download,
+    Trash2,
+    FileText,
+    Loader2,
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
+import { useNotificationStore } from '@/store/notificationStore'
 import { PermissionDashboard } from '@/components/integrations/PermissionDashboard'
 import { StepUpModal } from '@/components/integrations/StepUpModal'
 import { apiClient } from '@/lib/api'
@@ -52,6 +57,15 @@ export default function SettingsPage() {
             router.push('/login')
         }
     }, [isAuthenticated, router])
+
+    useEffect(() => {
+        const handler = (e: Event) => {
+            const tab = (e as CustomEvent).detail as Tab
+            if (tab) setActiveTab(tab)
+        }
+        window.addEventListener('switch-settings-tab', handler)
+        return () => window.removeEventListener('switch-settings-tab', handler)
+    }, [])
 
     const tabs = [
         { id: 'general' as Tab, name: 'General', icon: SettingsIcon },
@@ -250,33 +264,7 @@ export default function SettingsPage() {
 
                             {/* Privacy Settings */}
                             {activeTab === 'privacy' && (
-                                <Card className="p-6">
-                                    <h2 className="text-xl font-semibold mb-6 text-foreground">Privacy & Data</h2>
-
-                                    <div className="space-y-6">
-                                        <div className="p-4 rounded-lg bg-purple-500/10 dark:bg-blue-500/10 border border-purple-500/20 dark:border-blue-500/20">
-                                            <p className="text-sm text-foreground mb-2">
-                                                <strong>Your data is encrypted and secure.</strong>
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                All your personal information and connected services are protected with industry-standard encryption.
-                                            </p>
-                                        </div>
-
-                                        <div className="space-y-3">
-                                            <h3 className="font-medium text-foreground">Data Management</h3>
-                                            <Button variant="outline" className="w-full justify-start">
-                                                Download My Data
-                                            </Button>
-                                            <Button variant="outline" className="w-full justify-start">
-                                                Manage Consents
-                                            </Button>
-                                            <Button variant="destructive" className="w-full justify-start">
-                                                Delete All Data
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </Card>
+                                <PrivacyTab />
                             )}
 
                             {/* Integrations Settings */}
@@ -325,6 +313,143 @@ export default function SettingsPage() {
                 }}
             />
         </div>
+    )
+}
+
+// Privacy Tab Component
+function PrivacyTab() {
+    const { logout } = useAuthStore()
+    const { addNotification } = useNotificationStore()
+    const router = useRouter()
+    const [loadingAction, setLoadingAction] = useState<string | null>(null)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+    const handleDownloadData = async () => {
+        setLoadingAction('download')
+        try {
+            const response = await apiClient.getProfile()
+            const consents = await apiClient.getConsents()
+            const integrations = await apiClient.getIntegrationsStatus()
+            const auditLog = await apiClient.getAuditLog(100)
+
+            const data = {
+                profile: response,
+                consents,
+                integrations,
+                auditLog,
+                exportedAt: new Date().toISOString(),
+            }
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `londoolink-data-${new Date().toISOString().split('T')[0]}.json`
+            a.click()
+            URL.revokeObjectURL(url)
+            addNotification('Your data has been downloaded.', 'success')
+        } catch {
+            addNotification('Failed to download data. Please try again.', 'warning')
+        } finally {
+            setLoadingAction(null)
+        }
+    }
+
+    const handleManageConsents = () => {
+        // Switch to integrations tab by updating the URL and triggering a tab change
+        // Since we're already on /settings, we dispatch a custom event the parent listens to
+        window.dispatchEvent(new CustomEvent('switch-settings-tab', { detail: 'integrations' }))
+    }
+
+    const handleDeleteData = async () => {
+        if (!showDeleteConfirm) {
+            setShowDeleteConfirm(true)
+            return
+        }
+        setLoadingAction('delete')
+        try {
+            await apiClient.deleteProfile()
+            logout()
+            addNotification('Your account and data have been deleted.', 'info')
+            router.push('/login')
+        } catch {
+            addNotification('Failed to delete data. Please contact support.', 'warning')
+        } finally {
+            setLoadingAction(null)
+            setShowDeleteConfirm(false)
+        }
+    }
+
+    return (
+        <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-6 text-foreground">Privacy & Data</h2>
+            <div className="space-y-6">
+                <div className="p-4 rounded-lg bg-purple-500/10 dark:bg-blue-500/10 border border-purple-500/20 dark:border-blue-500/20">
+                    <p className="text-sm text-foreground mb-1">
+                        <strong>Your data is encrypted and secure.</strong>
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                        All your personal information and connected services are protected with industry-standard encryption.
+                    </p>
+                </div>
+
+                <div className="space-y-3">
+                    <h3 className="font-medium text-foreground">Data Management</h3>
+
+                    <Button
+                        variant="outline"
+                        className="w-full justify-start gap-2"
+                        onClick={handleDownloadData}
+                        disabled={loadingAction === 'download'}
+                    >
+                        {loadingAction === 'download'
+                            ? <Loader2 className="w-4 h-4 animate-spin" />
+                            : <Download className="w-4 h-4" />}
+                        Download My Data
+                    </Button>
+
+                    <Button
+                        variant="outline"
+                        className="w-full justify-start gap-2"
+                        onClick={handleManageConsents}
+                    >
+                        <FileText className="w-4 h-4" />
+                        Manage Consents
+                    </Button>
+
+                    {showDeleteConfirm ? (
+                        <div className="p-4 rounded-lg border border-destructive/50 bg-destructive/5 space-y-3">
+                            <p className="text-sm text-destructive font-medium">
+                                Are you sure? This will permanently delete your account and all data. This cannot be undone.
+                            </p>
+                            <div className="flex gap-2">
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleDeleteData}
+                                    disabled={loadingAction === 'delete'}
+                                >
+                                    {loadingAction === 'delete' ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                                    Yes, delete everything
+                                </Button>
+                                <Button variant="outline" size="sm" onClick={() => setShowDeleteConfirm(false)}>
+                                    Cancel
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <Button
+                            variant="destructive"
+                            className="w-full justify-start gap-2"
+                            onClick={handleDeleteData}
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            Delete All Data
+                        </Button>
+                    )}
+                </div>
+            </div>
+        </Card>
     )
 }
 
