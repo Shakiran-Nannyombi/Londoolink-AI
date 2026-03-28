@@ -1,0 +1,9 @@
+build:
+  languages:
+    - python
+run:
+  web: bash startup.sh
+release:
+  command:
+    - alembic upgrade head
+  image: web
