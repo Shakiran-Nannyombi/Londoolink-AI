@@ -10,13 +10,15 @@ export default function DashboardLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="min-h-screen bg-background relative flex overflow-hidden transition-colors duration-300">
+        <div className="min-h-screen bg-background relative flex transition-colors duration-300">
 
             {/* Navigation */}
             <Sidebar className="hidden lg:flex" />
-            <MobileNav />
 
-            <div className="flex-1 relative flex flex-col h-screen overflow-hidden">
+            <div className="flex-1 relative flex flex-col min-h-screen lg:h-screen lg:overflow-hidden">
+                {/* Mobile Navigation */}
+                <MobileNav />
+
                 {/* Background gradients */}
                 <div className="absolute top-0 left-0 w-full h-[500px] bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
