@@ -19,12 +19,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Add auth0_sub column to users table."""
-    op.add_column('users', sa.Column('auth0_sub', sa.String(255), nullable=True))
-    op.create_index(op.f('ix_users_auth0_sub'), 'users', ['auth0_sub'], unique=True)
+    """Add auth0_sub column to users table - already created in initial migration, nothing to do."""
+    pass
 
 
 def downgrade() -> None:
-    """Remove auth0_sub column from users table."""
-    op.drop_index(op.f('ix_users_auth0_sub'), table_name='users')
-    op.drop_column('users', 'auth0_sub')
+    """Remove auth0_sub column from users table - managed by initial migration."""
+    pass
