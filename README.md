@@ -1,3 +1,32 @@
+<div align="center">
+
+```
+██╗      ██████╗ ███╗   ██╗██████╗  ██████╗  ██████╗ ██╗     ██╗███╗   ██╗██╗  ██╗
+██║     ██╔═══██╗████╗  ██║██╔══██╗██╔═══██╗██╔═══██╗██║     ██║████╗  ██║██║ ██╔╝
+██║     ██║   ██║██╔██╗ ██║██║  ██║██║   ██║██║   ██║██║     ██║██╔██╗ ██║█████╔╝ 
+██║     ██║   ██║██║╚██╗██║██║  ██║██║   ██║██║   ██║██║     ██║██║╚██╗██║██╔═██╗ 
+███████╗╚██████╔╝██║ ╚████║██████╔╝╚██████╔╝╚██████╔╝███████╗██║██║ ╚████║██║  ██╗
+╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚═════╝ ╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
+                                                                              AI
+```
+
+### Your Intelligent Digital Twin
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-londoolink--ai.vercel.app-6366f1?style=for-the-badge&logoColor=white)](https://londoolink-ai.vercel.app)
+[![Try Demo](https://img.shields.io/badge/⚡_Try_Demo-No_Signup_Required-10b981?style=for-the-badge)](https://londoolink-ai.vercel.app/login?demo=true)
+[![Auth0 Hackathon](https://img.shields.io/badge/🏆_Auth0-AI_Agents_Hackathon_2026-eb5424?style=for-the-badge)](https://auth0.com)
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Next.js](https://img.shields.io/badge/Next.js_14-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-ff6b35?style=flat-square)](https://langchain-ai.github.io/langgraph)
+[![Auth0](https://img.shields.io/badge/Auth0-Token_Vault-eb5424?style=flat-square&logo=auth0&logoColor=white)](https://auth0.com)
+[![Gemini](https://img.shields.io/badge/Google-Gemini_AI-4285F4?style=flat-square&logo=google&logoColor=white)](https://deepmind.google/technologies/gemini)
+[![Heroku](https://img.shields.io/badge/Heroku-Deployed-430098?style=flat-square&logo=heroku&logoColor=white)](https://londoolink-abc635b5fe07.herokuapp.com)
+
+---
+
+</div>
+
 # Londoolink AI — Your Intelligent Digital Twin
 
 > Built for the **Auth0 AI Agents Hackathon 2026**
