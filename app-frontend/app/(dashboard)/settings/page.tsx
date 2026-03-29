@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Settings as SettingsIcon,
@@ -37,6 +37,7 @@ type Tab = 'general' | 'notifications' | 'privacy' | 'integrations' | 'security'
 
 export default function SettingsPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { isAuthenticated } = useAuthStore()
     const {
         theme,
@@ -61,6 +62,20 @@ export default function SettingsPage() {
             router.push('/login')
         }
     }, [isAuthenticated, router])
+
+    // Handle OAuth callback redirects (?tab=integrations&status=connected)
+    useEffect(() => {
+        const tab = searchParams.get('tab') as Tab | null
+        const status = searchParams.get('status')
+        if (tab) setActiveTab(tab)
+        if (status) {
+            // Clean up URL without reload
+            const url = new URL(window.location.href)
+            url.searchParams.delete('status')
+            url.searchParams.delete('service')
+            window.history.replaceState({}, '', url.toString())
+        }
+    }, [searchParams])
 
     useEffect(() => {
         const handler = (e: Event) => {

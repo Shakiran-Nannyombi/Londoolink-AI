@@ -195,8 +195,14 @@ async def google_callback(
 
         vault_client = get_token_vault_client()
         if auth0_sub:
-            await vault_client.store_token(auth0_sub, "google", token_data)
+            # Try vault storage but don't fail if unavailable
+            try:
+                await vault_client.store_token(auth0_sub, "google", token_data)
+            except Exception:
+                pass  # Vault unavailable, continue with DB-only storage
             user = db.query(User).filter(User.auth0_sub == auth0_sub).first()
+            if not user:
+                user = db.query(User).filter(User.email == auth0_sub).first()
             if user:
                 _upsert_connected_service(
                     db=db,
@@ -311,8 +317,15 @@ async def notion_callback(
 
         vault_client = get_token_vault_client()
         if auth0_sub:
-            await vault_client.store_token(auth0_sub, "notion", token_data)
+            # Try vault storage but don't fail if unavailable
+            try:
+                await vault_client.store_token(auth0_sub, "notion", token_data)
+            except Exception:
+                pass  # Vault unavailable, continue with DB-only storage
             user = db.query(User).filter(User.auth0_sub == auth0_sub).first()
+            if not user:
+                # Try matching by email if auth0_sub is an email
+                user = db.query(User).filter(User.email == auth0_sub).first()
             if user:
                 _upsert_connected_service(
                     db=db,
