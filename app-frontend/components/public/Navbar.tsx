@@ -128,7 +128,7 @@ export function Navbar() {
                             initial="closed"
                             animate="open"
                             exit="closed"
-                            className="fixed inset-0 bg-background/95 backdrop-blur-xl z-[100] flex flex-col items-center justify-center space-y-8 md:hidden"
+                            className="fixed inset-0 bg-background backdrop-blur-xl z-[100] flex flex-col items-center justify-center space-y-8 md:hidden"
                         >
                             <nav className="flex flex-col items-center gap-8">
                                 {[
