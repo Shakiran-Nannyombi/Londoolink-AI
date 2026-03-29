@@ -38,20 +38,16 @@ export function Navbar() {
     // Variants for mobile menu animation
     const menuVariants = {
         closed: {
-            opacity: 0,
-            y: "-100%",
-            borderRadius: "0 0 100% 100%",
+            x: "100%",
             transition: {
-                duration: 0.5,
+                duration: 0.3,
                 ease: [0.76, 0, 0.24, 1]
             }
         },
         open: {
-            opacity: 1,
-            y: "0%",
-            borderRadius: "0 0 0% 0%",
+            x: "0%",
             transition: {
-                duration: 0.7,
+                duration: 0.3,
                 ease: [0.76, 0, 0.24, 1]
             }
         }
@@ -128,7 +124,7 @@ export function Navbar() {
                             initial="closed"
                             animate="open"
                             exit="closed"
-                            className="fixed inset-0 bg-background backdrop-blur-xl z-[100] flex flex-col items-center justify-center space-y-8 md:hidden"
+                            className="fixed inset-0 bg-background z-[100] flex flex-col items-center justify-center space-y-8 md:hidden"
                         >
                             <nav className="flex flex-col items-center gap-8">
                                 {[
