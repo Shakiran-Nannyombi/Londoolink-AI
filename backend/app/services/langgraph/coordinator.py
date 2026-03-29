@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional
 
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 
 from app.core.config import settings
 from app.utils.text_formatter import clean_ai_response
@@ -48,20 +49,20 @@ class LangGraphCoordinator:
     
     MODEL_CONFIGS = {
         'small': {
-            'model_name': 'gemini-1.5-flash',
+            'model_name': 'llama-3.3-70b-versatile',
             'max_tokens': 4096,
             'temperature': 0.1,
             'timeout': 60
         },
         'medium': {
-            'model_name': 'gemini-1.5-pro',
-            'max_tokens': 16384,
+            'model_name': 'llama-3.3-70b-versatile',
+            'max_tokens': 8192,
             'temperature': 0.2,
             'timeout': 90
         },
         'large': {
-            'model_name': 'gemini-1.5-pro',
-            'max_tokens': 32768,
+            'model_name': 'llama-3.3-70b-versatile',
+            'max_tokens': 8192,
             'temperature': 0.3,
             'timeout': 120
         }
@@ -92,12 +93,12 @@ class LangGraphCoordinator:
         config = self.MODEL_CONFIGS[self.model_size]
         logger.info(f"Loading {self.model_size} model with config: {config}")
         
-        return ChatGoogleGenerativeAI(
+        return ChatGroq(
             model=config['model_name'],
             temperature=config['temperature'],
-            google_api_key=settings.GEMINI_API_KEY,
-            max_output_tokens=config['max_tokens'],
-            request_timeout=config['timeout'],
+            groq_api_key=settings.GROQ_API_KEY,
+            max_tokens=config['max_tokens'],
+            timeout=config['timeout'],
         )
 
     def cleanup(self):
