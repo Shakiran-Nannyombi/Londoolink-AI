@@ -5,7 +5,7 @@ import type { BackendBriefing } from './api'
 // Utility function to decode HTML entities and clean up text
 function decodeHtmlEntities(text: string): string {
   if (!text) return text
-  
+
   const entities: { [key: string]: string } = {
     '&quot;': '"',
     '&#39;': "'",
@@ -14,22 +14,22 @@ function decodeHtmlEntities(text: string): string {
     '&gt;': '>',
     '&nbsp;': ' '
   }
-  
+
   let decoded = text
   Object.entries(entities).forEach(([entity, char]) => {
     decoded = decoded.replace(new RegExp(entity, 'g'), char)
   })
-  
+
   return decoded
 }
 
 // Utility function to format markdown-like text for display
 function formatTextForDisplay(text: string): string {
   if (!text) return text
-  
+
   // First decode HTML entities
   let formatted = decodeHtmlEntities(text)
-  
+
   // Remove excessive markdown formatting for cleaner display
   formatted = formatted
     .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
@@ -38,7 +38,7 @@ function formatTextForDisplay(text: string): string {
     .replace(/^\s*[-*+]\s/gm, '• ') // Convert list markers to bullets
     .replace(/^\s*\d+\.\s/gm, '• ') // Convert numbered lists to bullets
     .trim()
-  
+
   return formatted
 }
 
@@ -135,9 +135,13 @@ export function transformBackendBriefing(backendData: BackendBriefing): Briefing
     })
   }
 
-  // If no specific insights, create a general summary item
+  // If no specific insights, create a general summary item (skip error messages)
   if (items.length === 0 && backendData.summary) {
     const summary = backendData.summary
+    // Don't show error messages as briefing items
+    if (summary.toLowerCase().includes('failed') || summary.toLowerCase().includes('error') || backendData.workflow_status === 'error') {
+      return []
+    }
     items.push({
       id: `summary-${backendData.user_id}-${Date.now()}`,
       type: 'task',
@@ -175,7 +179,7 @@ function determinePriority(insight: any): 'high' | 'medium' | 'low' {
   // Check for keywords indicating high priority
   const highPriorityKeywords = ['urgent', 'asap', 'deadline', 'important', 'critical', 'emergency']
   const text = (insight.analysis || insight.summary || '').toLowerCase()
-  
+
   if (highPriorityKeywords.some(keyword => text.includes(keyword))) {
     return 'high'
   }
@@ -216,7 +220,7 @@ export function transformError(error: any): AppError {
   if (error.message) {
     // Determine error type based on message content
     const message = error.message.toLowerCase()
-    
+
     if (message.includes('401') || message.includes('unauthorized') || message.includes('token')) {
       return {
         message: 'Authentication failed. Please login again.',
@@ -224,7 +228,7 @@ export function transformError(error: any): AppError {
         details: error.message
       }
     }
-    
+
     if (message.includes('network') || message.includes('fetch')) {
       return {
         message: 'Network error. Please check your connection.',
@@ -232,7 +236,7 @@ export function transformError(error: any): AppError {
         details: error.message
       }
     }
-    
+
     if (message.includes('500') || message.includes('server')) {
       return {
         message: 'Server error. Please try again later.',
@@ -240,7 +244,7 @@ export function transformError(error: any): AppError {
         details: error.message
       }
     }
-    
+
     if (message.includes('400') || message.includes('validation')) {
       return {
         message: 'Invalid data. Please check your input.',
