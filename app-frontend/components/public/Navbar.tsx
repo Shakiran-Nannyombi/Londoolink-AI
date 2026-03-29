@@ -72,12 +72,12 @@ export function Navbar() {
 
     return (
         <header className={cn(
-            "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+            "fixed top-0 left-0 right-0 z-[60] transition-all duration-300",
             scrolled ? "bg-background/80 backdrop-blur-md border-b border-border/50 py-3" : "bg-transparent py-5"
         )}>
             <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 z-50 relative" onClick={closeMobileMenu}>
+                <Link href="/" className="flex items-center gap-2 z-[70] relative" onClick={closeMobileMenu}>
                     <Logo className="h-10 w-auto object-contain" />
                     <span className="text-xl font-bold tracking-tight">Londoolink AI</span>
                 </Link>
@@ -102,7 +102,7 @@ export function Navbar() {
                 </nav>
 
                 {/* Mobile Menu Toggle */}
-                <div className="md:hidden z-50 flex items-center gap-4">
+                <div className="md:hidden z-[70] flex items-center gap-4">
                     {/* Theme toggle mobile */}
                     <button
                         onClick={toggleTheme}
@@ -128,7 +128,7 @@ export function Navbar() {
                             initial="closed"
                             animate="open"
                             exit="closed"
-                            className="fixed inset-0 bg-background/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center space-y-8 md:hidden"
+                            className="fixed inset-0 bg-background/95 backdrop-blur-xl z-[100] flex flex-col items-center justify-center space-y-8 md:hidden"
                         >
                             <nav className="flex flex-col items-center gap-8">
                                 {[

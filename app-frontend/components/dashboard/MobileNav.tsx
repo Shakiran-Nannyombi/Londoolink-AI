@@ -53,7 +53,7 @@ export function MobileNav() {
     const toggleMenu = () => setIsOpen(!isOpen)
 
     return (
-        <div className="lg:hidden sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border px-4 h-16 flex items-center justify-between shrink-0">
+        <div className="lg:hidden sticky top-0 z-[60] w-full bg-background/95 backdrop-blur-md border-b border-border px-4 h-16 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
                 <Logo className="w-8 h-8 object-contain" />
                 <span className="font-bold text-lg bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">Londoolink AI</span>
@@ -71,7 +71,7 @@ export function MobileNav() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-background/60 backdrop-blur-sm z-40"
+                            className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[70]"
                             onClick={toggleMenu}
                         />
 
@@ -81,7 +81,7 @@ export function MobileNav() {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 bottom-0 w-[80%] max-w-xs bg-background border-l border-border z-50 flex flex-col p-6"
+                            className="fixed top-0 right-0 bottom-0 w-[80%] max-w-xs bg-background border-l border-border z-[80] flex flex-col p-6"
                         >
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-2">
