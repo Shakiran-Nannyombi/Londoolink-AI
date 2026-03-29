@@ -68,7 +68,7 @@ heroku open
 
 ## That's It! 🎉
 
-Your API is now live at: `https://londoolink-ai-backend.herokuapp.com`
+Your API is now live at: `https://londoolink-abc635b5fe07.herokuapp.com`
 
 ## Quick Commands
 
@@ -93,7 +93,7 @@ heroku ps
 
 Change your frontend environment variable:
 ```
-NEXT_PUBLIC_API_BASE_URL=https://londoolink-ai-backend.herokuapp.com
+NEXT_PUBLIC_API_BASE_URL=https://londoolink-abc635b5fe07.herokuapp.com
 ```
 
 Redeploy on Vercel and you're done!

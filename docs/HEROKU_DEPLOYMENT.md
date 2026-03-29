@@ -70,13 +70,13 @@ heroku config:set OPENAI_API_KEY=your_openai_key
 # Google OAuth
 heroku config:set GOOGLE_CLIENT_ID=your_google_client_id
 heroku config:set GOOGLE_CLIENT_SECRET=your_google_client_secret
-heroku config:set GOOGLE_REDIRECT_URI=https://londoolink-ai-backend.herokuapp.com/api/v1/integrations/google/callback
+heroku config:set GOOGLE_REDIRECT_URI=https://londoolink-abc635b5fe07.herokuapp.com/api/v1/integrations/google/callback
 
 # Auth0
 heroku config:set AUTH0_DOMAIN=your_domain.auth0.com
 heroku config:set AUTH0_CLIENT_ID=your_auth0_client_id
 heroku config:set AUTH0_CLIENT_SECRET=your_auth0_client_secret
-heroku config:set AUTH0_AUDIENCE=https://londoolink-ai-backend.herokuapp.com
+heroku config:set AUTH0_AUDIENCE=https://londoolink-abc635b5fe07.herokuapp.com
 heroku config:set AUTH0_TOKEN_VAULT_BASE_URL=https://your_domain.auth0.com/api/v2/token-vault
 heroku config:set AUTH0_M2M_CLIENT_ID=your_m2m_client_id
 heroku config:set AUTH0_M2M_CLIENT_SECRET=your_m2m_client_secret
@@ -84,11 +84,11 @@ heroku config:set AUTH0_M2M_CLIENT_SECRET=your_m2m_client_secret
 # Notion OAuth
 heroku config:set NOTION_CLIENT_ID=your_notion_client_id
 heroku config:set NOTION_CLIENT_SECRET=your_notion_client_secret
-heroku config:set NOTION_REDIRECT_URI=https://londoolink-ai-backend.herokuapp.com/api/v1/integrations/notion/callback
+heroku config:set NOTION_REDIRECT_URI=https://londoolink-abc635b5fe07.herokuapp.com/api/v1/integrations/notion/callback
 
 # Frontend URL
 heroku config:set FRONTEND_URL=https://londoolink-ai.vercel.app
-heroku config:set ALLOWED_ORIGINS=https://londoolink-ai.vercel.app,https://londoolink-ai-backend.herokuapp.com
+heroku config:set ALLOWED_ORIGINS=https://londoolink-ai.vercel.app,https://londoolink-abc635b5fe07.herokuapp.com
 
 # ChromaDB
 heroku config:set CHROMA_DB_PATH=/tmp/chroma_db
@@ -132,11 +132,11 @@ Check if the app is running:
 heroku open
 ```
 
-Or visit: `https://londoolink-ai-backend.herokuapp.com`
+Or visit: `https://londoolink-abc635b5fe07.herokuapp.com`
 
 Check health endpoint:
 ```bash
-curl https://londoolink-ai-backend.herokuapp.com/health
+curl https://londoolink-abc635b5fe07.herokuapp.com/health
 ```
 
 Should return:
@@ -167,7 +167,7 @@ heroku logs --tail | grep ERROR
 Update your frontend `.env.local` or environment variables:
 
 ```bash
-NEXT_PUBLIC_API_BASE_URL=https://londoolink-ai-backend.herokuapp.com
+NEXT_PUBLIC_API_BASE_URL=https://londoolink-abc635b5fe07.herokuapp.com
 ```
 
 Redeploy your frontend on Vercel.
@@ -390,4 +390,4 @@ If you have data on Render:
 
 ---
 
-**Your app will be live at:** `https://londoolink-ai-backend.herokuapp.com` 🚀
+**Your app will be live at:** `https://londoolink-abc635b5fe07.herokuapp.com` 🚀
