@@ -21,9 +21,9 @@ class VideoIntelligenceAgent:
 
     def _create_llm(self):
         try:
-            # Gemini 3.0 Pro is optimized for multimodal input
+            # Gemini 1.5 Pro is optimized for multimodal input
             return ChatGoogleGenerativeAI(
-                model="gemini-3.0-pro",
+                model="gemini-1.5-pro",
                 temperature=0.2,
                 google_api_key=settings.GEMINI_API_KEY,
                 max_output_tokens=4096,
@@ -86,7 +86,7 @@ class VideoIntelligenceAgent:
                 "analysis": response.content,
                 "status": "completed",
                 "agent_type": "video_intelligence",
-                "model": "gemini-3.0-pro"
+                "model": "gemini-1.5-pro"
             }
 
         except Exception as e:

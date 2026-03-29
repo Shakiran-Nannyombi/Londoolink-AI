@@ -48,19 +48,19 @@ class LangGraphCoordinator:
     
     MODEL_CONFIGS = {
         'small': {
-            'model_name': 'gemini-3.0-flash',
+            'model_name': 'gemini-1.5-flash',
             'max_tokens': 4096,
             'temperature': 0.1,
             'timeout': 60
         },
         'medium': {
-            'model_name': 'gemini-3.0-pro',
+            'model_name': 'gemini-1.5-pro',
             'max_tokens': 16384,
             'temperature': 0.2,
             'timeout': 90
         },
         'large': {
-            'model_name': 'gemini-3.0-pro',
+            'model_name': 'gemini-1.5-pro',
             'max_tokens': 32768,
             'temperature': 0.3,
             'timeout': 120
