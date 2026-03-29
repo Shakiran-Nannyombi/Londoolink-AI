@@ -53,7 +53,7 @@ export function MobileNav() {
     const toggleMenu = () => setIsOpen(!isOpen)
 
     return (
-        <div className="lg:hidden sticky top-0 z-[60] w-full bg-background/95 backdrop-blur-md border-b border-border px-4 h-16 flex items-center justify-between shrink-0">
+        <div className="flex lg:hidden fixed top-0 left-0 z-60 w-full bg-background backdrop-blur-md border-b border-border px-4 h-16 items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
                 <Logo className="w-8 h-8 object-contain" />
                 <span className="font-bold text-lg bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">Londoolink AI</span>
@@ -71,7 +71,7 @@ export function MobileNav() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[70]"
+                            className="fixed inset-0 bg-background/60 backdrop-blur-sm z-70"
                             onClick={toggleMenu}
                         />
 
@@ -81,7 +81,7 @@ export function MobileNav() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-0 bg-background bg-white dark:bg-zinc-950 z-[80] flex flex-col p-6 overflow-y-auto md:max-w-none"
+                            className="fixed inset-0 bg-background dark:bg-zinc-950 z-80 flex flex-col p-6 overflow-y-auto md:max-w-none"
                         >
                             <div className="max-w-sm mx-auto w-full flex flex-col flex-1">
                                 <div className="flex items-center justify-between mb-12">

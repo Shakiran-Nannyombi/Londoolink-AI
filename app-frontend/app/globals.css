@@ -163,7 +163,7 @@ html {
 [data-testid*="debug"],
 [class*="debug"],
 [id*="debug"],
-button[style*="position: fixed"],
+/* button[style*="position: fixed"], */
 div[style*="position: fixed"][style*="bottom"][style*="right"],
 div[style*="position: absolute"][style*="bottom"][style*="right"] {
   display: none !important;
