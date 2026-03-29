@@ -172,22 +172,22 @@ The video shows a user navigating the Londoolink AI dashboard, specifically stru
                 <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-                            Action Items
+                            <Shield className="h-5 w-5 text-primary" />
+                            Security Options
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="flex items-start gap-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                            <Smartphone className="h-5 w-5 text-yellow-500 mt-0.5 shrink-0" />
+                        <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                            <Smartphone className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                             <div>
-                                <h4 className="text-sm font-medium">Enable 2FA</h4>
-                                <p className="text-xs text-muted-foreground mt-1">Managed securely by Auth0 MFA.</p>
+                                <h4 className="text-sm font-medium">Two-Factor Authentication</h4>
+                                <p className="text-xs text-muted-foreground mt-1">Optional: Add an extra layer of security to your account.</p>
                                 <Button
                                     variant="link"
-                                    className="text-yellow-500 h-auto p-0 text-xs mt-2"
+                                    className="text-primary h-auto p-0 text-xs mt-2"
                                     onClick={openAuth0MFA}
                                 >
-                                    Setup via Auth0 &rarr;
+                                    Enable 2FA (Optional) &rarr;
                                 </Button>
                             </div>
                         </div>
