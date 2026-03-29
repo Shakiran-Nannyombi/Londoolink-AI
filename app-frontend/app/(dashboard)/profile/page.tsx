@@ -42,16 +42,42 @@ export default function ProfilePage() {
         const file = e.target.files?.[0]
         if (!file) return
 
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+        if (!allowedTypes.includes(file.type)) {
+            addNotification('Please upload a JPEG, PNG, or WebP image.', 'warning')
+            return
+        }
+
+        // Validate file size (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            addNotification('Image must be smaller than 2MB.', 'warning')
+            return
+        }
+
         setIsLoading(true)
         try {
             const response = await apiClient.uploadProfilePicture(file)
+
+            // Update local state with the new image URL
             updateUser({ profile_picture_url: response.url })
+
+            // Also fetch the updated profile from backend to ensure sync
+            const profileResponse = await apiClient.getProfile()
+            if (profileResponse.profile_picture_url) {
+                updateUser({ profile_picture_url: profileResponse.profile_picture_url })
+            }
+
             addNotification('Profile picture updated!', 'success')
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to upload picture:', error)
-            addNotification('Failed to update profile picture.', 'warning')
+            addNotification(error.message || 'Failed to update profile picture.', 'warning')
         } finally {
             setIsLoading(false)
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
         }
     }
 
@@ -129,6 +155,7 @@ export default function ProfilePage() {
                                 <div className="w-32 h-32 rounded-full overflow-hidden bg-linear-to-br from-primary to-secondary flex items-center justify-center text-4xl font-bold text-white relative">
                                     {user?.profile_picture_url ? (
                                         <img
+                                            key={user.profile_picture_url}
                                             src={user.profile_picture_url.startsWith('data:')
                                                 ? user.profile_picture_url
                                                 : `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}${user.profile_picture_url}`}
@@ -141,10 +168,19 @@ export default function ProfilePage() {
                                         </span>
                                     )}
 
+                                    {/* Loading overlay */}
+                                    {isLoading && (
+                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                        </div>
+                                    )}
+
                                     {/* Overlay for hover effect */}
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                                        <Camera className="w-8 h-8 text-white" />
-                                    </div>
+                                    {!isLoading && (
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                                            <Camera className="w-8 h-8 text-white" />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <input
@@ -153,11 +189,13 @@ export default function ProfilePage() {
                                     className="hidden"
                                     accept="image/jpeg,image/png,image/webp"
                                     onChange={handleFileChange}
+                                    disabled={isLoading}
                                 />
 
                                 <button
-                                    className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors z-10"
+                                    className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                                     onClick={() => fileInputRef.current?.click()}
+                                    disabled={isLoading}
                                 >
                                     <Camera className="w-5 h-5" />
                                 </button>
@@ -185,24 +223,24 @@ export default function ProfilePage() {
                         </div>
                     </Card>
 
-                    {/* Stats Card */}
-                    <Card className="p-6 mt-6">
+                    {/* Stats Card - Hidden until real data is available */}
+                    {/* <Card className="p-6 mt-6">
                         <h3 className="font-semibold mb-4 text-foreground">Activity Stats</h3>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-sm text-muted-foreground">Tasks Completed</span>
-                                <span className="font-semibold text-foreground">24</span>
+                                <span className="font-semibold text-foreground">0</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-sm text-muted-foreground">Active Days</span>
-                                <span className="font-semibold text-foreground">7</span>
+                                <span className="font-semibold text-foreground">0</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-sm text-muted-foreground">Productivity</span>
-                                <span className="font-semibold text-success">94%</span>
+                                <span className="font-semibold text-success">0%</span>
                             </div>
                         </div>
-                    </Card>
+                    </Card> */}
                 </div>
 
                 {/* Right Column - Profile Details */}
