@@ -26,6 +26,7 @@ import { TypeIcon } from "@/components/shared/TypeIcon"
 import { DetailModal } from "@/components/dashboard/DetailModal"
 import { ChatbotWidget } from "@/components/chat/ChatbotWidget"
 import { useNotificationStore } from "@/store/notificationStore"
+import { WelcomeScreen } from "@/components/dashboard/WelcomeScreen"
 
 interface IntegrationStatus {
   service_type: string
@@ -96,6 +97,19 @@ export default function DashboardPage() {
   ])
   const [completedItems, setCompletedItems] = useState<Set<string>>(new Set())
   const [snoozedItems, setSnoozedItems] = useState<Set<string>>(new Set())
+  const [showWelcome, setShowWelcome] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const seen = localStorage.getItem('londoolink_welcome_seen')
+      if (!seen) setShowWelcome(true)
+    }
+  }, [])
+
+  const handleDismissWelcome = () => {
+    setShowWelcome(false)
+    localStorage.setItem('londoolink_welcome_seen', '1')
+  }
 
   useEffect(() => {
     // Check authentication
@@ -364,8 +378,8 @@ export default function DashboardPage() {
             <span
               key={svc}
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${connected
-                  ? 'bg-green-500/10 text-green-600 dark:text-green-400'
-                  : 'bg-muted text-muted-foreground'
+                ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                : 'bg-muted text-muted-foreground'
                 }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-green-500' : 'bg-muted-foreground/50'}`} />
@@ -596,6 +610,11 @@ export default function DashboardPage() {
 
       {/* Floating Chatbot Widget */}
       <ChatbotWidget />
+
+      {/* Welcome Screen */}
+      <AnimatePresence>
+        {showWelcome && <WelcomeScreen onDismiss={handleDismissWelcome} />}
+      </AnimatePresence>
     </>
   )
 }

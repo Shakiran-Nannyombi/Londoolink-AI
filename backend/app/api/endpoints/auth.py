@@ -5,10 +5,12 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 import httpx
+import json
 
 from app.core.config import settings
 from app.db.session import get_db
 from app.models.user import User
+from app.models.connected_service import ConnectedService
 from app.schemas.token import Token
 from app.schemas.user import UserCreate, UserLogin
 from app.security.jwt import create_access_token, get_current_user
@@ -154,6 +156,28 @@ async def google_auth0_callback(
                 user.auth0_sub = auth0_sub
         db.commit()
         db.refresh(user)
+
+        # Auto-connect Google if user logged in via Google OAuth
+        if auth0_sub and auth0_sub.startswith("google-oauth2|"):
+            existing = db.query(ConnectedService).filter(
+                ConnectedService.user_id == user.id,
+                ConnectedService.service_type == "google",
+            ).first()
+            if not existing:
+                google_service = ConnectedService(
+                    user_id=user.id,
+                    service_type="google",
+                    service_identifier=auth0_sub,
+                    vault_backed=True,
+                    auth0_sub=auth0_sub,
+                    granted_scopes=json.dumps(["openid", "profile", "email"]),
+                    is_active=True,
+                )
+                db.add(google_service)
+            else:
+                existing.is_active = True
+                existing.auth0_sub = auth0_sub
+            db.commit()
 
         access_token = create_access_token(
             data={"sub": user.email},
