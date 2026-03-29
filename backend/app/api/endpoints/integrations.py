@@ -132,7 +132,7 @@ async def google_connect(
     """Return the Auth0-delegated Google OAuth authorization URL."""
     domain = settings.AUTH0_DOMAIN
     client_id = settings.AUTH0_CLIENT_ID
-    redirect_uri = f"{settings.FRONTEND_URL}/api/v1/integrations/google/callback"
+    redirect_uri = settings.GOOGLE_REDIRECT_URI
 
     params = {
         "response_type": "code",
@@ -165,7 +165,7 @@ async def google_callback(
         )
 
     auth0_sub = state or ""
-    redirect_uri = f"{settings.FRONTEND_URL}/api/v1/integrations/google/callback"
+    redirect_uri = settings.GOOGLE_REDIRECT_URI
 
     try:
         # Exchange code for tokens via Auth0
