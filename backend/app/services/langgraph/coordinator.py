@@ -118,6 +118,12 @@ class LangGraphCoordinator:
         try:
             logger.info(f"Starting LangGraph daily briefing for user {user_id}")
 
+            # Build graph lazily if not yet initialized
+            if self.graph is None:
+                from app.services.langgraph.workflow import WorkflowBuilder
+                self.workflow_builder = WorkflowBuilder()
+                self.graph = self.workflow_builder.build_workflow()
+
             # Initialize state
             initial_state = create_initial_state(user_id)
 
