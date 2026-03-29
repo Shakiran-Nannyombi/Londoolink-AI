@@ -22,7 +22,6 @@ export default function AuthCallbackPage() {
 
         async function exchange() {
             try {
-                // Exchange Auth0 code for our backend JWT
                 const res = await fetch(`${API_BASE}/api/v1/auth/google/callback`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -38,7 +37,6 @@ export default function AuthCallbackPage() {
 
                 if (data.access_token) {
                     localStorage.setItem("londoolink_token", data.access_token)
-                    // Fetch profile
                     const profileRes = await fetch(`${API_BASE}/api/v1/auth/me`, {
                         headers: { Authorization: `Bearer ${data.access_token}` },
                     })

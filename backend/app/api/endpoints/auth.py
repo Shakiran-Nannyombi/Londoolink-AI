@@ -88,6 +88,7 @@ async def google_login(request: GoogleLoginRequest, db: Session = Depends(get_db
     )
 
 
+@router.post("/callback", response_model=Token)
 @router.post("/google/callback", response_model=Token)
 async def google_auth0_callback(
     request: Auth0CallbackRequest,
