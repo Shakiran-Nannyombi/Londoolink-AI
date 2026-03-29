@@ -31,10 +31,9 @@ echo "📦 Setting up Heroku app: $APP_NAME"
 # Create app (will fail if exists, that's ok)
 heroku create $APP_NAME 2>/dev/null || echo "✓ App already exists"
 
-# Add PostgreSQL
+# Skip PostgreSQL addon - using external database
 echo ""
-echo "🗄️  Adding PostgreSQL database..."
-heroku addons:create heroku-postgresql:essential-0 -a $APP_NAME 2>/dev/null || echo "✓ Database already exists"
+echo "📝 Skipping Heroku PostgreSQL (using external database)"
 
 # Add Heroku remote
 echo ""
@@ -69,6 +68,10 @@ echo "✅ Basic configuration complete!"
 echo ""
 echo "⚠️  IMPORTANT: Set these variables manually:"
 echo ""
+echo "# Database (use your Neon PostgreSQL URL)"
+echo "heroku config:set DATABASE_URL='postgresql://neondb_owner:npg_GqiJw2RTHzm7@ep-wandering-bar-ab83maya-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require' -a $APP_NAME"
+echo ""
+echo "# API Keys"
 echo "heroku config:set GEMINI_API_KEY=your_key -a $APP_NAME"
 echo "heroku config:set OPENAI_API_KEY=your_key -a $APP_NAME"
 echo "heroku config:set GOOGLE_CLIENT_ID=your_id -a $APP_NAME"
