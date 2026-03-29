@@ -130,8 +130,7 @@ class LangGraphCoordinator:
             # Run the workflow
             result = self.graph.invoke(initial_state)
 
-            # Format the response
-            return {
+            briefing = {
                 "user_id": user_id,
                 "generated_at": datetime.utcnow().isoformat(),
                 "email_insights": result.get("email_analysis", {}),
@@ -143,6 +142,12 @@ class LangGraphCoordinator:
                 "agent_framework": "langgraph",
             }
 
+            # Send SMS for urgent items
+            import asyncio
+            asyncio.create_task(self._send_urgent_sms(user_id, briefing))
+
+            return briefing
+
         except Exception as e:
             logger.error(f"LangGraph workflow failed: {e}")
             return {
@@ -153,6 +158,37 @@ class LangGraphCoordinator:
                 "workflow_status": "error",
                 "agent_framework": "langgraph",
             }
+
+    async def _send_urgent_sms(self, user_id: int, briefing: Dict[str, Any]) -> None:
+        """Send SMS alerts for urgent priority items."""
+        try:
+            from app.db.session import SessionLocal
+            from app.models.user import User
+            from app.services.sms_service import send_urgent_alert
+
+            db = SessionLocal()
+            try:
+                user = db.query(User).filter(User.id == user_id).first()
+                if not user or not user.phone_number:
+                    return
+
+                priority = briefing.get("priority_recommendations", {})
+                summary = priority.get("summary", "") or briefing.get("summary", "")
+
+                # Check if urgent keywords present
+                urgent_keywords = ["urgent", "critical", "immediate", "asap", "deadline today"]
+                is_urgent = any(kw in summary.lower() for kw in urgent_keywords)
+
+                if is_urgent:
+                    await send_urgent_alert(
+                        phone_number=user.phone_number,
+                        task_title="Urgent Task Detected",
+                        task_description=summary,
+                    )
+            finally:
+                db.close()
+        except Exception as e:
+            logger.error(f"Failed to send urgent SMS: {e}")
 
     def analyze_document(self, content: str, document_type: str) -> Dict[str, Any]:
         # Analyze a document using appropriate agent logic
