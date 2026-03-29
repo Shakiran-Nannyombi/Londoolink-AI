@@ -78,13 +78,21 @@ export function PermissionDashboard() {
     }, [refreshStatus])
 
     const handleConnect = useCallback(async (service: string) => {
-        const response = await apiClient.post<{ auth_url: string }>(
-            `/integrations/${service}/connect`,
-            {}
-        )
-        const authUrl = response.auth_url ?? response.data?.auth_url
-        if (authUrl) {
-            window.location.href = authUrl
+        try {
+            const response = await apiClient.post<{ auth_url: string }>(
+                `/integrations/${service}/connect`,
+                {}
+            )
+            const authUrl = (response as any).auth_url ?? (response as any).data?.auth_url
+            if (authUrl) {
+                window.location.href = authUrl
+            } else {
+                console.error('No auth_url in response:', response)
+                setError('Failed to get authorization URL. Please try again.')
+            }
+        } catch (err: any) {
+            console.error('Connect failed:', err)
+            setError(err.message || `Failed to connect ${service}`)
         }
     }, [])
 
