@@ -184,3 +184,17 @@ div[style*="position: fixed"][style*="bottom: 10px"][style*="right: 10px"],
 div[style*="position: fixed"][style*="bottom: 20px"][style*="right: 20px"] {
   display: none !important;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
