@@ -107,21 +107,37 @@ export default function HomePage() {
                         </p>
                     </ScrollReveal>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                         {[
-                            { icon: "📧", name: "Email Agent", desc: "Reads and prioritizes your Gmail. Surfaces urgent messages and drafts responses.", color: "from-red-500/10 to-red-500/5" },
-                            { icon: "📅", name: "Calendar Agent", desc: "Tracks your schedule, flags conflicts, and prepares you for upcoming meetings.", color: "from-blue-500/10 to-blue-500/5" },
-                            { icon: "📝", name: "Notion Agent", desc: "Reads your Notion workspace to surface relevant pages and action items.", color: "from-purple-500/10 to-purple-500/5" },
-                            { icon: "⚡", name: "Priority Agent", desc: "Synthesizes all agent outputs into a ranked daily briefing with SMS alerts for urgent tasks.", color: "from-yellow-500/10 to-yellow-500/5" },
+                            { icon: Mail, name: "Email Agent", desc: "Reads and prioritizes your Gmail. Surfaces urgent messages and drafts responses.", color: "text-red-500", bg: "bg-red-500/10", border: "hover:border-red-500/30" },
+                            { icon: Calendar, name: "Calendar Agent", desc: "Tracks your schedule, flags conflicts, and prepares you for upcoming meetings.", color: "text-blue-500", bg: "bg-blue-500/10", border: "hover:border-blue-500/30" },
+                            { icon: MessageSquare, name: "Notion Agent", desc: "Reads your Notion workspace to surface relevant pages and action items.", color: "text-purple-500", bg: "bg-purple-500/10", border: "hover:border-purple-500/30" },
+                            { icon: Zap, name: "Priority Agent", desc: "Synthesizes all agent outputs into a ranked daily briefing with SMS alerts for urgent tasks.", color: "text-yellow-500", bg: "bg-yellow-500/10", border: "hover:border-yellow-500/30" },
                         ].map((agent, i) => (
                             <ScrollReveal key={i} delay={i * 0.1}>
-                                <div className={`p-6 rounded-2xl bg-gradient-to-br ${agent.color} border border-border hover:border-primary/30 transition-all h-full`}>
-                                    <div className="text-4xl mb-4">{agent.icon}</div>
+                                <div className={`p-6 rounded-2xl bg-card border border-border ${agent.border} transition-all h-full`}>
+                                    <div className={`w-12 h-12 rounded-xl ${agent.bg} flex items-center justify-center mb-4`}>
+                                        <agent.icon className={`w-6 h-6 ${agent.color}`} />
+                                    </div>
                                     <h3 className="font-bold text-lg mb-2">{agent.name}</h3>
                                     <p className="text-sm text-muted-foreground leading-relaxed">{agent.desc}</p>
                                 </div>
                             </ScrollReveal>
                         ))}
+                    </div>
+
+                    {/* Architecture images */}
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <ScrollReveal delay={0.1}>
+                            <div className="rounded-3xl overflow-hidden border border-border/50 shadow-xl h-64">
+                                <img src="/images/data-ingestion.png" alt="Data Ingestion Pipeline" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                            </div>
+                        </ScrollReveal>
+                        <ScrollReveal delay={0.2}>
+                            <div className="rounded-3xl overflow-hidden border border-border/50 shadow-xl h-64">
+                                <img src="/images/agentic-workflow.png" alt="Agentic Workflow" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                            </div>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>

@@ -30,16 +30,13 @@ export default function AboutPage() {
                     </Link>
                 </motion.div>
                 <motion.div
-                    className="relative aspect-square rounded-3xl overflow-hidden border border-border shadow-2xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center"
+                    className="relative aspect-square rounded-3xl overflow-hidden border border-border shadow-2xl"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <div className="text-center space-y-4 p-8">
-                        <div className="text-7xl">🤖</div>
-                        <p className="text-2xl font-bold">Londoolink AI</p>
-                        <p className="text-muted-foreground">Your Intelligent Digital Twin</p>
-                    </div>
+                    <img src="/images/vision-vision.png" alt="Vision of Londoolink" className="object-cover w-full h-full" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
                 </motion.div>
             </div>
 
@@ -59,6 +56,9 @@ export default function AboutPage() {
                     <p className="text-base text-muted-foreground leading-relaxed">
                         We are not building another chatbot. We are building a system that follows your digital footprint — tracking what matters so you don't have to. Your AI agents act on your behalf, but you always stay in control of what they can access.
                     </p>
+                </div>
+                <div className="mt-8 rounded-2xl overflow-hidden border border-border/50">
+                    <img src="/images/cns-interface.png" alt="Digital CNS Interface" className="w-full object-cover" />
                 </div>
             </motion.section>
 
