@@ -130,6 +130,11 @@ export default function HomePage() {
                             Access Command Center
                         </Button>
                     </Link>
+                    <Link href="/login?demo=true">
+                        <Button size="lg" variant="outline" className="h-14 px-12 text-lg rounded-full hover:scale-105 transition-transform">
+                            Try Demo
+                        </Button>
+                    </Link>
                 </div>
             </section>
         </div>

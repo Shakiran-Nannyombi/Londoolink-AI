@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -8,9 +9,15 @@ import { Card } from "@/components/ui/card"
 import { AnimatedBackground } from "@/components/auth/AnimatedBackground"
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
 import { Check } from "lucide-react"
+import { useAuthStore } from "@/store/authStore"
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
 
 export default function LoginPage() {
+    const router = useRouter()
+    const { login } = useAuthStore()
     const [theme, setTheme] = useState<string>("light")
+    const [demoLoading, setDemoLoading] = useState(false)
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -19,6 +26,27 @@ export default function LoginPage() {
             document.documentElement.classList.toggle("dark", savedTheme === "dark")
         }
     }, [])
+
+    const handleDemoLogin = async () => {
+        setDemoLoading(true)
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/auth/demo-login`, { method: 'POST' })
+            const data = await res.json()
+            if (data.access_token) {
+                localStorage.setItem("londoolink_token", data.access_token)
+                const profileRes = await fetch(`${API_BASE}/api/v1/auth/me`, {
+                    headers: { Authorization: `Bearer ${data.access_token}` }
+                })
+                const profile = profileRes.ok ? await profileRes.json() : { email: "demodev708@gmail.com" }
+                login(data.access_token, profile)
+                router.push("/dashboard")
+            }
+        } catch (e) {
+            console.error('Demo login failed:', e)
+        } finally {
+            setDemoLoading(false)
+        }
+    }
 
     const handleAuth0Login = () => {
         const domain = process.env.NEXT_PUBLIC_AUTH0_DOMAIN
@@ -198,6 +226,16 @@ export default function LoginPage() {
                                 By continuing, you agree to our Terms of Service and Privacy Policy.
                                 Your credentials are secured by Auth0.
                             </p>
+
+                            <div className="mt-4 pt-4 border-t border-border">
+                                <button
+                                    onClick={handleDemoLogin}
+                                    disabled={demoLoading}
+                                    className="w-full text-sm text-muted-foreground hover:text-primary transition-colors text-center py-2 disabled:opacity-50"
+                                >
+                                    {demoLoading ? 'Loading demo...' : 'Try Demo Account →'}
+                                </button>
+                            </div>
                         </Card>
                     </div>
                 </motion.div>

@@ -150,11 +150,15 @@ export default function DashboardPage() {
     setError(null)
 
     try {
-      const response = await apiClient.getDailyBriefing()
+      // Use demo briefing for demo account
+      const isDemoUser = authUser?.email === 'demodev708@gmail.com'
+      const endpoint = isDemoUser ? '/auth/demo-briefing' : '/agent/briefing/daily'
+      const response = isDemoUser
+        ? await apiClient.get(endpoint)
+        : await apiClient.getDailyBriefing()
 
-      if (response && (response.briefing || response.data)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const briefingData = (response.briefing || response.data) as any
+      if (response && (response.briefing || response.data || response.email_insights)) {
+        const briefingData = (response.briefing || response.data || response) as any
         const transformedBriefing = transformBackendBriefing(briefingData)
         setBriefing(transformedBriefing)
       } else {
