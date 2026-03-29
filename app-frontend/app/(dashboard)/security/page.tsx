@@ -24,13 +24,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TwoFASetup } from "@/components/security/TwoFASetup"
 import { toast } from "sonner"
 
+const AUTH0_DOMAIN = process.env.NEXT_PUBLIC_AUTH0_DOMAIN
+const AUTH0_CLIENT_ID = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID
+
+function openAuth0MFA() {
+    // Redirect to Auth0 to manage MFA settings
+    const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: AUTH0_CLIENT_ID!,
+        redirect_uri: `${window.location.origin}/auth/callback`,
+        scope: 'openid profile email',
+        audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE!,
+        prompt: 'login',
+        acr_values: 'http://schemas.openid.net/pape/policies/2007/06/multi-factor',
+    })
+    window.location.href = `https://${AUTH0_DOMAIN}/authorize?${params}`
+}
+
 export default function SecurityPage() {
     const [securityScore, setSecurityScore] = useState(78)
     const [isScanning, setIsScanning] = useState(false)
     const [videoUrl, setVideoUrl] = useState("")
     const [videoAnalysis, setVideoAnalysis] = useState<string | null>(null)
     const [analyzingVideo, setAnalyzingVideo] = useState(false)
-    const [isTwoFAOpen, setIsTwoFAOpen] = useState(false)
 
     const runSecurityScan = () => {
         setIsScanning(true)
@@ -165,13 +181,13 @@ The video shows a user navigating the Londoolink AI dashboard, specifically stru
                             <Smartphone className="h-5 w-5 text-yellow-500 mt-0.5 shrink-0" />
                             <div>
                                 <h4 className="text-sm font-medium">Enable 2FA</h4>
-                                <p className="text-xs text-muted-foreground mt-1">Protect your account with an authenticator app.</p>
+                                <p className="text-xs text-muted-foreground mt-1">Managed securely by Auth0 MFA.</p>
                                 <Button
                                     variant="link"
                                     className="text-yellow-500 h-auto p-0 text-xs mt-2"
-                                    onClick={() => setIsTwoFAOpen(true)}
+                                    onClick={openAuth0MFA}
                                 >
-                                    Setup Now &rarr;
+                                    Setup via Auth0 &rarr;
                                 </Button>
                             </div>
                         </div>
@@ -277,12 +293,6 @@ The video shows a user navigating the Londoolink AI dashboard, specifically stru
                     </Card>
                 </TabsContent>
             </Tabs>
-
-            <TwoFASetup
-                open={isTwoFAOpen}
-                onOpenChange={setIsTwoFAOpen}
-                onComplete={handleTwoFAComplete}
-            />
         </div>
     )
 }
