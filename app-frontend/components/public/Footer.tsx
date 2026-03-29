@@ -1,28 +1,14 @@
 "use client"
 
-import { useSettingsStore } from '@/store/settingsStore'
-import { useEffect, useState } from 'react'
+import { Logo } from '@/components/shared/Logo'
 
 export function Footer() {
-    const { theme } = useSettingsStore()
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
-
     return (
         <footer className="py-12 px-6 border-t border-border bg-background/50">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                        {mounted && (
-                            <img
-                                src={theme === 'dark' ? '/logoDark.png' : '/logoLondo.png'}
-                                alt="Londoolink AI"
-                                className="h-8 w-auto object-contain"
-                            />
-                        )}
+                        <Logo className="h-8 w-auto object-contain" />
                         <span className="text-lg font-bold">Londoolink AI</span>
                     </div>
                     <p className="text-sm text-muted-foreground">

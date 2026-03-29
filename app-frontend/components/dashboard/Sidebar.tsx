@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/shared/Logo'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { useSettingsStore } from '@/store/settingsStore'
@@ -89,11 +90,7 @@ export function Sidebar({ className }: { className?: string }) {
             {/* Logo Section */}
             <div className="p-6 flex items-center gap-3 overflow-hidden">
                 <div className="w-8 h-8 shrink-0">
-                    <img
-                        src={theme === 'dark' ? '/logoDark.png' : '/logoLondo.png'}
-                        alt="Logo"
-                        className="w-full h-full object-contain"
-                    />
+                    <Logo className="w-full h-full object-contain" />
                 </div>
                 {!isCollapsed && (
                     <motion.div

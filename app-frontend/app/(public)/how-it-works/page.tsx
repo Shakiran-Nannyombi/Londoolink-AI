@@ -20,17 +20,6 @@ export default function HowItWorksPage() {
                 <TutorialDemo />
             </ScrollReveal>
 
-            {/* Architecture Diagram Image */}
-            <ScrollReveal>
-                <div className="rounded-3xl overflow-hidden border border-border/50 shadow-xl">
-                    <img
-                        src="/images/data-ingestion.png"
-                        alt="Data Ingestion Architecture"
-                        className="w-full object-cover"
-                    />
-                </div>
-            </ScrollReveal>
-
             <div className="space-y-24 relative">
                 <div className="absolute left-8 top-12 bottom-12 w-0.5 bg-gradient-to-b from-primary/50 to-primary/5 hidden md:block" />
 
@@ -50,16 +39,6 @@ export default function HowItWorksPage() {
                         description="When you connect Google or Notion, Auth0 handles the OAuth flow and stores your access tokens in Token Vault. Your agents request tokens on demand — scoped, audited, and revocable."
                         icon={Lock}
                     />
-                </ScrollReveal>
-
-                <ScrollReveal delay={0.35} direction="left">
-                    <div className="rounded-3xl overflow-hidden border border-border/50 shadow-xl ml-0 md:ml-24">
-                        <img
-                            src="/images/agentic-workflow.png"
-                            alt="Agentic Workflow"
-                            className="w-full object-cover"
-                        />
-                    </div>
                 </ScrollReveal>
 
                 <ScrollReveal delay={0.4} direction="left">
