@@ -73,6 +73,7 @@ class AICoordinator:
 
             try:
                 priority_result = priority_agent.create_briefing(
+                    user_id=user_id,
                     email_analysis=briefing_data["email_insights"].get("analysis", "Not available"),
                     calendar_analysis=briefing_data["calendar_insights"].get("analysis", "Not available"),
                     social_analysis=briefing_data["social_insights"].get("analysis", "Not available"),

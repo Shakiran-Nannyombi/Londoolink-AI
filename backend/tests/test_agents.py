@@ -138,7 +138,12 @@ class TestPriorityAgent:
         agent = PriorityAgent(tools)
         mock_langchain_agent.invoke.return_value = _mock_llm_response()
         agent.agent = mock_langchain_agent
-        result = agent.create_briefing("Email analysis", "Calendar analysis", "Social analysis")
+        result = agent.create_briefing(
+            user_id=1,
+            email_analysis="Email analysis",
+            calendar_analysis="Calendar analysis",
+            social_analysis="Social analysis"
+        )
         assert isinstance(result, dict)
         assert result["agent_type"] == "priority"
 
@@ -150,6 +155,67 @@ class TestPriorityAgent:
         result = agent.analyze_document("This is a test document", "general")
         assert isinstance(result, dict)
         assert result["agent_type"] == "priority"
+
+    def test_priority_agent_answer_followup_success(self, mock_langchain_agent):
+        """Test successful follow-up question answering with thread context."""
+        tools = []
+        agent = PriorityAgent(tools)
+        mock_langchain_agent.invoke.return_value = _mock_llm_response("Follow-up response")
+        agent.agent = mock_langchain_agent
+        
+        # Mock Backboard service
+        mock_backboard = Mock()
+        mock_backboard.get_thread_history.return_value = [
+            {"role": "assistant", "content": "Initial briefing content"},
+            {"role": "user", "content": "Previous question"},
+            {"role": "assistant", "content": "Previous answer"}
+        ]
+        mock_backboard.add_message.return_value = "msg_123"
+        agent.backboard = mock_backboard
+        
+        result = agent.answer_followup("thread_123", "What about the second item?")
+        
+        assert isinstance(result, str)
+        assert result == "Follow-up response"
+        mock_backboard.get_thread_history.assert_called_once_with("thread_123")
+        assert mock_backboard.add_message.call_count == 2  # User question + assistant response
+
+    def test_priority_agent_answer_followup_no_backboard(self, mock_langchain_agent):
+        """Test that answer_followup raises error when Backboard is not initialized."""
+        tools = []
+        agent = PriorityAgent(tools)
+        agent.backboard = None
+        
+        with pytest.raises(ValueError, match="Backboard service is not initialized"):
+            agent.answer_followup("thread_123", "Test question")
+
+    def test_priority_agent_answer_followup_empty_history(self, mock_langchain_agent):
+        """Test that answer_followup raises error when thread history is empty."""
+        tools = []
+        agent = PriorityAgent(tools)
+        
+        # Mock Backboard service with empty history
+        mock_backboard = Mock()
+        mock_backboard.get_thread_history.return_value = []
+        agent.backboard = mock_backboard
+        
+        with pytest.raises(ValueError, match="No thread history found"):
+            agent.answer_followup("thread_123", "Test question")
+
+    def test_priority_agent_answer_followup_backboard_error(self, mock_langchain_agent):
+        """Test that answer_followup handles Backboard service errors gracefully."""
+        from app.services.backboard.backboard_service import BackboardServiceError
+        
+        tools = []
+        agent = PriorityAgent(tools)
+        
+        # Mock Backboard service that raises error
+        mock_backboard = Mock()
+        mock_backboard.get_thread_history.side_effect = BackboardServiceError("API unavailable")
+        agent.backboard = mock_backboard
+        
+        with pytest.raises(ValueError, match="Failed to retrieve thread history"):
+            agent.answer_followup("thread_123", "Test question")
 
 
 class TestAICoordinator:

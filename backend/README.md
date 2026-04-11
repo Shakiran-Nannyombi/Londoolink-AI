@@ -85,6 +85,45 @@ JWT_ALGORITHM="HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
+### Backboard.io Integration (Optional)
+
+Londoolink AI supports integration with [Backboard.io](https://backboard.io) for enhanced capabilities:
+
+- **Cloud-based RAG**: Replace local ChromaDB with Backboard's cloud document storage and semantic search
+- **Persistent Memory**: Store and retrieve user preferences across sessions
+- **Thread-based Conversations**: Maintain conversation history for follow-up questions on briefings
+
+**Configuration:**
+
+```bash
+# Enable Backboard integration (default: false)
+USE_BACKBOARD=true
+
+# Backboard API key (required when USE_BACKBOARD=true)
+# Format must start with "espr_" prefix
+BACKBOARD_API_KEY="espr_your_api_key_here"
+
+# Optional: Override base URL for testing
+BACKBOARD_BASE_URL="https://api.backboard.io"
+```
+
+**Setup Steps:**
+
+1. Sign up for a Backboard.io account at [backboard.io](https://backboard.io)
+2. Generate an API key from your Backboard dashboard
+3. Add the API key to your `.env` file as `BACKBOARD_API_KEY`
+4. Set `USE_BACKBOARD=true` to enable the integration
+5. Restart the backend server
+
+**Feature Toggle:**
+
+The Backboard integration uses a feature toggle (`USE_BACKBOARD`) that allows you to:
+- Test the integration without breaking existing functionality
+- Gradually migrate from ChromaDB to Backboard
+- Roll back to ChromaDB if issues arise
+
+When `USE_BACKBOARD=false` (default), the system uses the local ChromaDB vector database. When `USE_BACKBOARD=true`, all document storage, memory, and thread operations route to Backboard's cloud API.
+
 ## Quick Test
 
 ```bash

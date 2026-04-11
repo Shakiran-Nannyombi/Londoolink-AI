@@ -73,6 +73,11 @@ class Settings(BaseSettings):
     NOTION_CLIENT_SECRET: Optional[str] = None  # Notion integration client secret
     NOTION_REDIRECT_URI: Optional[str] = None   # Notion OAuth redirect URI
 
+    # Backboard Configuration
+    USE_BACKBOARD: bool = False                 # Feature toggle for Backboard integration
+    BACKBOARD_API_KEY: Optional[str] = None     # Backboard API key (format: "espr_*")
+    BACKBOARD_BASE_URL: Optional[str] = None    # Optional base URL override for testing
+
 
 def validate_auth0_config() -> None:
     """Validate that all required Auth0 environment variables are set.
@@ -99,6 +104,26 @@ def validate_auth0_config() -> None:
         raise RuntimeError(
             f"Missing required Auth0 environment variables: {', '.join(missing)}. "
             "Set these variables or set ENVIRONMENT=development to skip validation."
+        )
+
+
+def validate_backboard_config() -> None:
+    """Validate Backboard configuration at startup.
+    
+    Raises:
+        RuntimeError: If USE_BACKBOARD=true but BACKBOARD_API_KEY is missing or invalid
+    """
+    if not settings.USE_BACKBOARD:
+        return
+    
+    if not settings.BACKBOARD_API_KEY:
+        raise RuntimeError(
+            "BACKBOARD_API_KEY is required when USE_BACKBOARD=true"
+        )
+    
+    if not settings.BACKBOARD_API_KEY.startswith("espr_"):
+        raise RuntimeError(
+            "BACKBOARD_API_KEY must start with 'espr_' prefix"
         )
 
 
