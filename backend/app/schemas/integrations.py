@@ -1,9 +1,11 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Literal
 from datetime import datetime
 
 
 class IntegrationStatusResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     service_type: str
     is_connected: bool
     service_provider: Optional[str] = None
@@ -13,9 +15,6 @@ class IntegrationStatusResponse(BaseModel):
     granted_scopes: Optional[str] = None
     last_token_used: Optional[datetime] = None
     auth0_sub: Optional[str] = None
-
-    class Config:
-        from_attributes = True
 
 
 class OAuthConnectResponse(BaseModel):

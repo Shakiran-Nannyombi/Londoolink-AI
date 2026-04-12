@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 
 from app.services.agents import CalendarAgent, EmailAgent, PriorityAgent, SocialAgent, VideoIntelligenceAgent
@@ -33,7 +33,7 @@ class AICoordinator:
 
             briefing_data = {
                 "user_id": user_id,
-                "generated_at": datetime.utcnow().isoformat(),
+                "generated_at": datetime.now(timezone.utc).isoformat(),
                 "email_insights": {},
                 "calendar_insights": {},
                 "social_insights": {},

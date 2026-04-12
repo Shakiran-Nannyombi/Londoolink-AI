@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -25,6 +25,8 @@ router = APIRouter()
 
 
 class AuditLogEntryResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     auth0_sub: str
     agent_name: str
@@ -34,9 +36,6 @@ class AuditLogEntryResponse(BaseModel):
     action_type: Optional[str]
     outcome: str
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 # ---------------------------------------------------------------------------

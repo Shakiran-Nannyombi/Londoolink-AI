@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from app.core.config import settings
@@ -38,7 +38,7 @@ class RAGPipeline:
         try:
             # Enhance metadata with timestamp if not present
             if "timestamp" not in metadata:
-                metadata["timestamp"] = datetime.utcnow().isoformat()
+                metadata["timestamp"] = datetime.now(timezone.utc).isoformat()
 
             if self.use_backboard:
                 # Route to Backboard backend
@@ -111,7 +111,7 @@ class RAGPipeline:
         try:
             from datetime import timedelta
 
-            cutoff_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
+            cutoff_date = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
 
             if self.use_backboard:
                 # For Backboard, we need to query with a filter

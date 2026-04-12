@@ -24,7 +24,7 @@ class TestRAGPipelineBackboardRouting:
         assert pipeline.chunker is not None
     
     @patch("app.services.rag.pipeline.settings")
-    @patch("app.services.rag.pipeline.BackboardService")
+    @patch("app.services.backboard.backboard_service.BackboardService")
     def test_init_with_backboard_backend(self, mock_backboard_service, mock_settings):
         """Test RAGPipeline initializes with Backboard when USE_BACKBOARD=True."""
         mock_settings.USE_BACKBOARD = True
@@ -60,7 +60,7 @@ class TestRAGPipelineBackboardRouting:
     
     @patch("app.services.rag.pipeline.settings")
     @patch("app.services.rag.pipeline.text_chunker")
-    @patch("app.services.rag.pipeline.BackboardService")
+    @patch("app.services.backboard.backboard_service.BackboardService")
     def test_add_text_routes_to_backboard(self, mock_backboard_service, mock_chunker, mock_settings):
         """Test add_text routes to Backboard when USE_BACKBOARD=True."""
         mock_settings.USE_BACKBOARD = True
@@ -98,7 +98,7 @@ class TestRAGPipelineBackboardRouting:
         mock_vector_store.query_documents.assert_called_once_with("test query", 5, None)
     
     @patch("app.services.rag.pipeline.settings")
-    @patch("app.services.rag.pipeline.BackboardService")
+    @patch("app.services.backboard.backboard_service.BackboardService")
     def test_query_texts_routes_to_backboard(self, mock_backboard_service, mock_settings):
         """Test query_texts routes to Backboard when USE_BACKBOARD=True."""
         mock_settings.USE_BACKBOARD = True
@@ -133,7 +133,7 @@ class TestRAGPipelineBackboardRouting:
         mock_vector_store.delete_documents.assert_called_once_with({"user_id": 1})
     
     @patch("app.services.rag.pipeline.settings")
-    @patch("app.services.rag.pipeline.BackboardService")
+    @patch("app.services.backboard.backboard_service.BackboardService")
     def test_delete_documents_routes_to_backboard(self, mock_backboard_service, mock_settings):
         """Test delete_documents routes to Backboard when USE_BACKBOARD=True."""
         mock_settings.USE_BACKBOARD = True
@@ -151,7 +151,7 @@ class TestRAGPipelineBackboardRouting:
         mock_backend_instance.delete_documents.assert_called_once_with({"user_id": 1})
     
     @patch("app.services.rag.pipeline.settings")
-    @patch("app.services.rag.pipeline.BackboardService")
+    @patch("app.services.backboard.backboard_service.BackboardService")
     def test_get_user_documents_routes_to_backboard(self, mock_backboard_service, mock_settings):
         """Test get_user_documents routes to Backboard when USE_BACKBOARD=True."""
         mock_settings.USE_BACKBOARD = True
@@ -169,5 +169,5 @@ class TestRAGPipelineBackboardRouting:
         
         assert len(result) == 1
         mock_backend_instance.search_documents.assert_called_once_with(
-            "", 50, {"user_id": 1}
+            query="", n_results=50, filter_metadata={"user_id": 1}
         )

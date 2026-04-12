@@ -121,7 +121,7 @@ async def get_current_user_info(
     current_user: User = Depends(get_current_user),
 ) -> UserSchema:
     # Get current user information
-    return UserSchema.from_orm(current_user)
+    return UserSchema.model_validate(current_user)
 
 
 @router.get("/rag/stats")

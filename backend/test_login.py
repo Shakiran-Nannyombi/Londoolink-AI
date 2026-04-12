@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Test login functionality"""
+"""Test login functionality - CLI script, not a pytest test"""
 import sys
 from app.db.base import SessionLocal
 from app.models.user import User
 from app.security.password import verify_password, hash_password
 
-def test_user_login(email: str, password: str):
+def check_user_login(email: str, password: str):
     db = SessionLocal()
     try:
         user = db.query(User).filter(User.email == email).first()
@@ -59,5 +59,5 @@ if __name__ == "__main__":
     print(f"Testing login for: {email}")
     print("=" * 50)
     
-    success = test_user_login(email, password)
+    success = check_user_login(email, password)
     sys.exit(0 if success else 1)

@@ -1,6 +1,6 @@
 import hashlib
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import chromadb
@@ -72,7 +72,7 @@ class VectorStore:
             # Ensure all metadata has timestamp
             for metadata in metadatas:
                 if "added_at" not in metadata:
-                    metadata["added_at"] = datetime.utcnow().isoformat()
+                    metadata["added_at"] = datetime.now(timezone.utc).isoformat()
 
             # Add to ChromaDB
             self.collection.add(ids=ids, documents=documents, metadatas=metadatas)

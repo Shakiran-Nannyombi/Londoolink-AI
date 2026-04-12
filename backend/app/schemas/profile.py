@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from datetime import datetime
 
@@ -12,6 +12,8 @@ class ProfileUpdate(BaseModel):
 
 
 class ProfileResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     email: str
     full_name: Optional[str] = None
@@ -20,9 +22,6 @@ class ProfileResponse(BaseModel):
     language_preference: str
     profile_picture_url: Optional[str] = None
     created_at: datetime
-    
-    class Config:
-        from_attributes = True
 
 
 class SettingsUpdate(BaseModel):
@@ -32,12 +31,11 @@ class SettingsUpdate(BaseModel):
 
 
 class SettingsResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     timezone: str
     language_preference: str
     notification_preferences: Optional[dict] = None
-    
-    class Config:
-        from_attributes = True
 
 
 class ConsentCreate(BaseModel):
@@ -46,15 +44,14 @@ class ConsentCreate(BaseModel):
 
 
 class ConsentResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     user_id: int
     service_type: str
     consent_given: bool
     consent_date: datetime
     revoked_date: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
 
 
 class ConsentRevoke(BaseModel):

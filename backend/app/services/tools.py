@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 
 from langchain.tools import tool
@@ -46,7 +46,7 @@ def get_recent_documents(days: str = "7") -> str:
     """Get recently added documents from the last N days."""
     try:
         days_int = int(days)
-        cutoff_date = (datetime.utcnow() - timedelta(days=days_int)).isoformat()
+        cutoff_date = (datetime.now(timezone.utc) - timedelta(days=days_int)).isoformat()
 
         # Query all documents and filter by timestamp
         all_results = rag_pipeline.query_texts(
