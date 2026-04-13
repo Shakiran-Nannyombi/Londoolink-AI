@@ -14,7 +14,8 @@ import {
     Moon,
     Sun,
     Shield,
-    Link2
+    Link2,
+    Heart
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -54,6 +55,7 @@ export function Sidebar({ className }: { className?: string }) {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: User, label: 'Profile', path: '/profile' },
+        { icon: Heart, label: 'Preferences', path: '/preferences' },
         { icon: Shield, label: 'Security', path: '/security' },
         { icon: Settings, label: 'Settings', path: '/settings' },
     ]

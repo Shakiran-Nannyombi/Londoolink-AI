@@ -222,6 +222,23 @@ export function DetailModal({
                             size="icon"
                             className="h-12 w-12 rounded-xl border border-border/50 hover:bg-muted/50"
                             title="Share"
+                            onClick={() => {
+                                const shareText = `${item.type === 'email' ? 'Email' : item.type === 'calendar' ? 'Event' : item.type === 'social' ? 'Social' : 'Notion'}: ${item.title}\n\n${item.description}`;
+
+                                if (navigator.share) {
+                                    navigator.share({
+                                        title: item.title,
+                                        text: shareText,
+                                    }).catch((error) => console.log('Error sharing:', error));
+                                } else {
+                                    // Fallback: copy to clipboard
+                                    navigator.clipboard.writeText(shareText).then(() => {
+                                        alert('Copied to clipboard!');
+                                    }).catch((error) => {
+                                        console.error('Failed to copy:', error);
+                                    });
+                                }
+                            }}
                         >
                             <Share2 className="w-5 h-5" />
                         </Button>

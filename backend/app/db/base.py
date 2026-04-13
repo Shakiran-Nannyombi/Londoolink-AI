@@ -14,5 +14,5 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-from app.models.audit_log import AuditLog  # noqa: F401
-from app.models.backboard_assistant import BackboardAssistant  # noqa: F401
+# Note: Model imports are handled in alembic/env.py for migrations
+# Do not import models here to avoid circular dependencies

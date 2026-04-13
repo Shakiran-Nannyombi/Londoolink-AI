@@ -136,7 +136,7 @@ class BackboardService:
     def _handle_response(self, response: requests.Response) -> Dict[str, Any]:
         """Handle API response and raise appropriate exceptions."""
         
-        if response.status_code == 200:
+        if response.status_code in (200, 201):
             return response.json()
         
         elif response.status_code == 400:
@@ -404,7 +404,8 @@ class BackboardService:
                 timeout=30
             )
             result = self._handle_response(response)
-            return result.get("assistants", [])
+            # Backboard API returns a list directly, not wrapped in a dict
+            return result if isinstance(result, list) else result.get("assistants", [])
         
         # Try to find existing assistant for this user
         assistants = self._call_with_retry(_list_assistants)
@@ -427,7 +428,7 @@ class BackboardService:
         assistant_id: str,
         memory_content: str,
         memory_type: str = "preference"
-    ) -> None:
+    ) -> str:
         """Add a memory entry to assistant's memory.
         
         Args:
@@ -435,12 +436,15 @@ class BackboardService:
             memory_content: Memory content text
             memory_type: Type of memory (preference, pattern, context)
             
+        Returns:
+            Memory ID from Backboard
+            
         Raises:
             BackboardAPIError: If API call fails
         """
         def _add():
             response = requests.post(
-                f"{self.base_url}/assistants/{assistant_id}/memory",
+                f"{self.base_url}/assistants/{assistant_id}/memories",
                 headers=self.headers,
                 json={
                     "content": memory_content,
@@ -448,21 +452,25 @@ class BackboardService:
                 },
                 timeout=30
             )
-            self._handle_response(response)
+            result = self._handle_response(response)
+            return result.get("memory_id")
         
-        self._call_with_retry(_add)
-        logger.info(f"Added memory to assistant {assistant_id}: type={memory_type}")
+        memory_id = self._call_with_retry(_add)
+        logger.info(f"Added memory to assistant {assistant_id}: memory_id={memory_id}, type={memory_type}")
+        return memory_id
     
     def query_memory(
         self,
         assistant_id: str,
-        query: str
+        query: str,
+        limit: int = 5
     ) -> List[Dict[str, Any]]:
         """Query assistant's memory for relevant information.
         
         Args:
             assistant_id: Assistant identifier
             query: Query text
+            limit: Maximum number of results to return
             
         Returns:
             List of memory entries with content and relevance scores
@@ -471,10 +479,10 @@ class BackboardService:
             BackboardAPIError: If API call fails
         """
         def _query():
-            response = requests.get(
-                f"{self.base_url}/assistants/{assistant_id}/memory/search",
+            response = requests.post(
+                f"{self.base_url}/assistants/{assistant_id}/memories/search",
                 headers=self.headers,
-                params={"query": query},
+                json={"query": query, "limit": limit},
                 timeout=30
             )
             result = self._handle_response(response)
@@ -486,31 +494,40 @@ class BackboardService:
     
     def get_all_memories(
         self,
-        assistant_id: str
-    ) -> List[Dict[str, Any]]:
+        assistant_id: str,
+        page: Optional[int] = None,
+        page_size: int = 25
+    ) -> Dict[str, Any]:
         """Retrieve all memory entries for an assistant.
         
         Args:
             assistant_id: Assistant identifier
+            page: Optional page number (1-indexed). Omit to fetch all.
+            page_size: Number of results per page (1-100, default 25)
             
         Returns:
-            List of all memory entries
+            Dict with 'memories' list, 'total_count', and pagination info
             
         Raises:
             BackboardAPIError: If API call fails
         """
         def _get_all():
+            params = {"page_size": page_size}
+            if page is not None:
+                params["page"] = page
+                
             response = requests.get(
-                f"{self.base_url}/assistants/{assistant_id}/memory",
+                f"{self.base_url}/assistants/{assistant_id}/memories",
                 headers=self.headers,
+                params=params,
                 timeout=30
             )
-            result = self._handle_response(response)
-            return result.get("memories", [])
+            return self._handle_response(response)
         
-        memories = self._call_with_retry(_get_all)
-        logger.info(f"Retrieved all memories for assistant {assistant_id}: count={len(memories)}")
-        return memories
+        result = self._call_with_retry(_get_all)
+        memories = result.get("memories", [])
+        logger.info(f"Retrieved memories for assistant {assistant_id}: count={len(memories)}, total={result.get('total_count', 0)}")
+        return result
     
     # Thread Operations
     def create_thread(
