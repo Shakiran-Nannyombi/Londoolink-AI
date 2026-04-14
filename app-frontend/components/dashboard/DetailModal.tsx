@@ -19,6 +19,7 @@ import { TypeIcon } from "@/components/shared/TypeIcon"
 import { PriorityBadge } from "@/components/shared/PriorityBadge"
 import { FormattedContent } from "@/components/shared/FormattedContent"
 import { GlassCard } from "@/components/shared/GlassCard"
+import { useToast } from "@/hooks/use-toast"
 
 export function DetailModal({
     item,
@@ -31,6 +32,8 @@ export function DetailModal({
     onMarkComplete: (itemId: string) => void;
     onSnooze: (itemId: string) => void;
 }) {
+    const { toast } = useToast();
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -229,13 +232,28 @@ export function DetailModal({
                                     navigator.share({
                                         title: item.title,
                                         text: shareText,
-                                    }).catch((error) => console.log('Error sharing:', error));
+                                    }).catch((error) => {
+                                        console.log('Error sharing:', error);
+                                        toast({
+                                            title: "Sharing cancelled",
+                                            description: "The share action was cancelled",
+                                            variant: "destructive",
+                                        });
+                                    });
                                 } else {
                                     // Fallback: copy to clipboard
                                     navigator.clipboard.writeText(shareText).then(() => {
-                                        alert('Copied to clipboard!');
+                                        toast({
+                                            title: "Copied to clipboard!",
+                                            description: "The item details have been copied to your clipboard",
+                                        });
                                     }).catch((error) => {
                                         console.error('Failed to copy:', error);
+                                        toast({
+                                            title: "Failed to copy",
+                                            description: "Could not copy to clipboard. Please try again.",
+                                            variant: "destructive",
+                                        });
                                     });
                                 }
                             }}

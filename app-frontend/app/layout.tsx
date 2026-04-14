@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const geistSans = Geist({
@@ -49,6 +50,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   )
