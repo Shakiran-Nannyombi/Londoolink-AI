@@ -53,8 +53,8 @@ export default function HowItWorksPage() {
                 <ScrollReveal delay={0.5} direction="left">
                     <Step
                         number="04"
-                        title="RAG Contextual Memory"
-                        description="Retrieval-Augmented Generation ensures agents act with full historical context. Every insight is grounded in your actual data — no hallucinations, no guesswork."
+                        title="Backboard.io Persistent Memory & RAG"
+                        description="Powered by Backboard.io, our agents have long-term memory and cloud-based RAG. The AI remembers your preferences across sessions, stores documents with semantic search, and maintains conversation threads for follow-up questions."
                         icon={Database}
                     />
                 </ScrollReveal>

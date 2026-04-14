@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
-import { Quote, Shield, Cpu, Zap, Globe, Lock, Bell } from 'lucide-react'
+import { Quote, Shield, Cpu, Zap, Globe, Lock, Bell, Database } from 'lucide-react'
 import { ScrollReveal } from '@/components/public/ScrollReveal'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ export default function AboutPage() {
                     </div>
                     <h1 className="text-4xl font-bold tracking-tight">Your AI acts. You stay in control.</h1>
                     <p className="text-xl text-muted-foreground leading-relaxed">
-                        Londoolink is a multi-agent AI system that manages your digital life — emails, calendar, Notion — while keeping your credentials locked in Auth0 Token Vault.
+                        Londoolink is a multi-agent AI system that manages your digital life — emails, calendar, Notion — while keeping your credentials locked in Auth0 Token Vault and your preferences remembered by Backboard.io's persistent memory.
                     </p>
                     <Link href="/login?demo=true">
                         <Button size="lg" className="rounded-full">Try the Demo</Button>
@@ -72,6 +72,7 @@ export default function AboutPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[
                         { icon: Shield, title: "Auth0 Token Vault", desc: "OAuth tokens for Google and Notion are stored in Auth0 Token Vault — never in our database. Agents request tokens on demand with scoped permissions.", color: "text-green-500", bg: "bg-green-500/10" },
+                        { icon: Database, title: "Backboard.io Memory", desc: "Persistent AI memory powered by Backboard.io. The system remembers your preferences across sessions, maintains conversation threads, and provides cloud-based RAG for semantic search.", color: "text-cyan-500", bg: "bg-cyan-500/10" },
                         { icon: Cpu, title: "LangGraph Multi-Agent", desc: "Email, Calendar, Notion, and Priority agents are orchestrated by LangGraph. Each agent is specialized and runs in parallel for fast briefings.", color: "text-blue-500", bg: "bg-blue-500/10" },
                         { icon: Zap, title: "Google Gemini", desc: "Gemini powers all AI analysis — email summarization, calendar insights, Notion page analysis, and priority recommendations.", color: "text-yellow-500", bg: "bg-yellow-500/10" },
                         { icon: Globe, title: "FastAPI + Next.js", desc: "Python FastAPI backend with async LangGraph workflows. Next.js 14 frontend with App Router, Zustand state management, and Framer Motion.", color: "text-purple-500", bg: "bg-purple-500/10" },

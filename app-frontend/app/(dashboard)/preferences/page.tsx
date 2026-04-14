@@ -7,6 +7,8 @@ import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
 interface Preference {
     memory_id?: string;
     content: string;
@@ -41,7 +43,7 @@ export default function PreferencesPage() {
                 return;
             }
 
-            const response = await fetch('http://localhost:8000/api/v1/memory/preferences', {
+            const response = await fetch(`${API_BASE_URL}/api/v1/memory/preferences`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -108,7 +110,7 @@ export default function PreferencesPage() {
                 return;
             }
 
-            const response = await fetch('http://localhost:8000/api/v1/memory/preferences', {
+            const response = await fetch(`${API_BASE_URL}/api/v1/memory/preferences`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -174,7 +176,7 @@ export default function PreferencesPage() {
 
             let successCount = 0;
             for (const pref of demoPrefs) {
-                const response = await fetch('http://localhost:8000/api/v1/memory/preferences', {
+                const response = await fetch(`${API_BASE_URL}/api/v1/memory/preferences`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
