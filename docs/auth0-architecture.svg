@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#2563eb"/>
+    </marker>
+  </defs>
+  
+  <text x="600" y="40" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#374151">Londoolink AI - Authentication Architecture</text>
+  <text x="600" y="70" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#6b7280">Secure Multi-Agent System with Auth0 Integration</text>
+  
+  <g>
+    <rect x="200" y="120" width="800" height="140" rx="8" fill="none" stroke="#3b82f6" stroke-width="2"/>
+    <text x="220" y="150" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#374151">Frontend Layer</text>
+    <text x="220" y="175" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">Next.js 14 • TypeScript • Tailwind CSS • Auth0 SDK</text>
+    <text x="220" y="200" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Universal Login with MFA</text>
+    <text x="220" y="220" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Step-up Authentication</text>
+    <text x="220" y="240" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• JWT Token Management</text>
+    <text x="550" y="200" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• OAuth 2.0 Integration</text>
+    <text x="550" y="220" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Secure Token Storage</text>
+    <text x="550" y="240" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Permission Dashboard</text>
+  </g>
+  
+  <line x1="600" y1="260" x2="600" y2="300" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="620" y="285" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">Auth Flow</text>
+  
+  <g>
+    <rect x="200" y="310" width="800" height="140" rx="8" fill="none" stroke="#10b981" stroke-width="2"/>
+    <text x="220" y="340" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#374151">API Gateway</text>
+    <text x="220" y="365" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">FastAPI • Python 3.12+ • Auth0 FGA • PostgreSQL</text>
+    <text x="220" y="390" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• JWT Token Verification</text>
+    <text x="220" y="410" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Fine-Grained Authorization</text>
+    <text x="220" y="430" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Permission-Based Access Control</text>
+    <text x="550" y="390" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Token Vault Integration</text>
+    <text x="550" y="410" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Audit Logging</text>
+    <text x="550" y="430" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Rate Limiting</text>
+  </g>
+  
+  <line x1="600" y1="450" x2="600" y2="490" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="620" y="475" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">API Calls</text>
+  
+  <g>
+    <rect x="200" y="500" width="800" height="140" rx="8" fill="none" stroke="#f59e0b" stroke-width="2"/>
+    <text x="220" y="530" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#374151">LangGraph Multi-Agent System</text>
+    <text x="220" y="555" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">LangGraph • LangChain • OpenAI GPT-4 • Backboard.io</text>
+    <text x="220" y="580" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Priority Agent (Briefing Generation)</text>
+    <text x="220" y="600" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Data Collection Agent (API Integration)</text>
+    <text x="220" y="620" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Persistent Memory and RAG</text>
+    <text x="550" y="580" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Email, Calendar, Notion Agents</text>
+    <text x="550" y="600" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Secure Token Retrieval</text>
+    <text x="550" y="620" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Thread-Based Conversations</text>
+  </g>
+  
+  <line x1="600" y1="640" x2="600" y2="680" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="620" y="665" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">Token Request</text>
+  
+  <g>
+    <rect x="200" y="690" width="800" height="140" rx="8" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="220" y="720" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#374151">Auth0 Token Vault</text>
+    <text x="220" y="745" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">Auth0 Management API • OAuth 2.0 • AES-256 Encryption</text>
+    <text x="220" y="770" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Encrypted Token Storage (Gmail, Calendar, Notion)</text>
+    <text x="220" y="790" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Automatic Token Refresh</text>
+    <text x="220" y="810" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Audit Logging for Compliance</text>
+    <text x="550" y="770" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Zero-Trust Architecture</text>
+    <text x="550" y="790" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• Secure Key Management</text>
+    <text x="550" y="810" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">• GDPR Compliant</text>
+  </g>
+</svg>
